@@ -1,0 +1,11 @@
+name: continent
+version: '1.0-SNAPSHOT'
+main: me.continent.ContinentPlugin
+api-version: '1.21'
+commands:
+  kingdom:
+    description: Kingdom system command
+    usage: /kingdom <subcommand>
+  gold:
+    description: Gold system command
+    usage: /gold <subcommand>
