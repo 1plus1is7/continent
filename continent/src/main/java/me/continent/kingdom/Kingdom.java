@@ -19,6 +19,9 @@ public class Kingdom {
     private double treasury;
     private long protectionUntil;
 
+    // Nation color in hex format (e.g. #FF0000)
+    private String color = "#ADFF2F";
+
     private String coreChunkKey;
     private String spawnChunkKey;
 
@@ -77,6 +80,14 @@ public class Kingdom {
     public void setName(String name) { this.name = name; }
 
     public UUID getKing() { return king; }
+
+    public boolean isAuthorized(UUID uuid) {
+        return king.equals(uuid);
+    }
+
+    public String getColor() { return color; }
+
+    public void setColor(String color) { this.color = color; }
 
     public Set<UUID> getMembers() { return members; }
 

@@ -22,6 +22,9 @@ public class MembershipService {
         if (ClaimService.isChunkClaimed(chunk)) return null;
 
         Kingdom kingdom = new Kingdom(name, uuid);
+        String defaultColor = me.continent.ContinentPlugin.getInstance()
+                .getConfig().getString("colors.kingdom-default", "#ADFF2F");
+        kingdom.setColor(defaultColor);
         kingdom.addChunk(chunk);
 
         Location ground = Kingdom.getGroundLocation(player.getLocation());

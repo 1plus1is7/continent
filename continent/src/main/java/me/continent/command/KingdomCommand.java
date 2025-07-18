@@ -6,6 +6,7 @@ import me.continent.kingdom.service.*;
 import me.continent.scoreboard.ScoreboardService;
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
+import me.continent.storage.KingdomStorage;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -40,6 +41,7 @@ public class KingdomCommand implements CommandExecutor {
             player.sendMessage("§e/kingdom leave §7- 국가 탈퇴");
             player.sendMessage("§e/kingdom kick <플레이어> §7- 구성원 추방");
             player.sendMessage("§e/kingdom rename <새이름> §7- 국가 이름 변경");
+            player.sendMessage("§e/kingdom color <HEX> §7- 국가 색상 변경");
             player.sendMessage("§e/kingdom list §7- 서버 내 모든 국가 목록");
             player.sendMessage("§e/kingdom setspawn §7- 국가 스폰 위치 설정");
             player.sendMessage("§e/kingdom chat §7- 국가 채팅 토글");
@@ -100,7 +102,7 @@ public class KingdomCommand implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("kick") && args.length >= 2) {
             Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
-            if (kingdom == null || !kingdom.getKing().equals(player.getUniqueId())) {
+            if (kingdom == null || !kingdom.isAuthorized(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 구성원을 추방할 수 있습니다.");
                 return true;
             }
@@ -118,6 +120,23 @@ public class KingdomCommand implements CommandExecutor {
             if (target.isOnline()) {
                 target.sendMessage("§c국가에서 추방당했습니다.");
             }
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("color") && args.length >= 2) {
+            Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
+            if (kingdom == null || !kingdom.isAuthorized(player.getUniqueId())) {
+                player.sendMessage("§c국왕만 색상을 변경할 수 있습니다.");
+                return true;
+            }
+            String hex = args[1];
+            if (!hex.matches("#?[0-9a-fA-F]{6}")) {
+                player.sendMessage("§c올바른 HEX 형식이 아닙니다.");
+                return true;
+            }
+            kingdom.setColor(hex.startsWith("#") ? hex : "#" + hex);
+            KingdomStorage.save(kingdom);
+            player.sendMessage("§a국가 색상이 변경되었습니다: " + hex);
             return true;
         }
 
