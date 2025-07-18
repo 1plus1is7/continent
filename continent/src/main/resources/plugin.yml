@@ -5,6 +5,7 @@ api-version: '1.21'
 commands:
   kingdom:
     description: Kingdom system command
+    aliases: [k]
     usage: /kingdom <subcommand>
   gold:
     description: Gold system command
