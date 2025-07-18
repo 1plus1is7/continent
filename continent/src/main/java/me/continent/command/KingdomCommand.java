@@ -321,6 +321,7 @@ public class KingdomCommand implements CommandExecutor {
 
             kingdom.setSpawnLocation(spawnLoc);
             KingdomStorage.save(kingdom); // ← 저장 반영
+            Chunk chunk = spawnLoc.getChunk();
             kingdom.setSpawnChunk(chunk);
             player.sendMessage("§a국가 스폰 위치가 지면 위로 자동 설정되었습니다.");
             return true;
