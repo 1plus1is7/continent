@@ -4,6 +4,7 @@ import me.continent.kingdom.*;
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
 import me.continent.kingdom.KingdomManager;
+import me.continent.chat.KingdomChatManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -35,6 +36,7 @@ public class KingdomCommand implements CommandExecutor {
             player.sendMessage("§e/kingdom members §7- 국가 구성원 확인");
             player.sendMessage("§e/kingdom list §7- 서버 내 모든 국가 목록");
             player.sendMessage("§e/kingdom setspawn §7- 국가 스폰 위치 설정");
+            player.sendMessage("§e/kingdom chat <메시지> §7- 국가 채팅 전송");
             return true;
         }
 
@@ -222,6 +224,23 @@ public class KingdomCommand implements CommandExecutor {
             for (Kingdom k : all) {
                 player.sendMessage("§f- " + k.getName());
             }
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("chat") || args[0].equalsIgnoreCase("c")) {
+            Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
+            if (kingdom == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+
+            if (args.length < 2) {
+                player.sendMessage("§c메시지를 입력하세요.");
+                return true;
+            }
+
+            String message = String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length));
+            KingdomChatManager.sendMessage(kingdom, player.getUniqueId(), message);
             return true;
         }
 
