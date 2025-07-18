@@ -50,6 +50,7 @@ public class KingdomStorage {
         config.set("treasury", kingdom.getTreasury());
         config.set("color", kingdom.getColor());
         config.set("chest", serializeItems(kingdom.getChestContents()));
+        config.set("memberIgnite", kingdom.isMemberIgniteAllowed());
 
         try {
             config.save(file);
@@ -76,6 +77,7 @@ public class KingdomStorage {
             double treasury = config.getDouble("treasury");
             String color = config.getString("color", "#ADFF2F");
             ItemStack[] chest = deserializeItems(config.getString("chest"));
+            boolean memberIgnite = config.getBoolean("memberIgnite", false);
 
             Kingdom kingdom = new Kingdom(name, king);
             kingdom.getMembers().addAll(members);
@@ -86,6 +88,7 @@ public class KingdomStorage {
             kingdom.setTreasury(treasury);
             kingdom.setColor(color);
             kingdom.setChestContents(chest);
+            kingdom.setMemberIgniteAllowed(memberIgnite);
             kingdom.setCoreChunkKey(config.getString("core-chunk"));
             kingdom.setSpawnChunkKey(config.getString("spawn-chunk"));
 
