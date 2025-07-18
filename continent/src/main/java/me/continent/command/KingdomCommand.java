@@ -37,6 +37,9 @@ public class KingdomCommand implements CommandExecutor {
             player.sendMessage("§e/kingdom accept <이름> §7- 초대 수락");
             player.sendMessage("§e/kingdom deny <이름> §7- 초대 거절");
             player.sendMessage("§e/kingdom members §7- 국가 구성원 확인");
+            player.sendMessage("§e/kingdom leave §7- 국가 탈퇴");
+            player.sendMessage("§e/kingdom kick <플레이어> §7- 구성원 추방");
+            player.sendMessage("§e/kingdom rename <새이름> §7- 국가 이름 변경");
             player.sendMessage("§e/kingdom list §7- 서버 내 모든 국가 목록");
             player.sendMessage("§e/kingdom setspawn §7- 국가 스폰 위치 설정");
             player.sendMessage("§e/kingdom chat §7- 국가 채팅 토글");
@@ -77,6 +80,59 @@ public class KingdomCommand implements CommandExecutor {
                 String role = uuid.equals(kingdom.getKing()) ? "§e(국왕)" : "§7(국민)";
                 player.sendMessage("§f- " + name + " " + role);
             }
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("leave")) {
+            Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
+            if (kingdom == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            if (kingdom.getKing().equals(player.getUniqueId())) {
+                player.sendMessage("§c국왕은 국가를 탈퇴할 수 없습니다. 해산을 시도하세요.");
+                return true;
+            }
+            MembershipService.leaveKingdom(player, kingdom);
+            player.sendMessage("§a국가를 탈퇴했습니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("kick") && args.length >= 2) {
+            Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
+            if (kingdom == null || !kingdom.getKing().equals(player.getUniqueId())) {
+                player.sendMessage("§c국왕만 구성원을 추방할 수 있습니다.");
+                return true;
+            }
+
+            Player target = Bukkit.getPlayerExact(args[1]);
+            if (target == null) {
+                player.sendMessage("§c해당 플레이어를 찾을 수 없습니다.");
+                return true;
+            }
+            if (!MembershipService.kickMember(kingdom, target.getUniqueId())) {
+                player.sendMessage("§c해당 플레이어는 국가의 구성원이 아닙니다.");
+                return true;
+            }
+            player.sendMessage("§e" + target.getName() + "§f을(를) 추방했습니다.");
+            if (target.isOnline()) {
+                target.sendMessage("§c국가에서 추방당했습니다.");
+            }
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("rename") && args.length >= 2) {
+            Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
+            if (kingdom == null || !kingdom.getKing().equals(player.getUniqueId())) {
+                player.sendMessage("§c국왕만 국가 이름을 변경할 수 있습니다.");
+                return true;
+            }
+            String newName = args[1];
+            if (!MembershipService.renameKingdom(kingdom, newName)) {
+                player.sendMessage("§c이미 사용 중인 이름입니다.");
+                return true;
+            }
+            player.sendMessage("§a국가 이름이 §e" + newName + "§a(으)로 변경되었습니다.");
             return true;
         }
 

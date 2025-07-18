@@ -92,6 +92,14 @@ public class KingdomStorage {
         save(kingdom);
     }
 
+    public static void rename(String oldName, String newName) {
+        File oldFile = new File(folder, oldName.toLowerCase() + ".yml");
+        File newFile = new File(folder, newName.toLowerCase() + ".yml");
+        if (oldFile.exists()) {
+            oldFile.renameTo(newFile);
+        }
+    }
+
     public static String serializeLocation(Location loc) {
         if (loc == null) return null;
         return loc.getWorld().getName() + "," + loc.getX() + "," + loc.getY() + "," + loc.getZ();

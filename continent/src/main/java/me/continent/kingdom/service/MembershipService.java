@@ -65,4 +65,43 @@ public class MembershipService {
             }
         }
     }
+
+    public static void leaveKingdom(Player player, Kingdom kingdom) {
+        UUID uuid = player.getUniqueId();
+        kingdom.removeMember(uuid);
+        KingdomManager.removeMember(uuid);
+
+        PlayerData data = PlayerDataManager.get(uuid);
+        if (data != null) {
+            data.setKingdom(null);
+            PlayerDataManager.save(uuid);
+        }
+
+        KingdomStorage.save(kingdom);
+    }
+
+    public static boolean kickMember(Kingdom kingdom, UUID target) {
+        if (!kingdom.getMembers().contains(target)) return false;
+        kingdom.removeMember(target);
+        KingdomManager.removeMember(target);
+
+        PlayerData data = PlayerDataManager.get(target);
+        if (data != null) {
+            data.setKingdom(null);
+            PlayerDataManager.save(target);
+        }
+
+        KingdomStorage.save(kingdom);
+        return true;
+    }
+
+    public static boolean renameKingdom(Kingdom kingdom, String newName) {
+        if (KingdomManager.exists(newName)) return false;
+        String old = kingdom.getName();
+        kingdom.setName(newName);
+        KingdomManager.updateName(old, kingdom);
+        KingdomStorage.rename(old, newName);
+        KingdomStorage.save(kingdom);
+        return true;
+    }
 }

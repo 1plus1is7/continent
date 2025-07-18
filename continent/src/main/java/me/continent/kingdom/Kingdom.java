@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Kingdom {
 
-    private final String name;
+    private String name;
     private final UUID king;
     private double fund = 0;
     private long protectionEnd = 0;
@@ -74,6 +74,8 @@ public class Kingdom {
 
     public String getName() { return name; }
 
+    public void setName(String name) { this.name = name; }
+
     public UUID getKing() { return king; }
 
     public Set<UUID> getMembers() { return members; }
@@ -107,6 +109,10 @@ public class Kingdom {
     // ---- 기능성 메서드 ----
     public void addMember(UUID uuid) {
         members.add(uuid);
+    }
+
+    public void removeMember(UUID uuid) {
+        members.remove(uuid);
     }
 
     public void addChunk(Chunk chunk) {
