@@ -18,6 +18,9 @@ public class Kingdom {
     private double treasury;
     private long protectionUntil;
 
+    // Whether members of this kingdom can ignite fire or TNT in protected areas
+    private boolean memberIgniteAllowed = false;
+
     // Nation color in hex format (e.g. #FF0000)
     private String color = "#ADFF2F";
 
@@ -129,6 +132,18 @@ public class Kingdom {
     public void setProtectionEnd(long protectionEnd) { this.protectionEnd = protectionEnd; }
 
     public long getProtectionUntil() { return protectionUntil; }
+
+    public boolean isUnderProtection() {
+        return System.currentTimeMillis() < protectionUntil;
+    }
+
+    public boolean isMemberIgniteAllowed() {
+        return memberIgniteAllowed;
+    }
+
+    public void setMemberIgniteAllowed(boolean allowed) {
+        this.memberIgniteAllowed = allowed;
+    }
 
     // ---- 기능성 메서드 ----
     public void addMember(UUID uuid) {

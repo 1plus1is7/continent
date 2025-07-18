@@ -48,6 +48,7 @@ public class KingdomCommand implements CommandExecutor {
             player.sendMessage("§e/kingdom setcore §7- 코어 위치 이동");
             player.sendMessage("§e/kingdom spawn §7- 국가 스폰으로 이동");
             player.sendMessage("§e/kingdom chest §7- 국가 창고 열기");
+            player.sendMessage("§e/kingdom ignite <on|off> §7- 아군 점화 허용 토글");
             player.sendMessage("§e/kingdom treasury <subcommand> §7- 국고 관리");
             player.sendMessage("§e/kingdom confirm §7- 대기 중인 작업 확인");
             player.sendMessage("§e/kingdom chat §7- 국가 채팅 토글");
@@ -523,6 +524,24 @@ public class KingdomCommand implements CommandExecutor {
                 return true;
             }
             ChestService.openChest(player, kingdom);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("ignite")) {
+            Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
+            if (kingdom == null || !kingdom.isAuthorized(player.getUniqueId())) {
+                player.sendMessage("§c국왕만 설정을 변경할 수 있습니다.");
+                return true;
+            }
+            boolean allow;
+            if (args.length >= 2) {
+                allow = args[1].equalsIgnoreCase("on") || args[1].equalsIgnoreCase("true");
+            } else {
+                allow = !kingdom.isMemberIgniteAllowed();
+            }
+            kingdom.setMemberIgniteAllowed(allow);
+            KingdomStorage.save(kingdom);
+            player.sendMessage("§e아군 점화 허용이 " + (allow ? "켜졌습니다" : "꺼졌습니다"));
             return true;
         }
 
