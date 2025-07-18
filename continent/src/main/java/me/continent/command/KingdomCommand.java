@@ -7,6 +7,7 @@ import me.continent.scoreboard.ScoreboardService;
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
 import me.continent.storage.KingdomStorage;
+import me.continent.utils.ConfirmationManager;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -44,7 +45,17 @@ public class KingdomCommand implements CommandExecutor {
             player.sendMessage("§e/kingdom color <HEX> §7- 국가 색상 변경");
             player.sendMessage("§e/kingdom list §7- 서버 내 모든 국가 목록");
             player.sendMessage("§e/kingdom setspawn §7- 국가 스폰 위치 설정");
+            player.sendMessage("§e/kingdom setcore §7- 코어 위치 이동");
+            player.sendMessage("§e/kingdom treasury <subcommand> §7- 국고 관리");
+            player.sendMessage("§e/kingdom confirm §7- 대기 중인 작업 확인");
             player.sendMessage("§e/kingdom chat §7- 국가 채팅 토글");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("confirm")) {
+            if (!ConfirmationManager.confirm(player)) {
+                player.sendMessage("§c진행 중인 확인 요청이 없습니다.");
+            }
             return true;
         }
 
@@ -59,8 +70,10 @@ public class KingdomCommand implements CommandExecutor {
                 return true;
             }
 
-            MembershipService.disband(kingdom);
-            player.sendMessage("§c국가가 성공적으로 해산되었습니다.");
+            ConfirmationManager.request(player, () -> {
+                MembershipService.disband(kingdom);
+                player.sendMessage("§c국가가 성공적으로 해산되었습니다.");
+            });
             return true;
         }
 
@@ -95,8 +108,10 @@ public class KingdomCommand implements CommandExecutor {
                 player.sendMessage("§c국왕은 국가를 탈퇴할 수 없습니다. 해산을 시도하세요.");
                 return true;
             }
-            MembershipService.leaveKingdom(player, kingdom);
-            player.sendMessage("§a국가를 탈퇴했습니다.");
+            ConfirmationManager.request(player, () -> {
+                MembershipService.leaveKingdom(player, kingdom);
+                player.sendMessage("§a국가를 탈퇴했습니다.");
+            });
             return true;
         }
 
@@ -112,14 +127,16 @@ public class KingdomCommand implements CommandExecutor {
                 player.sendMessage("§c해당 플레이어를 찾을 수 없습니다.");
                 return true;
             }
-            if (!MembershipService.kickMember(kingdom, target.getUniqueId())) {
-                player.sendMessage("§c해당 플레이어는 국가의 구성원이 아닙니다.");
-                return true;
-            }
-            player.sendMessage("§e" + target.getName() + "§f을(를) 추방했습니다.");
-            if (target.isOnline()) {
-                target.sendMessage("§c국가에서 추방당했습니다.");
-            }
+            ConfirmationManager.request(player, () -> {
+                if (!MembershipService.kickMember(kingdom, target.getUniqueId())) {
+                    player.sendMessage("§c해당 플레이어는 국가의 구성원이 아닙니다.");
+                    return;
+                }
+                player.sendMessage("§e" + target.getName() + "§f을(를) 추방했습니다.");
+                if (target.isOnline()) {
+                    target.sendMessage("§c국가에서 추방당했습니다.");
+                }
+            });
             return true;
         }
 
@@ -152,6 +169,85 @@ public class KingdomCommand implements CommandExecutor {
                 return true;
             }
             player.sendMessage("§a국가 이름이 §e" + newName + "§a(으)로 변경되었습니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("treasury")) {
+            Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
+            if (kingdom == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+
+            if (args.length < 2) {
+                player.sendMessage("§e/kingdom treasury balance§7, §e/kingdom treasury deposit <금액>§7, §e/kingdom treasury withdraw <금액>");
+                return true;
+            }
+
+            PlayerData data = PlayerDataManager.get(player.getUniqueId());
+
+            if (args[1].equalsIgnoreCase("balance")) {
+                player.sendMessage("§6[국고] §f잔액: §e" + kingdom.getTreasury() + "G");
+                return true;
+            }
+
+            if (args[1].equalsIgnoreCase("deposit") && args.length >= 3) {
+                if (!kingdom.isAuthorized(player.getUniqueId())) {
+                    player.sendMessage("§c국왕만 국고에 입금할 수 있습니다.");
+                    return true;
+                }
+                int amount;
+                try {
+                    amount = Integer.parseInt(args[2]);
+                } catch (NumberFormatException e) {
+                    player.sendMessage("§c금액은 숫자여야 합니다.");
+                    return true;
+                }
+                if (amount <= 0) {
+                    player.sendMessage("§c금액은 1 이상이어야 합니다.");
+                    return true;
+                }
+                if (data.getGold() < amount) {
+                    player.sendMessage("§c보유 골드가 부족합니다.");
+                    return true;
+                }
+                data.removeGold(amount);
+                kingdom.addGold(amount);
+                PlayerDataManager.save(player.getUniqueId());
+                KingdomStorage.save(kingdom);
+                player.sendMessage("§a국고에 " + amount + "G 를 입금했습니다.");
+                return true;
+            }
+
+            if (args[1].equalsIgnoreCase("withdraw") && args.length >= 3) {
+                if (!kingdom.isAuthorized(player.getUniqueId())) {
+                    player.sendMessage("§c국왕만 국고에서 출금할 수 있습니다.");
+                    return true;
+                }
+                int amount;
+                try {
+                    amount = Integer.parseInt(args[2]);
+                } catch (NumberFormatException e) {
+                    player.sendMessage("§c금액은 숫자여야 합니다.");
+                    return true;
+                }
+                if (amount <= 0) {
+                    player.sendMessage("§c금액은 1 이상이어야 합니다.");
+                    return true;
+                }
+                if (kingdom.getTreasury() < amount) {
+                    player.sendMessage("§c국고가 부족합니다.");
+                    return true;
+                }
+                kingdom.removeGold(amount);
+                data.addGold(amount);
+                PlayerDataManager.save(player.getUniqueId());
+                KingdomStorage.save(kingdom);
+                player.sendMessage("§a국고에서 " + amount + "G 를 출금했습니다.");
+                return true;
+            }
+
+            player.sendMessage("§c잘못된 하위 명령어입니다.");
             return true;
         }
 
@@ -402,6 +498,25 @@ public class KingdomCommand implements CommandExecutor {
             return true;
         }
 
+        if (args[0].equalsIgnoreCase("setcore")) {
+            Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
+            if (kingdom == null || !kingdom.getKing().equals(player.getUniqueId())) {
+                player.sendMessage("§c국왕만 코어 위치를 변경할 수 있습니다.");
+                return true;
+            }
+
+            String key = Kingdom.getChunkKey(player.getLocation().getChunk());
+            if (!kingdom.getClaimedChunks().contains(key)) {
+                player.sendMessage("§c해당 위치는 당신의 영토가 아닙니다.");
+                return true;
+            }
+
+            CoreService.removeCore(kingdom);
+            CoreService.placeCore(kingdom, player.getLocation());
+            player.sendMessage("§a코어 위치가 변경되었습니다.");
+            return true;
+        }
+
         if (args[0].equalsIgnoreCase("create") && args.length >= 2) {
             String name = args[1];
 
@@ -422,14 +537,15 @@ public class KingdomCommand implements CommandExecutor {
                 return true;
             }
 
-            Kingdom kingdom = MembershipService.createKingdom(name, player);
-            if (kingdom == null) {
-                player.sendMessage("§c국가 생성에 실패했습니다. (중복 이름 등)");
-                return true;
-            }
-
-            data.setGold(data.getGold() - 30);
-            player.sendMessage("§a국가가 생성되었습니다: §e" + name);
+            ConfirmationManager.request(player, () -> {
+                Kingdom kingdom = MembershipService.createKingdom(name, player);
+                if (kingdom == null) {
+                    player.sendMessage("§c국가 생성에 실패했습니다. (중복 이름 등)");
+                    return;
+                }
+                data.setGold(data.getGold() - 30);
+                player.sendMessage("§a국가가 생성되었습니다: §e" + name);
+            });
             return true;
         }
         return true;

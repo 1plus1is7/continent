@@ -41,7 +41,7 @@ public class KingdomStorage {
         config.set("spawn", serializeLocation(kingdom.getSpawnLocation()));
         config.set("core", serializeLocation(kingdom.getCoreLocation()));
         config.set("protectionEnd", kingdom.getProtectionEnd());
-        config.set("fund", kingdom.getFund());
+        config.set("treasury", kingdom.getTreasury());
         config.set("color", kingdom.getColor());
 
         try {
@@ -66,7 +66,7 @@ public class KingdomStorage {
             Location spawn = deserializeLocation(config.getString("spawn"));
             Location core = deserializeLocation(config.getString("core"));
             long protectionEnd = config.getLong("protectionEnd");
-            double fund = config.getDouble("fund");
+            double treasury = config.getDouble("treasury");
             String color = config.getString("color", "#ADFF2F");
 
             Kingdom kingdom = new Kingdom(name, king);
@@ -75,7 +75,7 @@ public class KingdomStorage {
             kingdom.setSpawnLocation(spawn);
             kingdom.setCoreLocation(core);
             kingdom.setProtectionEnd(protectionEnd);
-            kingdom.setFund(fund);
+            kingdom.setTreasury(treasury);
             kingdom.setColor(color);
             kingdom.setCoreChunkKey(config.getString("core-chunk"));
             kingdom.setSpawnChunkKey(config.getString("spawn-chunk"));
