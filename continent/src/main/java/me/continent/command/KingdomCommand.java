@@ -361,6 +361,11 @@ public class KingdomCommand implements CommandExecutor {
                 return true;
             }
 
+            if (KingdomManager.isNearOtherKingdom(chunk, kingdom, 2)) {
+                player.sendMessage("§c다른 국가와 너무 가까워 점령할 수 없습니다.");
+                return true;
+            }
+
             if (!kingdom.isAdjacent(chunk) && kingdom.getClaimedChunks().size() > 0) {
                 player.sendMessage("§c해당 청크는 기존 영토와 인접하지 않습니다.");
                 return true;
@@ -408,6 +413,12 @@ public class KingdomCommand implements CommandExecutor {
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
             if (data.getGold() < 30) {
                 player.sendMessage("§c국가를 생성하려면 30G가 필요합니다.");
+                return true;
+            }
+
+            Chunk chunk = player.getLocation().getChunk();
+            if (KingdomManager.isNearOtherKingdom(chunk, 2)) {
+                player.sendMessage("§c다른 국가와 너무 가까워 국가를 생성할 수 없습니다.");
                 return true;
             }
 
