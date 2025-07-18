@@ -156,7 +156,8 @@ public class KingdomCommand implements CommandExecutor {
             }
             kingdom.setColor(hex.startsWith("#") ? hex : "#" + hex);
             KingdomStorage.save(kingdom);
-            player.sendMessage("§a국가 색상이 변경되었습니다: " + hex);
+            String preview = net.md_5.bungee.api.ChatColor.of(hex).toString();
+            player.sendMessage("§a국가 색상이 변경되었습니다: " + preview + hex + net.md_5.bungee.api.ChatColor.RESET);
             return true;
         }
 
