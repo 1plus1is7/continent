@@ -70,9 +70,14 @@ public class ScoreboardService {
                 int zIdx = dz + half;
 
                 Chunk chunk = world.getChunkAt(px + dx, pz + dz);
-                boolean claimed = KingdomManager.isChunkClaimed(chunk);
+                Kingdom owner = KingdomManager.getByChunk(chunk);
 
-                String color = claimed ? claimedColor : unclaimedColor;
+                String color;
+                if (owner != null) {
+                    color = hexToColor(owner.getColor());
+                } else {
+                    color = unclaimedColor;
+                }
                 String symbol = (dx == 0 && dz == 0) ? centerSymbol : chunkSymbol;
                 grid[zIdx][xIdx] = color + symbol;
             }
@@ -155,5 +160,15 @@ public class ScoreboardService {
             for (int j = 0; j < n; j++)
                 result[n - 1 - j][i] = grid[i][j];
         return result;
+    }
+
+    private static String hexToColor(String hex) {
+        if (hex == null) return "";
+        if (!hex.startsWith("#")) hex = "#" + hex;
+        StringBuilder b = new StringBuilder("§x");
+        for (char c : hex.substring(1).toCharArray()) {
+            b.append('§').append(c);
+        }
+        return b.toString();
     }
 }
