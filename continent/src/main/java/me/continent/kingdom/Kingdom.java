@@ -10,7 +10,6 @@ public class Kingdom {
 
     private String name;
     private final UUID king;
-    private double fund = 0;
     private long protectionEnd = 0;
     private final Set<UUID> members = new HashSet<>();
     private final Set<String> claimedChunks = new HashSet<>();
@@ -103,13 +102,12 @@ public class Kingdom {
 
     public double getTreasury() { return treasury; }
 
+    public void setTreasury(double treasury) { this.treasury = treasury; }
+
     public void addGold(double amount) { this.treasury += amount; }
 
     public void removeGold(double amount) { this.treasury -= amount; }
 
-    public double getFund() { return fund; }
-
-    public void setFund(double fund) { this.fund = fund; }
 
     public long getProtectionEnd() { return protectionEnd; }
 
