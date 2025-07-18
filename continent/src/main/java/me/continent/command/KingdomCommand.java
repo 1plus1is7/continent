@@ -46,6 +46,8 @@ public class KingdomCommand implements CommandExecutor {
             player.sendMessage("§e/kingdom list §7- 서버 내 모든 국가 목록");
             player.sendMessage("§e/kingdom setspawn §7- 국가 스폰 위치 설정");
             player.sendMessage("§e/kingdom setcore §7- 코어 위치 이동");
+            player.sendMessage("§e/kingdom spawn §7- 국가 스폰으로 이동");
+            player.sendMessage("§e/kingdom chest §7- 국가 창고 열기");
             player.sendMessage("§e/kingdom treasury <subcommand> §7- 국고 관리");
             player.sendMessage("§e/kingdom confirm §7- 대기 중인 작업 확인");
             player.sendMessage("§e/kingdom chat §7- 국가 채팅 토글");
@@ -495,6 +497,32 @@ public class KingdomCommand implements CommandExecutor {
             }
             SpawnService.setSpawn(kingdom, player.getLocation());
             player.sendMessage("§a국가 스폰 위치가 지면 위로 자동 설정되었습니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("spawn")) {
+            Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
+            if (kingdom == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            Location spawnLoc = kingdom.getSpawnLocation();
+            if (spawnLoc == null) {
+                player.sendMessage("§c국가 스폰이 설정되어 있지 않습니다.");
+                return true;
+            }
+            player.teleport(spawnLoc);
+            player.sendMessage("§a국가 스폰으로 이동했습니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("chest")) {
+            Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
+            if (kingdom == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            ChestService.openChest(player, kingdom);
             return true;
         }
 

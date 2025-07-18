@@ -9,6 +9,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +49,7 @@ public class KingdomStorage {
         config.set("protectionEnd", kingdom.getProtectionEnd());
         config.set("treasury", kingdom.getTreasury());
         config.set("color", kingdom.getColor());
+        config.set("chest", serializeItems(kingdom.getChestContents()));
 
         try {
             config.save(file);
@@ -68,6 +75,7 @@ public class KingdomStorage {
             long protectionEnd = config.getLong("protectionEnd");
             double treasury = config.getDouble("treasury");
             String color = config.getString("color", "#ADFF2F");
+            ItemStack[] chest = deserializeItems(config.getString("chest"));
 
             Kingdom kingdom = new Kingdom(name, king);
             kingdom.getMembers().addAll(members);
@@ -77,6 +85,7 @@ public class KingdomStorage {
             kingdom.setProtectionEnd(protectionEnd);
             kingdom.setTreasury(treasury);
             kingdom.setColor(color);
+            kingdom.setChestContents(chest);
             kingdom.setCoreChunkKey(config.getString("core-chunk"));
             kingdom.setSpawnChunkKey(config.getString("spawn-chunk"));
 
@@ -117,5 +126,39 @@ public class KingdomStorage {
                 Double.parseDouble(parts[2]),
                 Double.parseDouble(parts[3])
         );
+    }
+
+    public static String serializeItems(ItemStack[] items) {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
+            dataOutput.writeInt(items.length);
+            for (ItemStack item : items) {
+                dataOutput.writeObject(item);
+            }
+            dataOutput.close();
+            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    public static ItemStack[] deserializeItems(String data) {
+        if (data == null || data.isEmpty()) return new ItemStack[27];
+        try {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(data));
+            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
+            int size = dataInput.readInt();
+            ItemStack[] items = new ItemStack[size];
+            for (int i = 0; i < size; i++) {
+                items[i] = (ItemStack) dataInput.readObject();
+            }
+            dataInput.close();
+            return items;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new ItemStack[27];
+        }
     }
 }
