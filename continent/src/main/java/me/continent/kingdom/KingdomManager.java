@@ -135,7 +135,8 @@ public class KingdomManager {
 
     // 국가 이름으로 국가 객체 가져오기
     public static Kingdom getKingdomByName(String name) {
-        return kingdoms.get(name);
+        if (name == null) return null;
+        return kingdomsByName.get(name.toLowerCase());
     }
 
     // 초대 목록에서 해당 국가 제거
