@@ -17,7 +17,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
-import net.md_5.bungee.api.ChatColor;
+
 
 public class ScoreboardService {
 
@@ -165,7 +165,12 @@ public class ScoreboardService {
 
     private static String hexToColor(String hex) {
         if (hex == null) return "";
-        if (!hex.startsWith("#")) hex = "#" + hex;
-        return ChatColor.of(hex).toString();
+        hex = hex.startsWith("#") ? hex.substring(1) : hex;
+        if (hex.length() != 6) return "";
+        StringBuilder builder = new StringBuilder("§x");
+        for (char c : hex.toCharArray()) {
+            builder.append('§').append(c);
+        }
+        return builder.toString();
     }
 }
