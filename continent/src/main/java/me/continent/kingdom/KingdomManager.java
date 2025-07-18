@@ -105,6 +105,37 @@ public class KingdomManager {
         return false;
     }
 
+    // 특정 청크가 다른 국가의 영토와 일정 거리 이내인지 확인
+    public static boolean isNearOtherKingdom(Chunk chunk, Kingdom self, int distance) {
+        String world = chunk.getWorld().getName();
+        int x = chunk.getX();
+        int z = chunk.getZ();
+
+        for (Kingdom kingdom : kingdomsByName.values()) {
+            if (kingdom == self) continue;
+
+            for (String key : kingdom.getClaimedChunks()) {
+                String[] parts = key.split(":");
+                if (!parts[0].equals(world)) continue;
+
+                int cx = Integer.parseInt(parts[1]);
+                int cz = Integer.parseInt(parts[2]);
+
+                int dx = Math.abs(cx - x);
+                int dz = Math.abs(cz - z);
+
+                if (Math.max(dx, dz) < distance) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean isNearOtherKingdom(Chunk chunk, int distance) {
+        return isNearOtherKingdom(chunk, null, distance);
+    }
+
 
 
     // ✅ 새로운 Kingdom 생성 및 등록
