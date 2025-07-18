@@ -100,12 +100,13 @@ public class ScoreboardService {
         lines.add("§7" + serverAddress);
 
         int score = lines.size();
-        String sscore = "";
+        char[] colors = "0123456789abcdef".toCharArray();
+        int idx = 0;
         for (String line : lines) {
-            if (score >= 10) { sscore = (score == 10) ? "§1§0" : "§1§1";}
-            else { sscore = " §" + score; }
-            Score s = obj.getScore(line + sscore);
+            String prefix = "§" + colors[idx % colors.length] + "§r";
+            Score s = obj.getScore(prefix + line);
             s.setScore(score--);
+            idx++;
         }
 
         player.setScoreboard(board);

@@ -44,7 +44,11 @@ public class ProtectionStateListener implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
-        if (block != null && inProtectedKingdom(block)) {
+        if (block == null) return;
+
+        Kingdom kingdom = KingdomManager.getByChunk(block.getChunk());
+        if (kingdom != null && kingdom.isUnderProtection()
+                && !kingdom.getMembers().contains(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
     }
