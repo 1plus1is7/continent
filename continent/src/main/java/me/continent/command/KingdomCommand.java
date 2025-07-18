@@ -1,11 +1,11 @@
 package me.continent.command;
 
-import me.continent.kingdom.*;
+import me.continent.kingdom.Kingdom;
+import me.continent.kingdom.KingdomManager;
+import me.continent.kingdom.service.*;
 import me.continent.scoreboard.ScoreboardService;
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
-import me.continent.kingdom.KingdomManager;
-import me.continent.scoreboard.ScoreboardService;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.continent.kingdom.Kingdom.getGroundLocation;
 
 public class KingdomCommand implements CommandExecutor {
     @Override
@@ -46,27 +45,16 @@ public class KingdomCommand implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("disband")) {
             Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
-
             if (kingdom == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-
             if (!kingdom.getKing().equals(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 국가를 해산할 수 있습니다.");
                 return true;
             }
 
-            // 모든 구성원 소속 제거
-            for (UUID member : kingdom.getMembers()) {
-                PlayerData data = PlayerDataManager.get(member);
-                data.setKingdom(null);
-            }
-
-            // Kingdom 제거 및 파일 삭제
-            KingdomManager.unregister(kingdom);
-            KingdomStorage.delete(kingdom);
-
+            MembershipService.disband(kingdom);
             player.sendMessage("§c국가가 성공적으로 해산되었습니다.");
             return true;
         }
@@ -108,18 +96,18 @@ public class KingdomCommand implements CommandExecutor {
 
             UUID playerUUID = player.getUniqueId();
 
-            if (!KingdomManager.getInvites(playerUUID).contains(targetKingdomName)) {
+            if (!InviteService.getInvites(playerUUID).contains(targetKingdomName)) {
                 player.sendMessage("§c해당 국가로부터 초대를 받지 않았습니다.");
                 return true;
             }
 
-            if (KingdomManager.getKingdom(playerUUID) != null) {
+            if (KingdomManager.getByPlayer(playerUUID) != null) {
                 player.sendMessage("§c이미 다른 국가에 소속되어 있습니다.");
                 return true;
             }
 
-            KingdomManager.joinKingdom(playerUUID, targetKingdom);
-            KingdomManager.removeInvite(playerUUID, targetKingdomName);
+            MembershipService.joinKingdom(player, targetKingdom);
+            InviteService.removeInvite(playerUUID, targetKingdomName);
 
             player.sendMessage("가입 완료!");
 
@@ -155,8 +143,8 @@ public class KingdomCommand implements CommandExecutor {
 
 
         if (args[0].equalsIgnoreCase("deny")) {
-            PlayerData data = PlayerDataManager.get(player.getUniqueId());
-            Set<String> invites = data.getPendingInvites();
+            UUID pid = player.getUniqueId();
+            Set<String> invites = InviteService.getInvites(pid);
 
             if (invites.isEmpty()) {
                 player.sendMessage("§c[오류] 받은 초대가 없습니다.");
@@ -179,8 +167,7 @@ public class KingdomCommand implements CommandExecutor {
                 }
             }
 
-            data.getPendingInvites().remove(targetName);
-            PlayerDataManager.save(player.getUniqueId());
+            InviteService.removeInvite(pid, targetName);
 
             player.sendMessage("§a[시스템] " + targetName + " 국가의 초대를 거절했습니다.");
             return true;
@@ -188,8 +175,7 @@ public class KingdomCommand implements CommandExecutor {
 
 
         if (args[0].equalsIgnoreCase("invites")) {
-            PlayerData data = PlayerDataManager.get(player.getUniqueId());
-            Set<String> invites = data.getPendingInvites();
+            Set<String> invites = InviteService.getInvites(player.getUniqueId());
 
             if (invites.isEmpty()) {
                 player.sendMessage("§7받은 초대가 없습니다.");
@@ -221,8 +207,7 @@ public class KingdomCommand implements CommandExecutor {
                 return true;
             }
 
-            PlayerData targetData = PlayerDataManager.get(target.getUniqueId());
-            targetData.getPendingInvites().add(kingdom.getName());
+            InviteService.sendInvite(target.getUniqueId(), kingdom.getName());
 
             player.sendMessage("§a초대장을 보냈습니다.");
             target.sendMessage("§6[국가 초대] §f" + player.getName() + " 님이 당신을 §e" + kingdom.getName() + "§f에 초대했습니다.");
@@ -263,7 +248,7 @@ public class KingdomCommand implements CommandExecutor {
                 return true;
             }
 
-            boolean result = KingdomUtils.unclaimChunk(kingdom, chunk);
+            boolean result = ClaimService.unclaim(kingdom, chunk);
             if (chunkKey.equals(kingdom.getCoreChunk()) || chunkKey.equals(kingdom.getSpawnChunk())) {
                 player.sendMessage(ChatColor.RED + "스폰이나 코어 지역은 해제할 수 없습니다.");
             }
@@ -318,8 +303,7 @@ public class KingdomCommand implements CommandExecutor {
             }
 
             data.setGold(data.getGold() - 5);
-            kingdom.addChunk(chunk);
-            KingdomStorage.save(kingdom);
+            ClaimService.claim(kingdom, chunk);
 
 
             player.sendMessage("§a청크를 성공적으로 점령했습니다.");
@@ -333,19 +317,7 @@ public class KingdomCommand implements CommandExecutor {
                 player.sendMessage("§c국왕만 국가 스폰을 설정할 수 있습니다.");
                 return true;
             }
-            Location loc = player.getLocation();
-            World world = loc.getWorld();
-            int x = loc.getBlockX();
-            int z = loc.getBlockZ();
-            int y = world.getHighestBlockYAt(x, z); // 지면 기준 Y 보정
-            loc = player.getLocation();
-            Chunk chunk = loc.getChunk();
-
-            Location spawnLoc = new Location(world, x + 0.5, y, z + 0.5); // 중앙 정렬
-
-            kingdom.setSpawnLocation(spawnLoc);
-            KingdomStorage.save(kingdom); // ← 저장 반영
-            kingdom.setSpawnChunk(player.getLocation().getChunk());
+            SpawnService.setSpawn(kingdom, player.getLocation());
             player.sendMessage("§a국가 스폰 위치가 지면 위로 자동 설정되었습니다.");
             return true;
         }
@@ -358,59 +330,20 @@ public class KingdomCommand implements CommandExecutor {
                 return true;
             }
 
-            Chunk chunk = player.getLocation().getChunk();
-            if (KingdomManager.isChunkClaimed(chunk)) {
-                player.sendMessage("§c해당 지역은 이미 다른 국가가 점령 중입니다.");
-                return true;
-            }
-
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
             if (data.getGold() < 30) {
                 player.sendMessage("§c국가를 생성하려면 30G가 필요합니다.");
                 return true;
             }
 
-            boolean success = KingdomManager.createKingdom(name, player.getUniqueId(), chunk);
-            if (!success) {
+            Kingdom kingdom = MembershipService.createKingdom(name, player);
+            if (kingdom == null) {
                 player.sendMessage("§c국가 생성에 실패했습니다. (중복 이름 등)");
                 return true;
             }
 
-// 생성된 kingdom 객체를 다시 조회
-            Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
-            if (kingdom == null) {
-                player.sendMessage("§c알 수 없는 오류로 인해 국가 정보가 조회되지 않았습니다.");
-                return true;
-            }
-
             data.setGold(data.getGold() - 30);
-            PlayerDataManager.get(player.getUniqueId()).setKingdom(kingdom);
-            // 국가 생성 성공 이후
-            // 국가 생성
-            kingdom = new Kingdom(name, player.getUniqueId());
-
-// 위치
-            Location loc = player.getLocation();
-            chunk = loc.getChunk();
-            String chunkKey = Kingdom.getChunkKey(chunk);
-
-// 기본 스폰 & 코어 모두 현재 위치
-            Location groundLoc = getGroundLocation(player.getLocation());
-            chunk = groundLoc.getChunk();
-
-            kingdom.setSpawnLocation(groundLoc);
-            kingdom.setCoreLocation(groundLoc);
-
-            String key = Kingdom.getChunkKey(chunk);
-            kingdom.setSpawnChunkKey(key);
-            kingdom.setCoreChunkKey(key);
-
-            kingdom.addChunk(chunk); // 자동 점령
-
-// 등록 및 저장
-            KingdomManager.addKingdom(kingdom);
             player.sendMessage("§a국가가 생성되었습니다: §e" + name);
-
             return true;
         }
         return true;

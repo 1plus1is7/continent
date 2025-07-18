@@ -1,7 +1,7 @@
 package me.continent.kingdom;
 
-import  me.continent.kingdom.Kingdom;
 import me.continent.player.PlayerDataManager;
+import me.continent.storage.KingdomStorage;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -154,17 +154,16 @@ public class KingdomManager {
 
     // 국가 가입 처리 (중복 방지, 기존 소속 제거 포함)
     public static void joinKingdom(UUID playerUUID, Kingdom kingdom) {
-        // 기존 국가에서 제거
         Kingdom oldKingdom = getKingdom(playerUUID);
         if (oldKingdom != null) {
             oldKingdom.getMembers().remove(playerUUID);
         }
 
-        // 새로운 국가에 추가
         kingdom.addMember(playerUUID);
         playerKingdoms.put(playerUUID, kingdom);
 
-        // YAML 저장
+        PlayerDataManager.get(playerUUID).setKingdom(kingdom);
+
         KingdomStorage.savePlayerData(playerUUID);
         KingdomStorage.saveKingdomData(kingdom);
     }

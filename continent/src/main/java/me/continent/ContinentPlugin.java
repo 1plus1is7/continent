@@ -8,7 +8,7 @@ import me.continent.listener.TerritoryListener;
 import me.continent.protection.TerritoryProtectionListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.continent.player.PlayerDataManager;
-import me.continent.kingdom.KingdomStorage;
+import me.continent.storage.KingdomStorage;
 import  me.continent.scoreboard.ScoreboardService;
 
 public class ContinentPlugin extends JavaPlugin {
