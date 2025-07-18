@@ -24,6 +24,9 @@ public class Kingdom {
     private String coreChunkKey;
     private String spawnChunkKey;
 
+    // 국가 창고 (27칸 단일 체스트)
+    private org.bukkit.inventory.ItemStack[] chestContents = new org.bukkit.inventory.ItemStack[27];
+
 
     public Kingdom(String name, UUID king) {
         this.name = name;
@@ -107,6 +110,18 @@ public class Kingdom {
     public void addGold(double amount) { this.treasury += amount; }
 
     public void removeGold(double amount) { this.treasury -= amount; }
+
+    public org.bukkit.inventory.ItemStack[] getChestContents() {
+        return chestContents;
+    }
+
+    public void setChestContents(org.bukkit.inventory.ItemStack[] items) {
+        if (items == null) {
+            this.chestContents = new org.bukkit.inventory.ItemStack[27];
+        } else {
+            this.chestContents = java.util.Arrays.copyOf(items, 27);
+        }
+    }
 
 
     public long getProtectionEnd() { return protectionEnd; }
