@@ -169,4 +169,13 @@ public class KingdomManager {
         KingdomStorage.saveKingdomData(kingdom);
     }
 
+    public static void removeMember(UUID uuid) {
+        kingdomsByPlayer.remove(uuid);
+    }
+
+    public static void updateName(String oldName, Kingdom kingdom) {
+        kingdomsByName.remove(oldName.toLowerCase());
+        kingdomsByName.put(kingdom.getName().toLowerCase(), kingdom);
+    }
+
 }
