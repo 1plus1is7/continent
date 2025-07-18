@@ -1,5 +1,6 @@
 package me.continent;
 
+import me.continent.chat.KingdomChatListener;
 import me.continent.command.GoldCommand;
 import me.continent.command.KingdomCommand;
 import me.continent.economy.CentralBankDataManager;
@@ -29,6 +30,7 @@ public class ContinentPlugin extends JavaPlugin {
         ScoreboardService.schedule();
 
         getServer().getPluginManager().registerEvents(new TerritoryListener(), this);
+        getServer().getPluginManager().registerEvents(new KingdomChatListener(), this);
         getServer().getPluginManager().registerEvents(new TerritoryProtectionListener(), this);
 
 

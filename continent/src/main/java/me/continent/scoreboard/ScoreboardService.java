@@ -94,12 +94,23 @@ public class ScoreboardService {
         lines.add("§7" + serverAddress);
 
         int score = lines.size();
+        String sscore = "";
         for (String line : lines) {
-            Score s = obj.getScore(line + " §" + score); // 중복 방지용
+            if (score >= 10) { sscore = (score == 10) ? "§1§0" : "§1§1";}
+            else { sscore = " §" + score; }
+            Score s = obj.getScore(line + sscore);
             s.setScore(score--);
         }
 
         player.setScoreboard(board);
+    }
+
+    public static void updateScoreboard(Player player) {
+        new ScoreboardService().render(player);
+    }
+
+    public void render(Player player) {
+        // 원래 렌더링 코드
     }
 
     public static void schedule() {

@@ -1,6 +1,7 @@
 package me.continent.kingdom;
 
 import  me.continent.kingdom.Kingdom;
+import me.continent.player.PlayerDataManager;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,8 +11,20 @@ import java.util.*;
 
 public class KingdomManager {
 
+    // KingdomManager.java에 추가
+    public static void addKingdom(Kingdom kingdom) {
+        kingdomsByName.put(kingdom.getName().toLowerCase(), kingdom); // 이름은 소문자로 일치시킴
+        kingdomsByPlayer.put(kingdom.getKing(), kingdom); // 플레이어 UUID로 등록
+        KingdomStorage.save(kingdom);
+    }
+
     private static final Map<String, Kingdom> kingdomsByName = new HashMap<>();
     private static final Map<UUID, Kingdom> kingdomsByPlayer = new HashMap<>();
+
+    private static final Map<UUID, Kingdom> playerKingdoms = new HashMap<>();
+    private static final Map<String, Kingdom> kingdoms = new HashMap<>();
+    private static final Map<UUID, Set<String>> playerInvites = new HashMap<>();
+
 
     // Kingdom 이름으로 중복 확인
     public static boolean exists(String name) {
@@ -34,7 +47,7 @@ public class KingdomManager {
         World world = chunk.getWorld();
         int centerX = (chunk.getX() << 4) + 8;
         int centerZ = (chunk.getZ() << 4) + 8;
-        int y = world.getHighestBlockYAt(centerX, centerZ);
+        int y = world.getHighestBlockYAt(centerX, centerZ)+1;
         return new Location(world, centerX, y, centerZ);
     }
 
@@ -49,10 +62,9 @@ public class KingdomManager {
 
     // Kingdom 제거
     public static void unregister(Kingdom kingdom) {
-        // 1. 신호기 제거
-        Location core = kingdom.getCoreLocation();
-        if (core != null && core.getBlock().getType() == Material.BEACON) {
-            core.getBlock().setType(Material.AIR);
+        Location coreLocation = kingdom.getCoreLocation();
+        if (coreLocation != null && coreLocation.getBlock().getType() == Material.BEACON) {
+            coreLocation.getBlock().setType(Material.AIR);
         }
 
         // 2. 데이터 해제
@@ -93,6 +105,8 @@ public class KingdomManager {
         return false;
     }
 
+
+
     // ✅ 새로운 Kingdom 생성 및 등록
     public static boolean createKingdom(String name, UUID king, Chunk chunk) {
         Kingdom kingdom = new Kingdom(name, king);
@@ -102,7 +116,7 @@ public class KingdomManager {
         World world = chunk.getWorld();
         int x = chunk.getX() << 4;
         int z = chunk.getZ() << 4;
-        int y = world.getHighestBlockYAt(x, z);
+        int y = (world.getHighestBlockYAt(x, z)+1);
 
         Location coreLocation = getSurfaceCenter(chunk);
 
@@ -113,4 +127,46 @@ public class KingdomManager {
         KingdomStorage.save(kingdom);
         return true;
     }
+
+    // 현재 플레이어가 속한 국가 반환
+    public static Kingdom getKingdom(UUID playerUUID) {
+        return playerKingdoms.get(playerUUID);
+    }
+
+    // 국가 이름으로 국가 객체 가져오기
+    public static Kingdom getKingdomByName(String name) {
+        return kingdoms.get(name);
+    }
+
+    // 초대 목록에서 해당 국가 제거
+    public static void removeInvite(UUID playerUUID, String kingdomName) {
+        Set<String> invites = playerInvites.get(playerUUID);
+        if (invites != null) {
+            invites.remove(kingdomName);
+        }
+    }
+
+    // 플레이어의 초대 목록 반환
+    public static Set<String> getInvites(UUID playerUUID) {
+        return playerInvites.getOrDefault(playerUUID, new HashSet<>());
+    }
+
+
+    // 국가 가입 처리 (중복 방지, 기존 소속 제거 포함)
+    public static void joinKingdom(UUID playerUUID, Kingdom kingdom) {
+        // 기존 국가에서 제거
+        Kingdom oldKingdom = getKingdom(playerUUID);
+        if (oldKingdom != null) {
+            oldKingdom.getMembers().remove(playerUUID);
+        }
+
+        // 새로운 국가에 추가
+        kingdom.addMember(playerUUID);
+        playerKingdoms.put(playerUUID, kingdom);
+
+        // YAML 저장
+        KingdomStorage.savePlayerData(playerUUID);
+        KingdomStorage.saveKingdomData(kingdom);
+    }
+
 }

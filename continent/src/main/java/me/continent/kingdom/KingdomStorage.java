@@ -1,6 +1,8 @@
 package me.continent.kingdom;
 
 import me.continent.ContinentPlugin;
+import me.continent.player.PlayerData;
+import me.continent.player.PlayerDataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,6 +24,8 @@ public class KingdomStorage {
         if (file.exists()) file.delete();
     }
 
+
+
     public static void save(Kingdom kingdom) {
         File file = new File(folder, kingdom.getName().toLowerCase() + ".yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
@@ -34,7 +38,8 @@ public class KingdomStorage {
             members.add(uuid.toString());
         }
         config.set("members", members);
-
+        config.set("core-chunk", kingdom.getCoreChunk());
+        config.set("spawn-chunk", kingdom.getSpawnChunk());
         config.set("chunks", new ArrayList<>(kingdom.getClaimedChunks()));
         config.set("spawn", serializeLocation(kingdom.getSpawnLocation()));
         config.set("core", serializeLocation(kingdom.getCoreLocation()));
@@ -58,6 +63,7 @@ public class KingdomStorage {
             String name = config.getString("name");
             UUID king = UUID.fromString(config.getString("king"));
             List<String> memberStrings = config.getStringList("members");
+
             Set<UUID> members = new HashSet<>();
             for (String m : memberStrings) {
                 members.add(UUID.fromString(m));
@@ -76,10 +82,25 @@ public class KingdomStorage {
             kingdom.setCoreLocation(core);
             kingdom.setProtectionEnd(protectionEnd);
             kingdom.setFund(fund);
+            kingdom.setCoreChunkKey(config.getString("core-chunk"));
+            kingdom.setSpawnChunkKey(config.getString("spawn-chunk"));
+
 
             KingdomManager.register(kingdom);
         }
     }
+
+    public static void savePlayerData(UUID playerUUID) {
+        PlayerData data = PlayerDataManager.get(playerUUID);
+        if (data != null) {
+            PlayerDataManager.save(playerUUID);
+        }
+    }
+
+    public static void saveKingdomData(Kingdom kingdom) {
+        save(kingdom); // 기존 save 메서드 재사용
+    }
+
 
     public static String serializeLocation(Location loc) {
         if (loc == null) return null;

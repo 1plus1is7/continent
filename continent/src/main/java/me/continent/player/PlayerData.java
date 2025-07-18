@@ -28,6 +28,29 @@ public class PlayerData {
         this.gold = 0;
     }
 
+    private boolean kingdomChat = false;
+    private boolean kingdomChatEnabled = false;
+
+    public boolean isKingdomChatEnabled() {
+        return kingdomChatEnabled;
+    }
+
+    public void setKingdomChatEnabled(boolean enabled) {
+        this.kingdomChatEnabled = enabled;
+    }
+
+
+
+    public boolean isInKingdomChat() {
+        return kingdomChat;
+    }
+
+    public void setKingdomChat(boolean kingdomChat) {
+        this.kingdomChat = kingdomChat;
+    }
+
+
+
     public void setGold(double amount) {
         this.gold = amount;
     }

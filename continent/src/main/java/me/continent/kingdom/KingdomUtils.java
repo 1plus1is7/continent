@@ -11,6 +11,11 @@ public class KingdomUtils {
     public static boolean unclaimChunk(Kingdom kingdom, Chunk chunk) {
         String key = Kingdom.getChunkKey(chunk);
 
+        if (key.equals(kingdom.getCoreChunk()) || key.equals(kingdom.getSpawnChunk())) {
+            return false; // 보호
+        }
+
+
         // 스폰/코어 청크 해제 방지
         String spawnKey = kingdom.getSpawnChunk();
         String coreKey = kingdom.getCoreChunk();
