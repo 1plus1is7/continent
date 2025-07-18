@@ -6,6 +6,7 @@ import me.continent.command.KingdomCommand;
 import me.continent.economy.CentralBankDataManager;
 import me.continent.listener.TerritoryListener;
 import me.continent.protection.TerritoryProtectionListener;
+import me.continent.protection.CoreProtectionListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.continent.player.PlayerDataManager;
 import me.continent.storage.KingdomStorage;
@@ -32,6 +33,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new TerritoryListener(), this);
         getServer().getPluginManager().registerEvents(new KingdomChatListener(), this);
         getServer().getPluginManager().registerEvents(new TerritoryProtectionListener(), this);
+        getServer().getPluginManager().registerEvents(new CoreProtectionListener(), this);
 
 
 
