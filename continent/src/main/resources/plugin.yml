@@ -14,3 +14,6 @@ commands:
     description: Kingdom system command
     aliases: [nation]
     usage: /kingdom <subcommand>
+  war:
+    description: War system command
+    usage: /war <subcommand>

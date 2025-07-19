@@ -2,6 +2,7 @@ package me.continent.protection;
 
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
+import me.continent.war.WarManager;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,8 +22,14 @@ public class TerritoryProtectionListener implements Listener {
 
         Village playerVillage = VillageManager.getByPlayer(player.getUniqueId());
 
-        // 소유자 마을와 다르면 보호
-        if (!owner.equals(playerVillage)) {
+        boolean allowed = false;
+        if (playerVillage != null && owner.getKingdom() != null && playerVillage.getKingdom() != null) {
+            if (WarManager.isAtWar(owner.getKingdom(), playerVillage.getKingdom())) {
+                allowed = true;
+            }
+        }
+
+        if (!owner.equals(playerVillage) && !allowed) {
             event.setCancelled(true);
             player.sendMessage("§c이 지역은 다른 마을의 보호 구역입니다.");
         }
@@ -38,7 +45,14 @@ public class TerritoryProtectionListener implements Listener {
 
         Village playerVillage = VillageManager.getByPlayer(player.getUniqueId());
 
-        if (!owner.equals(playerVillage)) {
+        boolean allowed = false;
+        if (playerVillage != null && owner.getKingdom() != null && playerVillage.getKingdom() != null) {
+            if (WarManager.isAtWar(owner.getKingdom(), playerVillage.getKingdom())) {
+                allowed = true;
+            }
+        }
+
+        if (!owner.equals(playerVillage) && !allowed) {
             event.setCancelled(true);
             player.sendMessage("§c이 지역은 다른 마을의 보호 구역입니다.");
         }

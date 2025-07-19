@@ -2,6 +2,7 @@ package me.continent.protection;
 
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
+import me.continent.war.WarManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -30,8 +31,17 @@ public class CoreProtectionListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         if (isCoreBlock(event.getBlock())) {
-            event.setCancelled(true);
-            event.getPlayer().sendMessage("§c코어는 명령어로만 제거할 수 있습니다.");
+            Village owner = VillageManager.getByChunk(event.getBlock().getChunk());
+            if (owner == null) {
+                event.setCancelled(true);
+                return;
+            }
+            Village attackerVillage = VillageManager.getByPlayer(event.getPlayer().getUniqueId());
+            boolean allowed = attackerVillage != null && owner.getKingdom() != null && attackerVillage.getKingdom() != null && WarManager.isAtWar(owner.getKingdom(), attackerVillage.getKingdom());
+            if (!allowed) {
+                event.setCancelled(true);
+                event.getPlayer().sendMessage("§c코어는 명령어로만 제거할 수 있습니다.");
+            }
         }
     }
 
