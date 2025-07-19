@@ -22,9 +22,6 @@ public class MembershipService {
         if (ClaimService.isChunkClaimed(chunk)) return null;
 
         Village village = new Village(name, uuid);
-        String defaultColor = me.continent.ContinentPlugin.getInstance()
-                .getConfig().getString("colors.village-default", "§a");
-        village.setColor(defaultColor);
         village.addChunk(chunk);
 
         Location ground = Village.getGroundLocation(player.getLocation());

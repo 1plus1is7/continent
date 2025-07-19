@@ -28,8 +28,6 @@ public class Village {
     // Whether members of this village can ignite fire or TNT in protected areas
     private boolean memberIgniteAllowed = false;
 
-    // Nation color in Minecraft color code (e.g. §a)
-    private String color = "§a";
 
     private String coreChunkKey;
     private String spawnChunkKey;
@@ -98,9 +96,6 @@ public class Village {
         return king.equals(uuid);
     }
 
-    public String getColor() { return color; }
-
-    public void setColor(String color) { this.color = color; }
 
     public Set<UUID> getMembers() { return members; }
 

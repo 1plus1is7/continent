@@ -42,7 +42,6 @@ public class VillageCommand implements CommandExecutor {
             player.sendMessage("§e/village leave §7- 마을 탈퇴");
             player.sendMessage("§e/village kick <플레이어> §7- 구성원 추방");
             player.sendMessage("§e/village rename <새이름> §7- 마을 이름 변경");
-            player.sendMessage("§e/village color <CODE> §7- 마을 색상 변경");
             player.sendMessage("§e/village list §7- 서버 내 모든 마을 목록");
             player.sendMessage("§e/village setspawn §7- 마을 스폰 위치 설정");
             player.sendMessage("§e/village setcore §7- 코어 위치 이동");
@@ -144,24 +143,6 @@ public class VillageCommand implements CommandExecutor {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("color") && args.length >= 2) {
-            Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || !village.isAuthorized(player.getUniqueId())) {
-                player.sendMessage("§c국왕만 색상을 변경할 수 있습니다.");
-                return true;
-            }
-            String code = args[1];
-            if (code.startsWith("§") || code.startsWith("&")) code = code.substring(1);
-            if (!code.matches("[0-9a-fA-F]")) {
-                player.sendMessage("§c올바른 색 코드가 아닙니다. (0-9, a-f)");
-                return true;
-            }
-            String color = "§" + code.toLowerCase();
-            village.setColor(color);
-            VillageStorage.save(village);
-            player.sendMessage("§a마을 색상이 변경되었습니다: " + color + "■§r");
-            return true;
-        }
 
         if (args[0].equalsIgnoreCase("rename") && args.length >= 2) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
