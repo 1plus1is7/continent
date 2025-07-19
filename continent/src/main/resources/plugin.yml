@@ -10,3 +10,7 @@ commands:
   gold:
     description: Gold system command
     usage: /gold <subcommand>
+  kingdom:
+    description: Kingdom system command
+    aliases: [nation]
+    usage: /kingdom <subcommand>
