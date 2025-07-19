@@ -113,11 +113,11 @@ public class ScoreboardService {
     }
 
     public static void updateScoreboard(Player player) {
-        new ScoreboardService().render(player);
+        update(player);
     }
 
     public void render(Player player) {
-        // 원래 렌더링 코드
+        update(player);
     }
 
     public static void schedule() {
@@ -131,9 +131,9 @@ public class ScoreboardService {
 
     private static String getDirection(float yaw) {
         yaw = (yaw % 360 + 360) % 360;
-        if (yaw >= 45 && yaw < 135) return "EAST";
+        if (yaw >= 45 && yaw < 135) return "WEST";
         if (yaw >= 135 && yaw < 225) return "NORTH";
-        if (yaw >= 225 && yaw < 315) return "WEST";
+        if (yaw >= 225 && yaw < 315) return "EAST";
         return "SOUTH";
     }
 

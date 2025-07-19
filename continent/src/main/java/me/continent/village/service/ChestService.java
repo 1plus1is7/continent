@@ -8,16 +8,32 @@ import org.bukkit.inventory.InventoryHolder;
 
 public class ChestService {
     public static void openChest(Player player, Village village) {
-        Inventory inv = Bukkit.createInventory(new VillageChestHolder(village), 27, "Village Chest");
+        VillageChestHolder holder = new VillageChestHolder(village);
+        Inventory inv = Bukkit.createInventory(holder, 27, "Village Chest");
+        holder.setInventory(inv);
         inv.setContents(village.getChestContents());
         player.openInventory(inv);
     }
 
     static class VillageChestHolder implements InventoryHolder {
         private final Village village;
-        VillageChestHolder(Village village) { this.village = village; }
-        Village getVillage() { return village; }
+        private Inventory inventory;
+
+        VillageChestHolder(Village village) {
+            this.village = village;
+        }
+
+        void setInventory(Inventory inv) {
+            this.inventory = inv;
+        }
+
+        Village getVillage() {
+            return village;
+        }
+
         @Override
-        public Inventory getInventory() { return null; }
+        public Inventory getInventory() {
+            return inventory;
+        }
     }
 }
