@@ -1,6 +1,7 @@
 maintenance:
   cost: 20
   unpaid-limit: 2
+  per-chunk-cost: 5
 upgrade:
   required-members: 5
   required-treasury: 100
