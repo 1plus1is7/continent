@@ -39,6 +39,9 @@ public class KingdomCommand implements CommandExecutor {
             player.sendMessage("§e/kingdom accept <국가명> §7- 초대 수락");
             player.sendMessage("§e/kingdom deny <국가명> §7- 초대 거절");
             player.sendMessage("§e/kingdom leave §7- 국가 탈퇴");
+            player.sendMessage("§e/kingdom treasury <subcommand> §7- 국고 관리");
+            player.sendMessage("§e/kingdom chat §7- 국가 채팅 토글");
+            player.sendMessage("§e/kingdom spawn [마을명] §7- 마을 스폰으로 이동");
             return true;
         }
 
@@ -306,6 +309,114 @@ public class KingdomCommand implements CommandExecutor {
             village.removeKingdomInvite(kingdomName);
             VillageStorage.save(village);
             player.sendMessage("§e초대가 거절되었습니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("treasury")) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null || village.getKingdom() == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+
+            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            if (args.length < 2) {
+                player.sendMessage("§e/kingdom treasury balance§7, §e/kingdom treasury deposit <금액>§7, §e/kingdom treasury withdraw <금액>");
+                return true;
+            }
+            PlayerData data = PlayerDataManager.get(player.getUniqueId());
+            if (args[1].equalsIgnoreCase("balance")) {
+                player.sendMessage("§6[국고] §f잔액: §e" + kingdom.getTreasury() + "G");
+                return true;
+            }
+            if (args[1].equalsIgnoreCase("deposit") && args.length >= 3) {
+                if (!kingdom.getLeader().equals(player.getUniqueId())) {
+                    player.sendMessage("§c국왕만 국고에 입금할 수 있습니다.");
+                    return true;
+                }
+                int amount;
+                try {
+                    amount = Integer.parseInt(args[2]);
+                } catch (NumberFormatException e) {
+                    player.sendMessage("§c금액은 숫자여야 합니다.");
+                    return true;
+                }
+                if (amount <= 0) {
+                    player.sendMessage("§c금액은 1 이상이어야 합니다.");
+                    return true;
+                }
+                if (data.getGold() < amount) {
+                    player.sendMessage("§c보유 골드가 부족합니다.");
+                    return true;
+                }
+                data.removeGold(amount);
+                kingdom.addGold(amount);
+                PlayerDataManager.save(player.getUniqueId());
+                KingdomStorage.save(kingdom);
+                Bukkit.getLogger().info(player.getName() + " deposited " + amount + "G to kingdom " + kingdom.getName());
+                player.sendMessage("§a국고에 " + amount + "G 를 입금했습니다.");
+                return true;
+            }
+            if (args[1].equalsIgnoreCase("withdraw") && args.length >= 3) {
+                if (!kingdom.getLeader().equals(player.getUniqueId())) {
+                    player.sendMessage("§c국왕만 국고에서 출금할 수 있습니다.");
+                    return true;
+                }
+                int amount;
+                try {
+                    amount = Integer.parseInt(args[2]);
+                } catch (NumberFormatException e) {
+                    player.sendMessage("§c금액은 숫자여야 합니다.");
+                    return true;
+                }
+                if (amount <= 0) {
+                    player.sendMessage("§c금액은 1 이상이어야 합니다.");
+                    return true;
+                }
+                if (kingdom.getTreasury() < amount) {
+                    player.sendMessage("§c국고가 부족합니다.");
+                    return true;
+                }
+                kingdom.removeGold(amount);
+                data.addGold(amount);
+                PlayerDataManager.save(player.getUniqueId());
+                KingdomStorage.save(kingdom);
+                Bukkit.getLogger().info(player.getName() + " withdrew " + amount + "G from kingdom " + kingdom.getName());
+                player.sendMessage("§a국고에서 " + amount + "G 를 출금했습니다.");
+                return true;
+            }
+            player.sendMessage("§c잘못된 하위 명령어입니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("chat")) {
+            PlayerData data = PlayerDataManager.get(player.getUniqueId());
+            boolean current = data.isKingdomChatEnabled();
+            data.setKingdomChatEnabled(!current);
+            PlayerDataManager.save(player.getUniqueId());
+            player.sendMessage("§a국가 채팅이 " + (data.isKingdomChatEnabled() ? "§b활성화§a되었습니다." : "§c비활성화§a되었습니다."));
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("spawn")) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null || village.getKingdom() == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            String targetName = args.length >= 2 ? args[1] : kingdom.getCapital();
+            if (!kingdom.getVillages().contains(targetName)) {
+                player.sendMessage("§c해당 마을은 같은 국가에 속해 있지 않습니다.");
+                return true;
+            }
+            Village target = VillageManager.getByName(targetName);
+            if (target == null || target.getSpawnLocation() == null) {
+                player.sendMessage("§c해당 마을의 스폰 위치가 설정되어 있지 않습니다.");
+                return true;
+            }
+            player.teleport(target.getSpawnLocation());
+            player.sendMessage("§a" + targetName + " 마을로 이동했습니다.");
             return true;
         }
 

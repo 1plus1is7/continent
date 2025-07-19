@@ -47,7 +47,7 @@ public class VillageStorage {
         config.set("spawn", serializeLocation(village.getSpawnLocation()));
         config.set("core", serializeLocation(village.getCoreLocation()));
         config.set("protectionEnd", village.getProtectionEnd());
-        config.set("treasury", village.getTreasury());
+        config.set("vault", village.getVault());
         config.set("chest", serializeItems(village.getChestContents()));
         config.set("memberIgnite", village.isMemberIgniteAllowed());
         config.set("maintenanceCount", village.getMaintenanceCount());
@@ -79,7 +79,7 @@ public class VillageStorage {
             Location spawn = deserializeLocation(config.getString("spawn"));
             Location core = deserializeLocation(config.getString("core"));
             long protectionEnd = config.getLong("protectionEnd");
-            double treasury = config.getDouble("treasury");
+            double vault = config.contains("vault") ? config.getDouble("vault") : config.getDouble("treasury");
             ItemStack[] chest = deserializeItems(config.getString("chest"));
             boolean memberIgnite = config.getBoolean("memberIgnite", false);
             int maintenanceCount = config.getInt("maintenanceCount", 0);
@@ -95,7 +95,7 @@ public class VillageStorage {
             village.setSpawnLocation(spawn);
             village.setCoreLocation(core);
             village.setProtectionEnd(protectionEnd);
-            village.setTreasury(treasury);
+            village.setVault(vault);
             village.setChestContents(chest);
             village.setMemberIgniteAllowed(memberIgnite);
             village.setMaintenanceCount(maintenanceCount);
