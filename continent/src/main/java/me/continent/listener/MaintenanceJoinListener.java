@@ -1,8 +1,8 @@
 package me.continent.listener;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
-import me.continent.kingdom.service.MaintenanceService;
+import me.continent.village.Village;
+import me.continent.village.VillageManager;
+import me.continent.village.service.MaintenanceService;
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
 import org.bukkit.event.EventHandler;
@@ -17,15 +17,15 @@ public class MaintenanceJoinListener implements Listener {
         PlayerData data = PlayerDataManager.get(player.getUniqueId());
         if (data == null) return;
 
-        Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
-        if (kingdom == null) return;
-        if (!kingdom.getKing().equals(player.getUniqueId())) return;
+        Village village = VillageManager.getByPlayer(player.getUniqueId());
+        if (village == null) return;
+        if (!village.getKing().equals(player.getUniqueId())) return;
 
-        int diff = kingdom.getMaintenanceCount() - data.getKnownMaintenance();
+        int diff = village.getMaintenanceCount() - data.getKnownMaintenance();
         if (diff > 0) {
             double total = MaintenanceService.getCost() * diff;
             player.sendMessage("§e마을 유지비로 " + diff + "주 동안 총 " + total + "G가 차감되었습니다.");
-            data.setKnownMaintenance(kingdom.getMaintenanceCount());
+            data.setKnownMaintenance(village.getMaintenanceCount());
             PlayerDataManager.save(player.getUniqueId());
         }
     }

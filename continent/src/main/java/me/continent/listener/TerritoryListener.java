@@ -1,7 +1,7 @@
 package me.continent.listener;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
+import me.continent.village.Village;
+import me.continent.village.VillageManager;
 import me.continent.ContinentPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -25,11 +25,11 @@ import java.util.UUID;
 
 public class TerritoryListener implements Listener {
     private final Map<UUID, BukkitTask> alertTasks = new HashMap<>();
-    private final Map<UUID, Kingdom> currentIntrusion = new HashMap<>();
+    private final Map<UUID, Village> currentIntrusion = new HashMap<>();
 
-    private void sendAlert(Kingdom kingdom, Player intruder) {
+    private void sendAlert(Village village, Player intruder) {
         String msg = "§c" + intruder.getName() + "님이 영토에 침입했습니다.";
-        for (UUID uuid : kingdom.getMembers()) {
+        for (UUID uuid : village.getMembers()) {
             Player member = Bukkit.getPlayer(uuid);
             if (member != null && member.isOnline()) {
                 member.sendMessage(msg);
@@ -42,18 +42,18 @@ public class TerritoryListener implements Listener {
         if (task != null) task.cancel();
     }
 
-    private void handleIntrusion(Player player, Kingdom toKingdom) {
+    private void handleIntrusion(Player player, Village toVillage) {
         UUID uuid = player.getUniqueId();
-        Kingdom playerKingdom = KingdomManager.getByPlayer(uuid);
+        Village playerVillage = VillageManager.getByPlayer(uuid);
 
-        if (toKingdom != null && (playerKingdom == null || !toKingdom.getMembers().contains(uuid))) {
-            // entering foreign kingdom
-            if (!toKingdom.equals(currentIntrusion.get(uuid))) {
+        if (toVillage != null && (playerVillage == null || !toVillage.getMembers().contains(uuid))) {
+            // entering foreign village
+            if (!toVillage.equals(currentIntrusion.get(uuid))) {
                 cancelAlert(uuid);
-                sendAlert(toKingdom, player);
-                BukkitTask task = Bukkit.getScheduler().runTaskTimer(ContinentPlugin.getInstance(), () -> sendAlert(toKingdom, player), 6000L, 6000L);
+                sendAlert(toVillage, player);
+                BukkitTask task = Bukkit.getScheduler().runTaskTimer(ContinentPlugin.getInstance(), () -> sendAlert(toVillage, player), 6000L, 6000L);
                 alertTasks.put(uuid, task);
-                currentIntrusion.put(uuid, toKingdom);
+                currentIntrusion.put(uuid, toVillage);
             }
             player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1, false, false));
         } else {
@@ -67,8 +67,8 @@ public class TerritoryListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Chunk chunk = player.getLocation().getChunk();
-        Kingdom kingdom = KingdomManager.getByChunk(chunk);
-        handleIntrusion(player, kingdom);
+        Village village = VillageManager.getByChunk(chunk);
+        handleIntrusion(player, village);
     }
 
     @EventHandler
@@ -88,17 +88,17 @@ public class TerritoryListener implements Listener {
 
         Player player = event.getPlayer();
 
-        Kingdom fromKingdom = KingdomManager.getByChunk(from);
-        Kingdom toKingdom = KingdomManager.getByChunk(to);
+        Village fromVillage = VillageManager.getByChunk(from);
+        Village toVillage = VillageManager.getByChunk(to);
 
-        // 같은 국가 or 같은 상태(null → null 포함)면 무시
-        if (Objects.equals(fromKingdom, toKingdom)) return;
+        // 같은 마을 or 같은 상태(null → null 포함)면 무시
+        if (Objects.equals(fromVillage, toVillage)) return;
 
-        handleIntrusion(player, toKingdom);
+        handleIntrusion(player, toVillage);
 
-        if (toKingdom != null) {
+        if (toVillage != null) {
             player.showTitle(Title.title(
-                    Component.text("§a" + toKingdom.getName()),
+                    Component.text("§a" + toVillage.getName()),
                     Component.text("§7점령된 영토"),
                     Title.Times.times(Duration.ofMillis(500), Duration.ofMillis(2000), Duration.ofMillis(500))
             ));

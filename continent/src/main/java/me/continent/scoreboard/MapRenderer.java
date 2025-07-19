@@ -1,7 +1,7 @@
 package me.continent.scoreboard;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
+import me.continent.village.Village;
+import me.continent.village.VillageManager;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
@@ -19,7 +19,7 @@ public class MapRenderer {
                 int z = centerZ + dz;
                 Chunk target = player.getWorld().getChunkAt(x, z);
 
-                boolean claimed = KingdomManager.isChunkClaimed(target);
+                boolean claimed = VillageManager.isChunkClaimed(target);
                 boolean isCurrent = dx == 0 && dz == 0;
 
                 if (isCurrent && claimed) {

@@ -3,13 +3,10 @@ version: '1.0-SNAPSHOT'
 main: me.continent.ContinentPlugin
 api-version: '1.21'
 commands:
-  kingdom:
-    description: Kingdom system command
+  village:
+    description: Village system command
     aliases: [k]
-    usage: /kingdom <subcommand>
+    usage: /village <subcommand>
   gold:
     description: Gold system command
     usage: /gold <subcommand>
-  village:
-    description: Village upgrade command
-    usage: /village <subcommand>

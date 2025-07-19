@@ -1,8 +1,8 @@
 package me.continent.scoreboard;
 
 import me.continent.ContinentPlugin;
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
+import me.continent.village.Village;
+import me.continent.village.VillageManager;
 import me.continent.player.PlayerDataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -43,9 +43,9 @@ public class ScoreboardService {
 
         List<String> lines = new ArrayList<>();
 
-        Kingdom kingdom = KingdomManager.getByPlayer(uuid);
-        String kingdomName = (kingdom != null) ? kingdom.getName() : "없음";
-        lines.add("국가: " + kingdomName);
+        Village village = VillageManager.getByPlayer(uuid);
+        String villageName = (village != null) ? village.getName() : "없음";
+        lines.add("마을: " + villageName);
 
         double gold = PlayerDataManager.get(uuid).getGold();
         lines.add("골드: " + String.format("%.2f", gold) + "G");
@@ -71,7 +71,7 @@ public class ScoreboardService {
                 int zIdx = dz + half;
 
                 Chunk chunk = world.getChunkAt(px + dx, pz + dz);
-                Kingdom owner = KingdomManager.getByChunk(chunk);
+                Village owner = VillageManager.getByChunk(chunk);
 
                 String color;
                 if (owner != null) {

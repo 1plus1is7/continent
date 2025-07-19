@@ -1,7 +1,7 @@
 package me.continent.protection;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
+import me.continent.village.Village;
+import me.continent.village.VillageManager;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -23,20 +23,20 @@ import java.util.Objects;
 
 public class ProtectionStateListener implements Listener {
 
-    private boolean inProtectedKingdom(Block block) {
-        Kingdom kingdom = KingdomManager.getByChunk(block.getChunk());
-        return kingdom != null && kingdom.isUnderProtection();
+    private boolean inProtectedVillage(Block block) {
+        Village village = VillageManager.getByChunk(block.getChunk());
+        return village != null && village.isUnderProtection();
     }
 
-    private boolean inProtectedKingdom(Entity entity) {
+    private boolean inProtectedVillage(Entity entity) {
         Chunk chunk = entity.getLocation().getChunk();
-        Kingdom kingdom = KingdomManager.getByChunk(chunk);
-        return kingdom != null && kingdom.isUnderProtection();
+        Village village = VillageManager.getByChunk(chunk);
+        return village != null && village.isUnderProtection();
     }
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
-        if (inProtectedKingdom(event.getEntity())) {
+        if (inProtectedVillage(event.getEntity())) {
             event.setCancelled(true);
         }
     }
@@ -46,9 +46,9 @@ public class ProtectionStateListener implements Listener {
         Block block = event.getClickedBlock();
         if (block == null) return;
 
-        Kingdom kingdom = KingdomManager.getByChunk(block.getChunk());
-        if (kingdom != null && kingdom.isUnderProtection()
-                && !kingdom.getMembers().contains(event.getPlayer().getUniqueId())) {
+        Village village = VillageManager.getByChunk(block.getChunk());
+        if (village != null && village.isUnderProtection()
+                && !village.getMembers().contains(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
     }
@@ -56,11 +56,11 @@ public class ProtectionStateListener implements Listener {
     @EventHandler
     public void onIgnite(BlockIgniteEvent event) {
         Block block = event.getBlock();
-        Kingdom kingdom = KingdomManager.getByChunk(block.getChunk());
-        if (kingdom == null || !kingdom.isUnderProtection()) return;
+        Village village = VillageManager.getByChunk(block.getChunk());
+        if (village == null || !village.isUnderProtection()) return;
 
         Player player = event.getPlayer();
-        if (player != null && kingdom.getMembers().contains(player.getUniqueId()) && kingdom.isMemberIgniteAllowed()) {
+        if (player != null && village.getMembers().contains(player.getUniqueId()) && village.isMemberIgniteAllowed()) {
             return; // allow allies if enabled
         }
         event.setCancelled(true);
@@ -70,9 +70,9 @@ public class ProtectionStateListener implements Listener {
     public void onBlockFromTo(BlockFromToEvent event) {
         Block from = event.getBlock();
         Block to = event.getToBlock();
-        Kingdom dest = KingdomManager.getByChunk(to.getChunk());
+        Village dest = VillageManager.getByChunk(to.getChunk());
         if (dest != null) {
-            Kingdom src = KingdomManager.getByChunk(from.getChunk());
+            Village src = VillageManager.getByChunk(from.getChunk());
             if (!Objects.equals(dest, src)) {
                 if (from.getType() == Material.WATER || from.getType() == Material.LAVA) {
                     event.setCancelled(true);
@@ -84,12 +84,12 @@ public class ProtectionStateListener implements Listener {
     @EventHandler
     public void onStructureGrow(StructureGrowEvent event) {
         Chunk root = event.getLocation().getChunk();
-        Kingdom rootKingdom = KingdomManager.getByChunk(root);
+        Village rootVillage = VillageManager.getByChunk(root);
         Iterator<BlockState> it = event.getBlocks().iterator();
         while (it.hasNext()) {
             BlockState state = it.next();
-            Kingdom dest = KingdomManager.getByChunk(state.getLocation().getChunk());
-            if (!Objects.equals(rootKingdom, dest)) {
+            Village dest = VillageManager.getByChunk(state.getLocation().getChunk());
+            if (!Objects.equals(rootVillage, dest)) {
                 it.remove();
             }
         }
@@ -97,10 +97,10 @@ public class ProtectionStateListener implements Listener {
 
     @EventHandler
     public void onPistonExtend(BlockPistonExtendEvent event) {
-        Kingdom src = KingdomManager.getByChunk(event.getBlock().getChunk());
+        Village src = VillageManager.getByChunk(event.getBlock().getChunk());
         for (Block block : event.getBlocks()) {
             Chunk destChunk = block.getRelative(event.getDirection()).getChunk();
-            Kingdom dest = KingdomManager.getByChunk(destChunk);
+            Village dest = VillageManager.getByChunk(destChunk);
             if (!Objects.equals(src, dest)) {
                 event.setCancelled(true);
                 return;
@@ -111,10 +111,10 @@ public class ProtectionStateListener implements Listener {
     @EventHandler
     public void onPistonRetract(BlockPistonRetractEvent event) {
         if (!event.isSticky()) return;
-        Kingdom src = KingdomManager.getByChunk(event.getBlock().getChunk());
+        Village src = VillageManager.getByChunk(event.getBlock().getChunk());
         for (Block block : event.getBlocks()) {
             Chunk destChunk = block.getRelative(event.getDirection().getOppositeFace()).getChunk();
-            Kingdom dest = KingdomManager.getByChunk(destChunk);
+            Village dest = VillageManager.getByChunk(destChunk);
             if (!Objects.equals(src, dest)) {
                 event.setCancelled(true);
                 return;
