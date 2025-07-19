@@ -15,7 +15,7 @@ public class Village {
     private final Set<String> claimedChunks = new HashSet<>();
     private Location spawnLocation;
     private Location coreLocation;
-    private double treasury;
+    private double vault;
     private long protectionUntil;
 
     private String kingdom;
@@ -43,7 +43,7 @@ public class Village {
         this.name = name;
         this.king = king;
         this.members.add(king);
-        this.treasury = 0;
+        this.vault = 0;
         this.kingdom = null;
         this.protectionUntil = System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000L; // 7일
     }
@@ -116,13 +116,13 @@ public class Village {
 
     public void setCoreLocation(Location location) { this.coreLocation = location; }
 
-    public double getTreasury() { return treasury; }
+    public double getVault() { return vault; }
 
-    public void setTreasury(double treasury) { this.treasury = treasury; }
+    public void setVault(double vault) { this.vault = vault; }
 
-    public void addGold(double amount) { this.treasury += amount; }
+    public void addGold(double amount) { this.vault += amount; }
 
-    public void removeGold(double amount) { this.treasury -= amount; }
+    public void removeGold(double amount) { this.vault -= amount; }
 
     public int getMaintenanceCount() { return maintenanceCount; }
 

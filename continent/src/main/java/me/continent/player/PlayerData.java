@@ -30,6 +30,7 @@ public class PlayerData {
 
     private boolean villageChat = false;
     private boolean villageChatEnabled = false;
+    private boolean kingdomChatEnabled = false;
 
     private int knownMaintenance = 0;
 
@@ -39,6 +40,14 @@ public class PlayerData {
 
     public void setVillageChatEnabled(boolean enabled) {
         this.villageChatEnabled = enabled;
+    }
+
+    public boolean isKingdomChatEnabled() {
+        return kingdomChatEnabled;
+    }
+
+    public void setKingdomChatEnabled(boolean enabled) {
+        this.kingdomChatEnabled = enabled;
     }
 
 

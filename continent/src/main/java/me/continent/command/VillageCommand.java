@@ -49,7 +49,7 @@ public class VillageCommand implements CommandExecutor {
             player.sendMessage("§e/village chest §7- 마을 창고 열기");
             player.sendMessage("§e/village ignite <on|off> §7- 아군 점화 허용 토글");
             player.sendMessage("§e/village upkeep §7- 현재 유지비 확인");
-            player.sendMessage("§e/village treasury <subcommand> §7- 국고 관리");
+            player.sendMessage("§e/village treasury <subcommand> §7- 금고 관리");
             player.sendMessage("§e/village confirm §7- 대기 중인 작업 확인");
             player.sendMessage("§e/village chat §7- 마을 채팅 토글");
             return true;
@@ -66,6 +66,11 @@ public class VillageCommand implements CommandExecutor {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
             if (village == null) {
                 player.sendMessage("§c소속된 마을가 없습니다.");
+                return true;
+            }
+
+            if (!village.getKing().equals(player.getUniqueId())) {
+                player.sendMessage("§c국왕만 마을를 해산할 수 있습니다.");
                 return true;
             }
             if (!village.getKing().equals(player.getUniqueId())) {
@@ -166,6 +171,11 @@ public class VillageCommand implements CommandExecutor {
                 return true;
             }
 
+            if (village.getKingdom() != null) {
+                player.sendMessage("§c국가에 속한 마을의 금고는 국가 국고에 포함되어 개별 관리할 수 없습니다.");
+                return true;
+            }
+
             if (args.length < 2) {
                 player.sendMessage("§e/village treasury balance§7, §e/village treasury deposit <금액>§7, §e/village treasury withdraw <금액>");
                 return true;
@@ -174,13 +184,13 @@ public class VillageCommand implements CommandExecutor {
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
 
             if (args[1].equalsIgnoreCase("balance")) {
-                player.sendMessage("§6[국고] §f잔액: §e" + village.getTreasury() + "G");
+                player.sendMessage("§6[금고] §f잔액: §e" + village.getVault() + "G");
                 return true;
             }
 
             if (args[1].equalsIgnoreCase("deposit") && args.length >= 3) {
                 if (!village.isAuthorized(player.getUniqueId())) {
-                    player.sendMessage("§c국왕만 국고에 입금할 수 있습니다.");
+                    player.sendMessage("§c국왕만 금고에 입금할 수 있습니다.");
                     return true;
                 }
                 int amount;
@@ -202,13 +212,13 @@ public class VillageCommand implements CommandExecutor {
                 village.addGold(amount);
                 PlayerDataManager.save(player.getUniqueId());
                 VillageStorage.save(village);
-                player.sendMessage("§a국고에 " + amount + "G 를 입금했습니다.");
+                player.sendMessage("§a금고에 " + amount + "G 를 입금했습니다.");
                 return true;
             }
 
             if (args[1].equalsIgnoreCase("withdraw") && args.length >= 3) {
                 if (!village.isAuthorized(player.getUniqueId())) {
-                    player.sendMessage("§c국왕만 국고에서 출금할 수 있습니다.");
+                    player.sendMessage("§c국왕만 금고에서 출금할 수 있습니다.");
                     return true;
                 }
                 int amount;
@@ -222,15 +232,15 @@ public class VillageCommand implements CommandExecutor {
                     player.sendMessage("§c금액은 1 이상이어야 합니다.");
                     return true;
                 }
-                if (village.getTreasury() < amount) {
-                    player.sendMessage("§c국고가 부족합니다.");
+                if (village.getVault() < amount) {
+                    player.sendMessage("§c금고가 부족합니다.");
                     return true;
                 }
                 village.removeGold(amount);
                 data.addGold(amount);
                 PlayerDataManager.save(player.getUniqueId());
                 VillageStorage.save(village);
-                player.sendMessage("§a국고에서 " + amount + "G 를 출금했습니다.");
+                player.sendMessage("§a금고에서 " + amount + "G 를 출금했습니다.");
                 return true;
             }
 

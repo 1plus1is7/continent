@@ -33,6 +33,8 @@ public class KingdomManager {
         kingdom.getVillages().add(village.getName());
         kingdomsByVillage.put(village.getName().toLowerCase(), kingdom);
         village.setKingdom(kingdom.getName());
+        kingdom.addGold(village.getVault());
+        village.setVault(0);
     }
 
     public static void removeVillage(Kingdom kingdom, Village village) {
@@ -54,6 +56,8 @@ public class KingdomManager {
         if (getByName(name) != null) return null;
         Kingdom kingdom = new Kingdom(name, capital.getKing(), capital);
         register(kingdom);
+        kingdom.addGold(capital.getVault());
+        capital.setVault(0);
         return kingdom;
     }
 }

@@ -25,6 +25,9 @@ public class KingdomStorage {
         config.set("capital", kingdom.getCapital());
         config.set("villages", new ArrayList<>(kingdom.getVillages()));
         config.set("treasury", kingdom.getTreasury());
+        config.set("maintenanceCount", kingdom.getMaintenanceCount());
+        config.set("unpaidWeeks", kingdom.getUnpaidWeeks());
+        config.set("lastMaintenance", kingdom.getLastMaintenance());
 
         Map<String, String> roleMap = new HashMap<>();
         for (Map.Entry<UUID, String> e : kingdom.getRoles().entrySet()) {
@@ -50,11 +53,17 @@ public class KingdomStorage {
             String capitalName = config.getString("capital");
             List<String> villages = config.getStringList("villages");
             double treasury = config.getDouble("treasury");
+            int maintenanceCount = config.getInt("maintenanceCount", 0);
+            int unpaidWeeks = config.getInt("unpaidWeeks", 0);
+            long lastMaintenance = config.getLong("lastMaintenance", 0);
             Map<String, Object> rolesObj = config.getConfigurationSection("roles") != null ? config.getConfigurationSection("roles").getValues(false) : new HashMap<>();
 
             Kingdom kingdom = new Kingdom(name, leader, VillageManager.getByName(capitalName));
             kingdom.getVillages().addAll(villages);
             kingdom.setTreasury(treasury);
+            kingdom.setMaintenanceCount(maintenanceCount);
+            kingdom.setUnpaidWeeks(unpaidWeeks);
+            kingdom.setLastMaintenance(lastMaintenance);
             for (Map.Entry<String, Object> e : rolesObj.entrySet()) {
                 kingdom.getRoles().put(UUID.fromString(e.getKey()), Objects.toString(e.getValue(), ""));
             }

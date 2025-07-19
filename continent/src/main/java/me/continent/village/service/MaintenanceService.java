@@ -3,7 +3,10 @@ package me.continent.village.service;
 import me.continent.ContinentPlugin;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
+import me.continent.kingdom.Kingdom;
+import me.continent.kingdom.KingdomManager;
 import me.continent.storage.VillageStorage;
+import me.continent.kingdom.KingdomStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -54,14 +57,19 @@ public class MaintenanceService {
     }
 
     private static void run() {
+        for (Kingdom kingdom : KingdomManager.getAll()) {
+            charge(kingdom);
+        }
         for (Village village : VillageManager.getAll()) {
-            charge(village);
+            if (village.getKingdom() == null) {
+                charge(village);
+            }
         }
     }
 
     private static void charge(Village village) {
         double chargeAmount = getWeeklyCost(village);
-        if (village.getTreasury() >= chargeAmount) {
+        if (village.getVault() >= chargeAmount) {
             village.removeGold(chargeAmount);
             village.setUnpaidWeeks(0);
         } else {
@@ -79,6 +87,29 @@ public class MaintenanceService {
         Player king = Bukkit.getPlayer(village.getKing());
         if (king != null) {
             king.sendMessage("§a마을 유지비 " + chargeAmount + "G가 차감되었습니다.");
+        }
+    }
+
+    private static void charge(Kingdom kingdom) {
+        double total = 0;
+        for (String vName : kingdom.getVillages()) {
+            Village v = VillageManager.getByName(vName);
+            if (v != null) {
+                total += getWeeklyCost(v);
+            }
+        }
+        if (kingdom.getTreasury() >= total) {
+            kingdom.removeGold(total);
+            kingdom.setUnpaidWeeks(0);
+        } else {
+            kingdom.setUnpaidWeeks(kingdom.getUnpaidWeeks() + 1);
+        }
+        kingdom.setMaintenanceCount(kingdom.getMaintenanceCount() + 1);
+        kingdom.setLastMaintenance(System.currentTimeMillis());
+        KingdomStorage.save(kingdom);
+        Player king = Bukkit.getPlayer(kingdom.getLeader());
+        if (king != null) {
+            king.sendMessage("§a국가 유지비 " + total + "G가 차감되었습니다.");
         }
     }
 }
