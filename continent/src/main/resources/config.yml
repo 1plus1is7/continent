@@ -14,3 +14,5 @@ colors:
 symbols:
   center: "▣"
   chunk: "▩"
+lobby-world: "lobby"
+land-world: "world"
