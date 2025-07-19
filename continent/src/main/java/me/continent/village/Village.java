@@ -18,6 +18,8 @@ public class Village {
     private double treasury;
     private long protectionUntil;
 
+    private String kingdom;
+
     private int maintenanceCount = 0;
     private int unpaidWeeks = 0;
     private long lastMaintenance = 0;
@@ -41,6 +43,7 @@ public class Village {
         this.king = king;
         this.members.add(king);
         this.treasury = 0;
+        this.kingdom = null;
         this.protectionUntil = System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000L; // 7일
     }
 
@@ -102,6 +105,10 @@ public class Village {
     public Set<UUID> getMembers() { return members; }
 
     public Set<String> getClaimedChunks() { return claimedChunks; }
+
+    public String getKingdom() { return kingdom; }
+
+    public void setKingdom(String kingdom) { this.kingdom = kingdom; }
 
     public Location getSpawnLocation() { return spawnLocation; }
 
