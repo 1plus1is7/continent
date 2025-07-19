@@ -16,14 +16,24 @@ import java.time.temporal.TemporalAdjusters;
 public class MaintenanceService {
     private static double cost;
     private static int unpaidLimit;
+    private static double perChunkCost;
 
     public static void init(FileConfiguration config) {
         cost = config.getDouble("maintenance.cost", 20.0);
         unpaidLimit = config.getInt("maintenance.unpaid-limit", 2);
+        perChunkCost = config.getDouble("maintenance.per-chunk-cost", 5.0);
     }
 
     public static double getCost() {
         return cost;
+    }
+
+    public static double getWeeklyCost(Kingdom kingdom) {
+        if (!kingdom.isNation()) {
+            return cost;
+        }
+        int extra = Math.max(0, kingdom.getClaimedChunks().size() - 16);
+        return cost + extra * perChunkCost;
     }
 
     public static void schedule() {
@@ -50,8 +60,9 @@ public class MaintenanceService {
     }
 
     private static void charge(Kingdom kingdom) {
-        if (kingdom.getTreasury() >= cost) {
-            kingdom.removeGold(cost);
+        double chargeAmount = getWeeklyCost(kingdom);
+        if (kingdom.getTreasury() >= chargeAmount) {
+            kingdom.removeGold(chargeAmount);
             kingdom.setUnpaidWeeks(0);
         } else {
             kingdom.setUnpaidWeeks(kingdom.getUnpaidWeeks() + 1);
@@ -67,7 +78,7 @@ public class MaintenanceService {
 
         Player king = Bukkit.getPlayer(kingdom.getKing());
         if (king != null) {
-            king.sendMessage("§a마을 유지비 " + cost + "G가 차감되었습니다.");
+            king.sendMessage("§a마을 유지비 " + chargeAmount + "G가 차감되었습니다.");
         }
     }
 }

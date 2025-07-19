@@ -188,7 +188,7 @@ public class Kingdom {
     }
 
     public boolean isVillage() {
-        return claimedChunks.size() <= 16;
+        return !nation;
     }
 
     public boolean isAdjacent(Chunk chunk) {

@@ -49,6 +49,7 @@ public class KingdomCommand implements CommandExecutor {
             player.sendMessage("§e/kingdom spawn §7- 국가 스폰으로 이동");
             player.sendMessage("§e/kingdom chest §7- 국가 창고 열기");
             player.sendMessage("§e/kingdom ignite <on|off> §7- 아군 점화 허용 토글");
+            player.sendMessage("§e/kingdom upkeep §7- 현재 유지비 확인");
             player.sendMessage("§e/kingdom treasury <subcommand> §7- 국고 관리");
             player.sendMessage("§e/kingdom confirm §7- 대기 중인 작업 확인");
             player.sendMessage("§e/kingdom chat §7- 국가 채팅 토글");
@@ -279,6 +280,11 @@ public class KingdomCommand implements CommandExecutor {
 
             if (KingdomManager.getByPlayer(playerUUID) != null) {
                 player.sendMessage("§c이미 다른 국가에 소속되어 있습니다.");
+                return true;
+            }
+
+            if (targetKingdom.isVillage() && targetKingdom.getMembers().size() >= 15) {
+                player.sendMessage("§c마을은 최대 15명까지만 가입할 수 있습니다.");
                 return true;
             }
 
@@ -526,6 +532,17 @@ public class KingdomCommand implements CommandExecutor {
                 return true;
             }
             ChestService.openChest(player, kingdom);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("upkeep")) {
+            Kingdom kingdom = KingdomManager.getByPlayer(player.getUniqueId());
+            if (kingdom == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            double amount = MaintenanceService.getWeeklyCost(kingdom);
+            player.sendMessage("§e이번 주 유지비: " + amount + "G");
             return true;
         }
 
