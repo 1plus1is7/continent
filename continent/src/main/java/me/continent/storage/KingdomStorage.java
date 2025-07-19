@@ -51,6 +51,10 @@ public class KingdomStorage {
         config.set("color", kingdom.getColor());
         config.set("chest", serializeItems(kingdom.getChestContents()));
         config.set("memberIgnite", kingdom.isMemberIgniteAllowed());
+        config.set("maintenanceCount", kingdom.getMaintenanceCount());
+        config.set("unpaidWeeks", kingdom.getUnpaidWeeks());
+        config.set("lastMaintenance", kingdom.getLastMaintenance());
+        config.set("nation", kingdom.isNation());
 
         try {
             config.save(file);
@@ -78,6 +82,10 @@ public class KingdomStorage {
             String color = config.getString("color", "#ADFF2F");
             ItemStack[] chest = deserializeItems(config.getString("chest"));
             boolean memberIgnite = config.getBoolean("memberIgnite", false);
+            int maintenanceCount = config.getInt("maintenanceCount", 0);
+            int unpaidWeeks = config.getInt("unpaidWeeks", 0);
+            long lastMaintenance = config.getLong("lastMaintenance", 0);
+            boolean nation = config.getBoolean("nation", false);
 
             Kingdom kingdom = new Kingdom(name, king);
             kingdom.getMembers().addAll(members);
@@ -89,6 +97,10 @@ public class KingdomStorage {
             kingdom.setColor(color);
             kingdom.setChestContents(chest);
             kingdom.setMemberIgniteAllowed(memberIgnite);
+            kingdom.setMaintenanceCount(maintenanceCount);
+            kingdom.setUnpaidWeeks(unpaidWeeks);
+            kingdom.setLastMaintenance(lastMaintenance);
+            kingdom.setNation(nation);
             kingdom.setCoreChunkKey(config.getString("core-chunk"));
             kingdom.setSpawnChunkKey(config.getString("spawn-chunk"));
 

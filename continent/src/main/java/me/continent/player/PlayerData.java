@@ -31,6 +31,8 @@ public class PlayerData {
     private boolean kingdomChat = false;
     private boolean kingdomChatEnabled = false;
 
+    private int knownMaintenance = 0;
+
     public boolean isKingdomChatEnabled() {
         return kingdomChatEnabled;
     }
@@ -74,5 +76,13 @@ public class PlayerData {
     // ✅ 초대 목록 getter
     public Set<String> getPendingInvites() {
         return pendingInvites;
+    }
+
+    public int getKnownMaintenance() {
+        return knownMaintenance;
+    }
+
+    public void setKnownMaintenance(int count) {
+        this.knownMaintenance = count;
     }
 }

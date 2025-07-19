@@ -24,6 +24,7 @@ public class PlayerStorage {
         config.set("uuid", data.getUuid().toString());
         config.set("gold", data.getGold());
         config.set("invites", new HashSet<>(data.getPendingInvites()));
+        config.set("maintenance", data.getKnownMaintenance());
 
         try {
             config.save(file);
@@ -40,6 +41,7 @@ public class PlayerStorage {
         PlayerData data = new PlayerData(uuid);
         data.setGold(config.getDouble("gold"));
         data.getPendingInvites().addAll(config.getStringList("invites"));
+        data.setKnownMaintenance(config.getInt("maintenance", 0));
         return data;
     }
 }

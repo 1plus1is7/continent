@@ -1,0 +1,19 @@
+maintenance:
+  cost: 20
+  unpaid-limit: 2
+upgrade:
+  required-members: 5
+  required-treasury: 100
+scoreboard:
+  title: "§aContinent Server"
+  minimap-size: 7
+  show-coordinates: false
+  refresh-interval: 0.5
+server-address: "example.com"
+colors:
+  claimed: "§a"
+  unclaimed: "§f"
+  kingdom-default: "§a"
+symbols:
+  center: "▣"
+  chunk: "▩"

@@ -18,6 +18,11 @@ public class Kingdom {
     private double treasury;
     private long protectionUntil;
 
+    private int maintenanceCount = 0;
+    private int unpaidWeeks = 0;
+    private long lastMaintenance = 0;
+    private boolean nation = false;
+
     // Whether members of this kingdom can ignite fire or TNT in protected areas
     private boolean memberIgniteAllowed = false;
 
@@ -113,6 +118,22 @@ public class Kingdom {
     public void addGold(double amount) { this.treasury += amount; }
 
     public void removeGold(double amount) { this.treasury -= amount; }
+
+    public int getMaintenanceCount() { return maintenanceCount; }
+
+    public void setMaintenanceCount(int count) { this.maintenanceCount = count; }
+
+    public int getUnpaidWeeks() { return unpaidWeeks; }
+
+    public void setUnpaidWeeks(int weeks) { this.unpaidWeeks = weeks; }
+
+    public long getLastMaintenance() { return lastMaintenance; }
+
+    public void setLastMaintenance(long time) { this.lastMaintenance = time; }
+
+    public boolean isNation() { return nation; }
+
+    public void setNation(boolean nation) { this.nation = nation; }
 
     public org.bukkit.inventory.ItemStack[] getChestContents() {
         return chestContents;
