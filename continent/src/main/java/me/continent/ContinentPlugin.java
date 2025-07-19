@@ -13,6 +13,7 @@ import me.continent.listener.MaintenanceJoinListener;
 import me.continent.protection.TerritoryProtectionListener;
 import me.continent.protection.CoreProtectionListener;
 import me.continent.war.CoreAttackListener;
+import me.continent.war.WarDeathListener;
 import me.continent.protection.ProtectionStateListener;
 import me.continent.village.service.ChestListener;
 import me.continent.village.service.MaintenanceService;
@@ -56,6 +57,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CoreAttackListener(), this);
         getServer().getPluginManager().registerEvents(new ChestListener(), this);
         getServer().getPluginManager().registerEvents(new ProtectionStateListener(), this);
+        getServer().getPluginManager().registerEvents(new WarDeathListener(), this);
 
 
 
