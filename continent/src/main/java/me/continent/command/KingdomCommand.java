@@ -34,6 +34,11 @@ public class KingdomCommand implements CommandExecutor {
             player.sendMessage("§e/kingdom members §7- 소속 마을 목록");
             player.sendMessage("§e/kingdom setcapital <마을명> §7- 수도 변경");
             player.sendMessage("§e/kingdom setking <플레이어> §7- 국왕 위임");
+            player.sendMessage("§e/kingdom addvillage <마을명> §7- 마을 초대");
+            player.sendMessage("§e/kingdom removevillage <마을명> §7- 마을 제외");
+            player.sendMessage("§e/kingdom accept <국가명> §7- 초대 수락");
+            player.sendMessage("§e/kingdom deny <국가명> §7- 초대 거절");
+            player.sendMessage("§e/kingdom leave §7- 국가 탈퇴");
             return true;
         }
 
@@ -193,6 +198,137 @@ public class KingdomCommand implements CommandExecutor {
             kingdom.setLeader(tId);
             KingdomStorage.save(kingdom);
             Bukkit.broadcastMessage("§e[국가] " + kingdom.getName() + "의 새로운 국왕은 " + (target.getName() != null ? target.getName() : tId) + "입니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("addvillage") && args.length >= 2) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null || village.getKingdom() == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            if (!kingdom.getLeader().equals(player.getUniqueId())) {
+                player.sendMessage("§c국왕만 마을을 초대할 수 있습니다.");
+                return true;
+            }
+
+            String targetName = args[1];
+            Village target = VillageManager.getByName(targetName);
+            if (target == null) {
+                player.sendMessage("§c해당 마을이 존재하지 않습니다.");
+                return true;
+            }
+            if (target.getKingdom() != null) {
+                player.sendMessage("§c이미 다른 국가에 속한 마을입니다.");
+                return true;
+            }
+
+            target.addKingdomInvite(kingdom.getName());
+            VillageStorage.save(target);
+            player.sendMessage("§a초대장을 보냈습니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("removevillage") && args.length >= 2) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null || village.getKingdom() == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            if (!kingdom.getLeader().equals(player.getUniqueId())) {
+                player.sendMessage("§c국왕만 마을을 제외할 수 있습니다.");
+                return true;
+            }
+
+            String targetName = args[1];
+            if (targetName.equalsIgnoreCase(kingdom.getCapital())) {
+                player.sendMessage("§c수도 마을은 제외할 수 없습니다.");
+                return true;
+            }
+            Village target = VillageManager.getByName(targetName);
+            if (target == null || !kingdom.getVillages().contains(targetName)) {
+                player.sendMessage("§c해당 마을은 국가에 속해 있지 않습니다.");
+                return true;
+            }
+
+            KingdomManager.removeVillage(kingdom, target);
+            KingdomStorage.save(kingdom);
+            VillageStorage.save(target);
+            Bukkit.broadcastMessage("§e[국가] " + targetName + " 마을이 " + kingdom.getName() + "에서 제외되었습니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("accept") && args.length >= 2) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null || !village.isAuthorized(player.getUniqueId())) {
+                player.sendMessage("§c마을 국왕만 사용할 수 있습니다.");
+                return true;
+            }
+
+            String kingdomName = args[1];
+            if (!village.getKingdomInvites().contains(kingdomName.toLowerCase())) {
+                player.sendMessage("§c해당 국가로부터 초대받지 않았습니다.");
+                return true;
+            }
+            if (village.getKingdom() != null) {
+                player.sendMessage("§c이미 다른 국가에 속해 있습니다.");
+                return true;
+            }
+
+            Kingdom kingdom = KingdomManager.getByName(kingdomName);
+            if (kingdom == null) {
+                player.sendMessage("§c해당 국가가 존재하지 않습니다.");
+                return true;
+            }
+
+            KingdomManager.addVillage(kingdom, village);
+            village.removeKingdomInvite(kingdomName);
+            KingdomStorage.save(kingdom);
+            VillageStorage.save(village);
+            Bukkit.broadcastMessage("§e[국가] " + village.getName() + " 마을이 " + kingdom.getName() + "에 가입했습니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("deny") && args.length >= 2) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null || !village.isAuthorized(player.getUniqueId())) {
+                player.sendMessage("§c마을 국왕만 사용할 수 있습니다.");
+                return true;
+            }
+
+            String kingdomName = args[1];
+            if (!village.getKingdomInvites().contains(kingdomName.toLowerCase())) {
+                player.sendMessage("§c해당 국가로부터 초대받지 않았습니다.");
+                return true;
+            }
+            village.removeKingdomInvite(kingdomName);
+            VillageStorage.save(village);
+            player.sendMessage("§e초대가 거절되었습니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("leave")) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null || village.getKingdom() == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            if (!village.isAuthorized(player.getUniqueId())) {
+                player.sendMessage("§c마을 국왕만 사용할 수 있습니다.");
+                return true;
+            }
+            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            if (kingdom.getCapital().equalsIgnoreCase(village.getName())) {
+                player.sendMessage("§c수도 마을은 탈퇴할 수 없습니다.");
+                return true;
+            }
+
+            KingdomManager.removeVillage(kingdom, village);
+            KingdomStorage.save(kingdom);
+            VillageStorage.save(village);
+            Bukkit.broadcastMessage("§e[국가] " + village.getName() + " 마을이 " + kingdom.getName() + "에서 탈퇴했습니다.");
             return true;
         }
 

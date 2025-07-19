@@ -17,7 +17,7 @@ Continent 플러그인은 마인크래프트 서버에서 마을 체계와 경�
 - **스코어보드**
   플레이어의 골드, 소속 국가, 미니맵(마을 점령지는 기본 연두색(§a) 표시), 서버 주소 등을 실시간으로 보여 주는 스코어보드가 일정 간격으로 갱신됩니다.
 - **국가 시스템**
-  여러 마을이 국가를 결성하여 `/kingdom create`, `disband`, `info`, `list`, `members`, `setcapital`, `setking` 명령으로 관리할 수 있습니다.
+  여러 마을이 국가를 결성하여 `/kingdom create`, `disband`, `info`, `list`, `members`, `setcapital`, `setking`, `addvillage`, `removevillage`, `accept`, `deny`, `leave` 명령으로 관리할 수 있습니다.
 - **주간 유지비**
   매주 유지비가 국고에서 차감되며 미납이 일정 주 이상 쌓이면 마을이 해산됩니다. 접속 시 지난 납부 내역이 안내됩니다.
 - **영토 침입 경고**
