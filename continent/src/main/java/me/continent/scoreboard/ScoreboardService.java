@@ -75,7 +75,7 @@ public class ScoreboardService {
 
                 String color;
                 if (owner != null) {
-                    color = hexToColor(owner.getColor());
+                    color = owner.getColor();
                 } else {
                     color = unclaimedColor;
                 }
@@ -164,14 +164,5 @@ public class ScoreboardService {
         return result;
     }
 
-    private static String hexToColor(String hex) {
-        if (hex == null) return "";
-        hex = hex.startsWith("#") ? hex.substring(1) : hex;
-        if (hex.length() != 6) return "";
-        StringBuilder builder = new StringBuilder("§x");
-        for (char c : hex.toCharArray()) {
-            builder.append('§').append(c);
-        }
-        return builder.toString();
-    }
+    // No additional helpers needed for standard color codes
 }
