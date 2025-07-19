@@ -10,3 +10,6 @@ commands:
   gold:
     description: Gold system command
     usage: /gold <subcommand>
+  village:
+    description: Village upgrade command
+    usage: /village <subcommand>
