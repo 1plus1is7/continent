@@ -1,6 +1,7 @@
 package me.continent;
 
 import me.continent.chat.KingdomChatListener;
+import me.continent.chat.GlobalChatListener;
 import me.continent.command.GoldCommand;
 import me.continent.command.KingdomCommand;
 import me.continent.command.VillageCommand;
@@ -44,6 +45,7 @@ public class ContinentPlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new TerritoryListener(), this);
         getServer().getPluginManager().registerEvents(new KingdomChatListener(), this);
+        getServer().getPluginManager().registerEvents(new GlobalChatListener(), this);
         getServer().getPluginManager().registerEvents(new MaintenanceJoinListener(), this);
         getServer().getPluginManager().registerEvents(new TerritoryProtectionListener(), this);
         getServer().getPluginManager().registerEvents(new CoreProtectionListener(), this);
