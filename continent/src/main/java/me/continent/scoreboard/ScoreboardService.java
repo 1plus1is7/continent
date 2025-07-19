@@ -78,12 +78,7 @@ public class ScoreboardService {
                 Chunk chunk = world.getChunkAt(px + dx, pz + dz);
                 Village owner = VillageManager.getByChunk(chunk);
 
-                String color;
-                if (owner != null) {
-                    color = owner.getColor();
-                } else {
-                    color = unclaimedColor;
-                }
+                String color = (owner != null) ? claimedColor : unclaimedColor;
                 String symbol = (dx == 0 && dz == 0) ? centerSymbol : chunkSymbol;
                 grid[zIdx][xIdx] = color + symbol;
             }

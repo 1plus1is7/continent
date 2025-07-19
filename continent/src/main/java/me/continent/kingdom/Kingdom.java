@@ -10,7 +10,6 @@ public class Kingdom {
     private String capital; // village name
     private final Set<String> villages = new HashSet<>();
     private double treasury = 0;
-    private String color = "§6";
     private final Map<UUID, String> roles = new HashMap<>();
 
     public Kingdom(String name, UUID leader, Village capital) {
@@ -62,14 +61,6 @@ public class Kingdom {
 
     public void removeGold(double amount) {
         this.treasury -= amount;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
     }
 
     public Map<UUID, String> getRoles() {

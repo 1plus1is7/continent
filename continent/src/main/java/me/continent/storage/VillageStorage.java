@@ -48,7 +48,6 @@ public class VillageStorage {
         config.set("core", serializeLocation(village.getCoreLocation()));
         config.set("protectionEnd", village.getProtectionEnd());
         config.set("treasury", village.getTreasury());
-        config.set("color", village.getColor());
         config.set("chest", serializeItems(village.getChestContents()));
         config.set("memberIgnite", village.isMemberIgniteAllowed());
         config.set("maintenanceCount", village.getMaintenanceCount());
@@ -80,7 +79,6 @@ public class VillageStorage {
             Location core = deserializeLocation(config.getString("core"));
             long protectionEnd = config.getLong("protectionEnd");
             double treasury = config.getDouble("treasury");
-            String color = config.getString("color", "#ADFF2F");
             ItemStack[] chest = deserializeItems(config.getString("chest"));
             boolean memberIgnite = config.getBoolean("memberIgnite", false);
             int maintenanceCount = config.getInt("maintenanceCount", 0);
@@ -96,7 +94,6 @@ public class VillageStorage {
             village.setCoreLocation(core);
             village.setProtectionEnd(protectionEnd);
             village.setTreasury(treasury);
-            village.setColor(color);
             village.setChestContents(chest);
             village.setMemberIgniteAllowed(memberIgnite);
             village.setMaintenanceCount(maintenanceCount);
