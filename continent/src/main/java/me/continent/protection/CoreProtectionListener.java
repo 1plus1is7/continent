@@ -41,6 +41,8 @@ public class CoreProtectionListener implements Listener {
             if (!allowed) {
                 event.setCancelled(true);
                 event.getPlayer().sendMessage("§c코어는 명령어로만 제거할 수 있습니다.");
+            } else {
+                WarManager.coreDestroyed(owner, me.continent.kingdom.KingdomManager.getByName(attackerVillage.getKingdom()));
             }
         }
     }

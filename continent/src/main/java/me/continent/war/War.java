@@ -1,13 +1,14 @@
 package me.continent.war;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class War {
     private final String attacker;
     private final String defender;
     private final long startTime;
     private final Map<String, Integer> coreHp = new HashMap<>();
+    private final Map<String, String> destroyedVillages = new HashMap<>();
+    private final Map<UUID, Long> bannedPlayers = new HashMap<>();
 
     public War(String attacker, String defender) {
         this.attacker = attacker;
@@ -37,5 +38,35 @@ public class War {
 
     public Map<String, Integer> getAllCoreHp() {
         return coreHp;
+    }
+
+    // ---- Core destruction tracking ----
+    public void addDestroyedVillage(String village, String attackerKingdom) {
+        destroyedVillages.put(village.toLowerCase(), attackerKingdom);
+    }
+
+    public boolean isVillageDestroyed(String village) {
+        return destroyedVillages.containsKey(village.toLowerCase());
+    }
+
+    public String getCapturer(String village) {
+        return destroyedVillages.get(village.toLowerCase());
+    }
+
+    public Map<String, String> getDestroyedVillages() {
+        return destroyedVillages;
+    }
+
+    // ---- Player ban tracking ----
+    public void banPlayer(UUID uuid) {
+        bannedPlayers.put(uuid, System.currentTimeMillis());
+    }
+
+    public boolean isPlayerBanned(UUID uuid) {
+        return bannedPlayers.containsKey(uuid);
+    }
+
+    public Map<UUID, Long> getBannedPlayers() {
+        return bannedPlayers;
     }
 }
