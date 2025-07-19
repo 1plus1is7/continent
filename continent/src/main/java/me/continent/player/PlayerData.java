@@ -1,6 +1,6 @@
 package me.continent.player;
 
-import me.continent.kingdom.Kingdom;
+import me.continent.village.Village;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,14 +13,14 @@ public class PlayerData {
     private double gold;
     private final Set<String> pendingInvites = new HashSet<>();  // ✅ 중복 제거됨
 
-    private Kingdom kingdom;
+    private Village village;
 
-    public void setKingdom(Kingdom kingdom) {
-        this.kingdom = kingdom;
+    public void setVillage(Village village) {
+        this.village = village;
     }
 
-    public Kingdom getKingdom() {
-        return this.kingdom;
+    public Village getVillage() {
+        return this.village;
     }
 
     public PlayerData(UUID uuid) {
@@ -28,27 +28,27 @@ public class PlayerData {
         this.gold = 0;
     }
 
-    private boolean kingdomChat = false;
-    private boolean kingdomChatEnabled = false;
+    private boolean villageChat = false;
+    private boolean villageChatEnabled = false;
 
     private int knownMaintenance = 0;
 
-    public boolean isKingdomChatEnabled() {
-        return kingdomChatEnabled;
+    public boolean isVillageChatEnabled() {
+        return villageChatEnabled;
     }
 
-    public void setKingdomChatEnabled(boolean enabled) {
-        this.kingdomChatEnabled = enabled;
+    public void setVillageChatEnabled(boolean enabled) {
+        this.villageChatEnabled = enabled;
     }
 
 
 
-    public boolean isInKingdomChat() {
-        return kingdomChat;
+    public boolean isInVillageChat() {
+        return villageChat;
     }
 
-    public void setKingdomChat(boolean kingdomChat) {
-        this.kingdomChat = kingdomChat;
+    public void setVillageChat(boolean villageChat) {
+        this.villageChat = villageChat;
     }
 
 

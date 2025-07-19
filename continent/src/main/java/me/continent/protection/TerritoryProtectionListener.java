@@ -1,7 +1,7 @@
 package me.continent.protection;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
+import me.continent.village.Village;
+import me.continent.village.VillageManager;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,15 +16,15 @@ public class TerritoryProtectionListener implements Listener {
         Player player = event.getPlayer();
         Chunk chunk = event.getBlock().getChunk();
 
-        Kingdom owner = KingdomManager.getByChunk(chunk);
+        Village owner = VillageManager.getByChunk(chunk);
         if (owner == null) return; // 야생
 
-        Kingdom playerKingdom = KingdomManager.getByPlayer(player.getUniqueId());
+        Village playerVillage = VillageManager.getByPlayer(player.getUniqueId());
 
-        // 소유자 국가와 다르면 보호
-        if (!owner.equals(playerKingdom)) {
+        // 소유자 마을와 다르면 보호
+        if (!owner.equals(playerVillage)) {
             event.setCancelled(true);
-            player.sendMessage("§c이 지역은 다른 국가의 보호 구역입니다.");
+            player.sendMessage("§c이 지역은 다른 마을의 보호 구역입니다.");
         }
     }
 
@@ -33,14 +33,14 @@ public class TerritoryProtectionListener implements Listener {
         Player player = event.getPlayer();
         Chunk chunk = event.getBlock().getChunk();
 
-        Kingdom owner = KingdomManager.getByChunk(chunk);
+        Village owner = VillageManager.getByChunk(chunk);
         if (owner == null) return;
 
-        Kingdom playerKingdom = KingdomManager.getByPlayer(player.getUniqueId());
+        Village playerVillage = VillageManager.getByPlayer(player.getUniqueId());
 
-        if (!owner.equals(playerKingdom)) {
+        if (!owner.equals(playerVillage)) {
             event.setCancelled(true);
-            player.sendMessage("§c이 지역은 다른 국가의 보호 구역입니다.");
+            player.sendMessage("§c이 지역은 다른 마을의 보호 구역입니다.");
         }
     }
 }

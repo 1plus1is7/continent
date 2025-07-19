@@ -2,9 +2,6 @@ maintenance:
   cost: 20
   unpaid-limit: 2
   per-chunk-cost: 5
-upgrade:
-  required-members: 5
-  required-treasury: 100
 scoreboard:
   title: "§aContinent Server"
   minimap-size: 7
@@ -14,7 +11,7 @@ server-address: "example.com"
 colors:
   claimed: "§a"
   unclaimed: "§f"
-  kingdom-default: "§a"
+  village-default: "§a"
 symbols:
   center: "▣"
   chunk: "▩"

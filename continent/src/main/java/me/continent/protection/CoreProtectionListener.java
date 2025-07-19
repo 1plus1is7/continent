@@ -1,7 +1,7 @@
 package me.continent.protection;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
+import me.continent.village.Village;
+import me.continent.village.VillageManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -14,8 +14,8 @@ public class CoreProtectionListener implements Listener {
 
     private boolean isCoreBlock(Block block) {
         Location loc = block.getLocation();
-        for (Kingdom kingdom : KingdomManager.getAll()) {
-            Location core = kingdom.getCoreLocation();
+        for (Village village : VillageManager.getAll()) {
+            Location core = village.getCoreLocation();
             if (core == null) continue;
             if (core.getWorld().equals(loc.getWorld())
                     && core.getBlockX() == loc.getBlockX()

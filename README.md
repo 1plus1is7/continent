@@ -1,25 +1,25 @@
 # continent
-Continent 플러그인은 마인크래프트 서버에서 국가 체계와 경제 시스템을 제공하는 통합 플러그인입니다.
+Continent 플러그인은 마인크래프트 서버에서 마을 체계와 경제 시스템을 제공하는 통합 플러그인입니다.
 
 ## 주요 기능
 - **골드 경제 시스템**  
   `/gold balance`로 보유 골드를 확인하고 `exchange`로 금괴를 골드로 환전하거나 `convert`로 골드로 금괴를 구매할 수 있습니다. `pay` 하위 명령으로 플레이어간 골드 송금도 지원합니다.
 - **중앙은행**  
   거래량에 따라 환율이 변동되며 서버 종료 시 `centralbank.yml`에 환율이 저장됩니다.
-- **국가 관리**  
-  `/kingdom` 명령을 통해 국가 생성(`create`)과 해산(`disband`), 영토 점령/해제(`claim`, `unclaim`), 초대(`invite`, `accept`, `deny`, `invites`)와 추방(`kick`), 구성원 목록(`members`), 탈퇴(`leave`), 국명 변경(`rename`), 색상 변경(`color`), 국고 관리(`treasury balance|deposit|withdraw`), 스폰 설정 및 이동(`setspawn`, `spawn`), 코어 위치 지정(`setcore`), 국가 창고(`chest`), 점화 허용 토글(`ignite`), 국가 채팅 토글(`chat`), 명령 확인(`confirm`), 서버 내 국가 목록(`list`) 등 모든 행정 명령이 제공됩니다.
-- **국가 창고**  
+- **마을 관리**
+  `/village` 명령을 통해 마을 생성(`create`)과 해산(`disband`), 영토 점령/해제(`claim`, `unclaim`), 초대(`invite`, `accept`, `deny`, `invites`)와 추방(`kick`), 구성원 목록(`members`), 탈퇴(`leave`), 마을명 변경(`rename`), 색상 변경(`color`), 마을 금고 관리(`treasury balance|deposit|withdraw`), 스폰 설정 및 이동(`setspawn`, `spawn`), 코어 위치 지정(`setcore`), 마을 창고(`chest`), 점화 허용 토글(`ignite`), 마을 채팅 토글(`chat`), 명령 확인(`confirm`), 서버 내 마을 목록(`list`) 등 모든 행정 명령이 제공됩니다.
+- **마을 창고**
   27칸의 전용 인벤토리를 제공하며 내용물은 자동 저장됩니다.
 - **영토 및 코어 보호**  
   다른 국가의 영토에서 블록 파괴/설치가 제한되고, 코어 블록은 파괴나 폭발로부터 보호됩니다. 생성 직후 일정 기간은 보호 상태로 일부 상호 작용이 차단됩니다.
-- **국가 채팅 및 로그**  
-  국가별 전용 채팅을 제공하며, 모든 메시지는 `plugins/Continent/kingdom-logs` 폴더에 기록됩니다.
+- **마을 채팅 및 로그**
+  마을별 전용 채팅을 제공하며, 모든 메시지는 `plugins/Continent/village-logs` 폴더에 기록됩니다.
 - **스코어보드**  
   플레이어의 골드, 소속 국가, 미니맵, 서버 주소 등을 실시간으로 보여 주는 스코어보드가 일정 간격으로 갱신됩니다.
-- **데이터 지속성**  
-  플레이어와 국가 정보는 `plugins/Continent/players`와 `kingdoms` 폴더에 YAML 형식으로 저장되어 서버 재시작 후에도 유지됩니다.
-- **확인 시스템**  
-  위험한 명령은 `/kingdom confirm`을 통해 한 번 더 확인하도록 하여 실수로 인한 피해를 방지합니다.
+- **데이터 지속성**
+  플레이어와 마을 정보는 `plugins/Continent/players`와 `villages` 폴더에 YAML 형식으로 저장되어 서버 재시작 후에도 유지됩니다.
+- **확인 시스템**
+  위험한 명령은 `/village confirm`을 통해 한 번 더 확인하도록 하여 실수로 인한 피해를 방지합니다.
 
 ## 명령어 사용법
-`/kingdom` 명령어는 `/k` 로도 사용할 수 있습니다.
+`/village` 명령어는 `/k` 로도 사용할 수 있습니다.
