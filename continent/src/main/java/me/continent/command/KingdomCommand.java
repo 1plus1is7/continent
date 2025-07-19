@@ -42,7 +42,7 @@ public class KingdomCommand implements CommandExecutor {
             player.sendMessage("§e/kingdom leave §7- 국가 탈퇴");
             player.sendMessage("§e/kingdom kick <플레이어> §7- 구성원 추방");
             player.sendMessage("§e/kingdom rename <새이름> §7- 국가 이름 변경");
-            player.sendMessage("§e/kingdom color <HEX> §7- 국가 색상 변경");
+            player.sendMessage("§e/kingdom color <CODE> §7- 국가 색상 변경");
             player.sendMessage("§e/kingdom list §7- 서버 내 모든 국가 목록");
             player.sendMessage("§e/kingdom setspawn §7- 국가 스폰 위치 설정");
             player.sendMessage("§e/kingdom setcore §7- 코어 위치 이동");
@@ -149,15 +149,16 @@ public class KingdomCommand implements CommandExecutor {
                 player.sendMessage("§c국왕만 색상을 변경할 수 있습니다.");
                 return true;
             }
-            String hex = args[1];
-            if (!hex.matches("#?[0-9a-fA-F]{6}")) {
-                player.sendMessage("§c올바른 HEX 형식이 아닙니다.");
+            String code = args[1];
+            if (code.startsWith("§") || code.startsWith("&")) code = code.substring(1);
+            if (!code.matches("[0-9a-fA-F]")) {
+                player.sendMessage("§c올바른 색 코드가 아닙니다. (0-9, a-f)");
                 return true;
             }
-            kingdom.setColor(hex.startsWith("#") ? hex : "#" + hex);
+            String color = "§" + code.toLowerCase();
+            kingdom.setColor(color);
             KingdomStorage.save(kingdom);
-            String preview = net.md_5.bungee.api.ChatColor.of(hex).toString();
-            player.sendMessage("§a국가 색상이 변경되었습니다: " + preview + hex + net.md_5.bungee.api.ChatColor.RESET);
+            player.sendMessage("§a국가 색상이 변경되었습니다: " + color + "■§r");
             return true;
         }
 

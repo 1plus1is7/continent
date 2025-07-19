@@ -21,8 +21,8 @@ public class Kingdom {
     // Whether members of this kingdom can ignite fire or TNT in protected areas
     private boolean memberIgniteAllowed = false;
 
-    // Nation color in hex format (e.g. #FF0000)
-    private String color = "#ADFF2F";
+    // Nation color in Minecraft color code (e.g. §a)
+    private String color = "§a";
 
     private String coreChunkKey;
     private String spawnChunkKey;

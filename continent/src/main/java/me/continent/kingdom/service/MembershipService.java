@@ -23,7 +23,7 @@ public class MembershipService {
 
         Kingdom kingdom = new Kingdom(name, uuid);
         String defaultColor = me.continent.ContinentPlugin.getInstance()
-                .getConfig().getString("colors.kingdom-default", "#00FF00");
+                .getConfig().getString("colors.kingdom-default", "§a");
         kingdom.setColor(defaultColor);
         kingdom.addChunk(chunk);
 
