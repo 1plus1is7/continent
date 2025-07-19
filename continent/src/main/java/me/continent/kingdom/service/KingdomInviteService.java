@@ -1,0 +1,22 @@
+package me.continent.kingdom.service;
+
+import me.continent.village.Village;
+
+import java.util.Set;
+
+public class KingdomInviteService {
+
+    public static void sendInvite(String kingdomName, Village village) {
+        village.addKingdomInvite(kingdomName);
+        me.continent.storage.VillageStorage.save(village);
+    }
+
+    public static void removeInvite(String kingdomName, Village village) {
+        village.removeKingdomInvite(kingdomName);
+        me.continent.storage.VillageStorage.save(village);
+    }
+
+    public static Set<String> getInvites(Village village) {
+        return village.getKingdomInvites();
+    }
+}

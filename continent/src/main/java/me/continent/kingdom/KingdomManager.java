@@ -29,6 +29,18 @@ public class KingdomManager {
         }
     }
 
+    public static void addVillage(Kingdom kingdom, Village village) {
+        kingdom.getVillages().add(village.getName());
+        kingdomsByVillage.put(village.getName().toLowerCase(), kingdom);
+        village.setKingdom(kingdom.getName());
+    }
+
+    public static void removeVillage(Kingdom kingdom, Village village) {
+        kingdom.getVillages().remove(village.getName());
+        kingdomsByVillage.remove(village.getName().toLowerCase());
+        village.setKingdom(null);
+    }
+
     public static void unregister(Kingdom kingdom) {
         kingdomsByName.remove(kingdom.getName().toLowerCase());
         for (String v : kingdom.getVillages()) {

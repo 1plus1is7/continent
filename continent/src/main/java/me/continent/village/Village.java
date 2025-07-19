@@ -28,6 +28,9 @@ public class Village {
     // Whether members of this village can ignite fire or TNT in protected areas
     private boolean memberIgniteAllowed = false;
 
+    // Kingdom invite tracking
+    private final Set<String> kingdomInvites = new HashSet<>();
+
 
     private String coreChunkKey;
     private String spawnChunkKey;
@@ -136,6 +139,12 @@ public class Village {
     public boolean isNation() { return nation; }
 
     public void setNation(boolean nation) { this.nation = nation; }
+
+    public Set<String> getKingdomInvites() { return kingdomInvites; }
+
+    public void addKingdomInvite(String kingdom) { this.kingdomInvites.add(kingdom.toLowerCase()); }
+
+    public void removeKingdomInvite(String kingdom) { this.kingdomInvites.remove(kingdom.toLowerCase()); }
 
     public org.bukkit.inventory.ItemStack[] getChestContents() {
         return chestContents;
