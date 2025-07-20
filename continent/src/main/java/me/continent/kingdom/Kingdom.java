@@ -14,6 +14,7 @@ public class Kingdom {
     private int unpaidWeeks = 0;
     private long lastMaintenance = 0;
     private final Map<UUID, String> roles = new HashMap<>();
+    private final Set<String> researchedNodes = new HashSet<>();
 
     public Kingdom(String name, UUID leader, Village capital) {
         this.name = name;
@@ -92,5 +93,9 @@ public class Kingdom {
 
     public Map<UUID, String> getRoles() {
         return roles;
+    }
+
+    public Set<String> getResearchedNodes() {
+        return researchedNodes;
     }
 }

@@ -27,6 +27,8 @@ import me.continent.temperature.BodyTemperatureManager;
 import me.continent.listener.RainListener;
 import me.continent.crop.CropGrowthManager;
 import me.continent.crop.CropListener;
+import me.continent.research.ResearchListener;
+import me.continent.research.ResearchManager;
 
 public class ContinentPlugin extends JavaPlugin {
     private static ContinentPlugin instance;
@@ -53,6 +55,8 @@ public class ContinentPlugin extends JavaPlugin {
         me.continent.kingdom.KingdomStorage.loadAll();
         PlayerDataManager.loadAll();
 
+        ResearchManager.loadNodes(this);
+
         SeasonManager.init(this);
         CropGrowthManager.init(this);
 
@@ -72,6 +76,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WarDeathListener(), this);
         getServer().getPluginManager().registerEvents(new RainListener(), this);
         getServer().getPluginManager().registerEvents(new CropListener(), this);
+        getServer().getPluginManager().registerEvents(new ResearchListener(), this);
 
 
 
