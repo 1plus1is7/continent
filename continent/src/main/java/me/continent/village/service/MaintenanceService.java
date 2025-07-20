@@ -39,6 +39,26 @@ public class MaintenanceService {
         return cost + extra * perChunkCost;
     }
 
+    public static double getPerChunkCost() {
+        return perChunkCost;
+    }
+
+    public static int getUnpaidLimit() {
+        return unpaidLimit;
+    }
+
+    public static void setCost(double value) {
+        cost = Math.max(0, value);
+    }
+
+    public static void setPerChunkCost(double value) {
+        perChunkCost = Math.max(0, value);
+    }
+
+    public static void setUnpaidLimit(int value) {
+        unpaidLimit = Math.max(0, value);
+    }
+
     public static void schedule() {
         long delay = ticksUntilNext();
         long week = 7L * 24 * 60 * 60 * 20;
