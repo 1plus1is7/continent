@@ -25,6 +25,7 @@ import java.util.UUID;
 
 public class CoreAttackListener implements Listener {
     private final Map<String, BukkitTask> alertTasks = new HashMap<>();
+    private final Map<String, Long> lastAttack = new HashMap<>();
 
     private boolean isCoreBlock(Block block) {
         Village village = VillageManager.getByChunk(block.getChunk());
@@ -47,6 +48,7 @@ public class CoreAttackListener implements Listener {
         String kingdomName = village.getKingdom();
         if (kingdomName == null) return;
         String key = kingdomName.toLowerCase();
+        lastAttack.put(key, System.currentTimeMillis());
         if (alertTasks.containsKey(key)) return;
 
         Runnable alert = () -> {
@@ -59,16 +61,22 @@ public class CoreAttackListener implements Listener {
                 cancel(key);
                 return;
             }
+            Long last = lastAttack.get(key);
+            if (last == null || System.currentTimeMillis() - last > 5000) {
+                cancel(key);
+                return;
+            }
             sendAlert(kingdomName, village.getName());
         };
 
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(ContinentPlugin.getInstance(), alert, 0L, 300L);
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(ContinentPlugin.getInstance(), alert, 0L, 100L);
         alertTasks.put(key, task);
     }
 
     private void cancel(String key) {
         BukkitTask task = alertTasks.remove(key);
         if (task != null) task.cancel();
+        lastAttack.remove(key);
     }
 
     private void sendAlert(String kingdomName, String villageName) {
@@ -96,6 +104,8 @@ public class CoreAttackListener implements Listener {
         Village attackerVillage = VillageManager.getByPlayer(attacker.getUniqueId());
         if (attackerVillage == null || attackerVillage.getKingdom() == null) return;
         if (!WarManager.isAtWar(attackerVillage.getKingdom(), village.getKingdom())) return;
+        if (attackerVillage.getKingdom().equalsIgnoreCase(village.getKingdom())) return;
+        lastAttack.put(village.getKingdom().toLowerCase(), System.currentTimeMillis());
         startAlert(village);
     }
 

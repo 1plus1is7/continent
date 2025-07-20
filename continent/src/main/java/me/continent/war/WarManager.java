@@ -6,6 +6,8 @@ import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import me.continent.village.service.CoreService;
 import me.continent.war.WarBossBarManager;
+import me.continent.kingdom.KingdomStorage;
+import me.continent.storage.VillageStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
@@ -61,6 +63,36 @@ public class WarManager {
 
         war.getBannedPlayers().clear();
         WarBossBarManager.endWar(war);
+    }
+
+    public static void surrender(Kingdom loser) {
+        if (loser == null) return;
+        War war = getWar(loser.getName());
+        if (war == null) return;
+        String winnerName = war.getAttacker().equalsIgnoreCase(loser.getName())
+                ? war.getDefender() : war.getAttacker();
+        Kingdom winner = KingdomManager.getByName(winnerName);
+
+        endWar(war);
+
+        if (winner != null) {
+            for (String vName : new HashSet<>(loser.getVillages())) {
+                Village v = VillageManager.getByName(vName);
+                if (v != null && !winner.getVillages().contains(vName)) {
+                    KingdomManager.addVillage(winner, v);
+                }
+            }
+            KingdomManager.unregister(loser);
+            KingdomStorage.delete(loser);
+            KingdomStorage.save(winner);
+            for (String vName : winner.getVillages()) {
+                Village vv = VillageManager.getByName(vName);
+                if (vv != null) VillageStorage.save(vv);
+            }
+        } else {
+            KingdomManager.unregister(loser);
+            KingdomStorage.delete(loser);
+        }
     }
 
     public static void coreDestroyed(Village village, Kingdom attacker) {

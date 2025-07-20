@@ -83,8 +83,9 @@ public class WarCommand implements TabExecutor {
                 player.sendMessage("§c전쟁 중이 아닙니다.");
                 return true;
             }
-            WarManager.endWar(war);
-            Bukkit.broadcastMessage("§e[전쟁] §f" + kingdom.getName() + " 국가가 항복했습니다.");
+            WarManager.surrender(kingdom);
+            String winner = war.getAttacker().equalsIgnoreCase(kingdom.getName()) ? war.getDefender() : war.getAttacker();
+            Bukkit.broadcastMessage("§e[전쟁] §f" + kingdom.getName() + " 국가가 항복했습니다. 승자는 " + winner + " 국가입니다.");
             return true;
         }
 
