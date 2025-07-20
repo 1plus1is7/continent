@@ -25,13 +25,23 @@ public class ProtectionStateListener implements Listener {
 
     private boolean inProtectedVillage(Block block) {
         Village village = VillageManager.getByChunk(block.getChunk());
-        return village != null && village.isUnderProtection();
+        if (village == null) return false;
+        if (!village.isUnderProtection()) return false;
+        if (village.getKingdom() != null && me.continent.war.WarManager.getWar(village.getKingdom()) != null) {
+            return false;
+        }
+        return true;
     }
 
     private boolean inProtectedVillage(Entity entity) {
         Chunk chunk = entity.getLocation().getChunk();
         Village village = VillageManager.getByChunk(chunk);
-        return village != null && village.isUnderProtection();
+        if (village == null) return false;
+        if (!village.isUnderProtection()) return false;
+        if (village.getKingdom() != null && me.continent.war.WarManager.getWar(village.getKingdom()) != null) {
+            return false;
+        }
+        return true;
     }
 
     @EventHandler
