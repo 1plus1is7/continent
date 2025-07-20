@@ -34,6 +34,8 @@ public class PlayerData {
 
     private int knownMaintenance = 0;
 
+    private double bodyTemperature = 36.5;
+
     public boolean isVillageChatEnabled() {
         return villageChatEnabled;
     }
@@ -93,5 +95,13 @@ public class PlayerData {
 
     public void setKnownMaintenance(int count) {
         this.knownMaintenance = count;
+    }
+
+    public double getBodyTemperature() {
+        return bodyTemperature;
+    }
+
+    public void setBodyTemperature(double temp) {
+        this.bodyTemperature = temp;
     }
 }

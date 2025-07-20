@@ -17,10 +17,12 @@ import me.continent.war.WarDeathListener;
 import me.continent.protection.ProtectionStateListener;
 import me.continent.village.service.ChestListener;
 import me.continent.village.service.MaintenanceService;
+import me.continent.season.SeasonManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.continent.player.PlayerDataManager;
 import me.continent.storage.VillageStorage;
-import  me.continent.scoreboard.ScoreboardService;
+import me.continent.scoreboard.ScoreboardService;
+import me.continent.temperature.BodyTemperatureManager;
 
 public class ContinentPlugin extends JavaPlugin {
     private static ContinentPlugin instance;
@@ -38,6 +40,7 @@ public class ContinentPlugin extends JavaPlugin {
         getCommand("village").setExecutor(new VillageCommand());
         getCommand("kingdom").setExecutor(new KingdomCommand());
         getCommand("war").setExecutor(new WarCommand());
+        getCommand("season").setExecutor(new SeasonManager());
 
         // 중앙은행 데이터 로딩
         CentralBankDataManager.load();
@@ -45,7 +48,10 @@ public class ContinentPlugin extends JavaPlugin {
         me.continent.kingdom.KingdomStorage.loadAll();
         PlayerDataManager.loadAll();
 
+        SeasonManager.init(this);
+
         ScoreboardService.schedule();
+        BodyTemperatureManager.start();
 
         getServer().getPluginManager().registerEvents(new TerritoryListener(), this);
         getServer().getPluginManager().registerEvents(new VillageChatListener(), this);
@@ -70,6 +76,9 @@ public class ContinentPlugin extends JavaPlugin {
         CentralBankDataManager.save();
         me.continent.kingdom.KingdomStorage.saveAll();
         PlayerDataManager.saveAll();
+
+        SeasonManager.shutdown();
+        BodyTemperatureManager.stop();
 
         getLogger().info("Continent 플러그인 비활성화됨");
     }

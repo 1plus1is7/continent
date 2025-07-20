@@ -17,3 +17,6 @@ commands:
   war:
     description: War system command
     usage: /war <subcommand>
+  season:
+    description: Season control command
+    usage: /season <subcommand>

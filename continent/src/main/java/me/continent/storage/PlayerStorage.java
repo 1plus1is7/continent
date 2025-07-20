@@ -26,6 +26,7 @@ public class PlayerStorage {
         config.set("invites", new HashSet<>(data.getPendingInvites()));
         config.set("maintenance", data.getKnownMaintenance());
         config.set("kingdomChat", data.isKingdomChatEnabled());
+        config.set("bodyTemp", data.getBodyTemperature());
 
         try {
             config.save(file);
@@ -44,6 +45,7 @@ public class PlayerStorage {
         data.getPendingInvites().addAll(config.getStringList("invites"));
         data.setKnownMaintenance(config.getInt("maintenance", 0));
         data.setKingdomChatEnabled(config.getBoolean("kingdomChat", false));
+        data.setBodyTemperature(config.getDouble("bodyTemp", 36.5));
         return data;
     }
 }
