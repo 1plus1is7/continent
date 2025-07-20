@@ -3,8 +3,8 @@ package me.continent.economy;
 public class CentralBank {
 
     private static double exchangeRate = 20.0; // 초기 환율: 금괴 1개 = 20G
-    private static final double minRate = 10.0;
-    private static final double maxRate = 40.0;
+    private static double minRate = 10.0;
+    private static double maxRate = 40.0;
 
     private static int recentTrades = 0;
     private static final int tradesPerAdjustment = 10;
@@ -35,5 +35,23 @@ public class CentralBank {
     public static void resetExchangeRate() {
         exchangeRate = 20.0;
         recentTrades = 0;
+    }
+
+    public static double getMinRate() {
+        return minRate;
+    }
+
+    public static double getMaxRate() {
+        return maxRate;
+    }
+
+    public static void setMinRate(double rate) {
+        minRate = Math.max(0, rate);
+        if (exchangeRate < minRate) exchangeRate = minRate;
+    }
+
+    public static void setMaxRate(double rate) {
+        maxRate = Math.max(minRate, rate);
+        if (exchangeRate > maxRate) exchangeRate = maxRate;
     }
 }

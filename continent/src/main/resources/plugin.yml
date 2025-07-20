@@ -26,3 +26,6 @@ commands:
   specialty:
     description: Specialty goods command
     usage: /specialty <subcommand>
+  admin:
+    description: Manage wars, economy and maintenance
+    usage: /admin <subcommand>
