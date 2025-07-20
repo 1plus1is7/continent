@@ -5,12 +5,15 @@ import me.continent.kingdom.KingdomManager;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import me.continent.village.service.CoreService;
+import me.continent.war.WarBossBarManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import java.util.*;
 
 public class WarManager {
+    public static final int CAPITAL_CORE_HP = 30;
+    public static final int VILLAGE_CORE_HP = 20;
     private static final Map<String, War> wars = new HashMap<>();
 
     public static War declareWar(Kingdom attacker, Kingdom defender) {
@@ -18,6 +21,9 @@ public class WarManager {
         War war = new War(attacker.getName(), defender.getName());
         wars.put(attacker.getName().toLowerCase(), war);
         wars.put(defender.getName().toLowerCase(), war);
+        initCoreHp(war, attacker);
+        initCoreHp(war, defender);
+        WarBossBarManager.createWar(war);
         return war;
     }
 
@@ -54,6 +60,7 @@ public class WarManager {
         }
 
         war.getBannedPlayers().clear();
+        WarBossBarManager.endWar(war);
     }
 
     public static void coreDestroyed(Village village, Kingdom attacker) {
@@ -61,6 +68,7 @@ public class WarManager {
         War war = getWar(village.getKingdom());
         if (war == null) return;
         war.addDestroyedVillage(village.getName(), attacker.getName());
+        WarBossBarManager.remove(war, village.getName());
         Bukkit.broadcastMessage("§c[전쟁] §f" + village.getName() + " 마을의 코어가 파괴되었습니다!");
     }
 
@@ -69,5 +77,17 @@ public class WarManager {
             if (war.isPlayerBanned(uuid)) return true;
         }
         return false;
+    }
+
+    private static void initCoreHp(War war, Kingdom kingdom) {
+        if (kingdom == null) return;
+        for (String vName : kingdom.getVillages()) {
+            war.setCoreHp(vName, getInitialHp(kingdom, vName));
+        }
+    }
+
+    public static int getInitialHp(Kingdom kingdom, String villageName) {
+        if (kingdom == null || villageName == null) return VILLAGE_CORE_HP;
+        return villageName.equalsIgnoreCase(kingdom.getCapital()) ? CAPITAL_CORE_HP : VILLAGE_CORE_HP;
     }
 }
