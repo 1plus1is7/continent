@@ -19,7 +19,11 @@ public class TemperatureManager {
         boolean isDay = isDaytime(time);
         double base = getBaseTemperature(season, isDay);
         double weight = getTimeWeight(time);
-        return base + weight;
+        double temp = base + weight;
+        if (SeasonManager.isRainySeason()) {
+            temp -= 3.0;
+        }
+        return temp;
     }
 
     /**

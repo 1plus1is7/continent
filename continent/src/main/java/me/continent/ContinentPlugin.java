@@ -24,6 +24,9 @@ import me.continent.player.PlayerDataManager;
 import me.continent.storage.VillageStorage;
 import me.continent.scoreboard.ScoreboardService;
 import me.continent.temperature.BodyTemperatureManager;
+import me.continent.listener.RainListener;
+import me.continent.crop.CropGrowthManager;
+import me.continent.crop.CropListener;
 
 public class ContinentPlugin extends JavaPlugin {
     private static ContinentPlugin instance;
@@ -51,6 +54,7 @@ public class ContinentPlugin extends JavaPlugin {
         PlayerDataManager.loadAll();
 
         SeasonManager.init(this);
+        CropGrowthManager.init(this);
 
         ScoreboardService.schedule();
         BodyTemperatureManager.start();
@@ -66,6 +70,8 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChestListener(), this);
         getServer().getPluginManager().registerEvents(new ProtectionStateListener(), this);
         getServer().getPluginManager().registerEvents(new WarDeathListener(), this);
+        getServer().getPluginManager().registerEvents(new RainListener(), this);
+        getServer().getPluginManager().registerEvents(new CropListener(), this);
 
 
 
@@ -81,6 +87,7 @@ public class ContinentPlugin extends JavaPlugin {
 
         SeasonManager.shutdown();
         BodyTemperatureManager.stop();
+        CropGrowthManager.shutdown();
 
         getLogger().info("Continent 플러그인 비활성화됨");
     }
