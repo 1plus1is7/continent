@@ -20,3 +20,6 @@ commands:
   season:
     description: Season control command
     usage: /season <subcommand>
+  seasonguide:
+    description: Gives a guide book about the season system
+    usage: /seasonguide
