@@ -8,6 +8,7 @@ import me.continent.command.VillageCommand;
 import me.continent.command.KingdomCommand;
 import me.continent.war.WarCommand;
 import me.continent.command.SeasonGuideCommand;
+import me.continent.command.SpecialtyCommand;
 import me.continent.economy.CentralBankDataManager;
 import me.continent.listener.TerritoryListener;
 import me.continent.listener.MaintenanceJoinListener;
@@ -29,6 +30,8 @@ import me.continent.crop.CropGrowthManager;
 import me.continent.crop.CropListener;
 import me.continent.research.ResearchListener;
 import me.continent.research.ResearchManager;
+import me.continent.specialty.SpecialtyManager;
+import me.continent.specialty.SpecialtyListener;
 
 public class ContinentPlugin extends JavaPlugin {
     private static ContinentPlugin instance;
@@ -48,6 +51,7 @@ public class ContinentPlugin extends JavaPlugin {
         getCommand("war").setExecutor(new WarCommand());
         getCommand("season").setExecutor(new SeasonManager());
         getCommand("seasonguide").setExecutor(new SeasonGuideCommand());
+        getCommand("specialty").setExecutor(new SpecialtyCommand());
 
         // 중앙은행 데이터 로딩
         CentralBankDataManager.load();
@@ -56,6 +60,7 @@ public class ContinentPlugin extends JavaPlugin {
         PlayerDataManager.loadAll();
 
         ResearchManager.loadNodes(this);
+        me.continent.specialty.SpecialtyManager.load(this);
 
         SeasonManager.init(this);
         CropGrowthManager.init(this);
@@ -77,6 +82,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RainListener(), this);
         getServer().getPluginManager().registerEvents(new CropListener(), this);
         getServer().getPluginManager().registerEvents(new ResearchListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.specialty.SpecialtyListener(), this);
 
 
 
