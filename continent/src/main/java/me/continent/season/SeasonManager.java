@@ -21,6 +21,7 @@ public class SeasonManager implements TabExecutor {
     private static final Set<ChunkCoord> processedChunks = ConcurrentHashMap.newKeySet();
     private static File dataFile;
     private static int taskId = -1;
+    private static boolean enabled = true;
     private static boolean rainySeason = false;
     private static int rainyStart = -1;
     private static int rainyDays = 0;
@@ -31,16 +32,18 @@ public class SeasonManager implements TabExecutor {
         loadData();
         SeasonLeafManager.init(plugin);
         LeafPileManager.init(plugin);
-        startScheduler();
-        SeasonVisuals.start();
+        if (enabled) {
+            startScheduler();
+            SeasonVisuals.start();
+        }
     }
 
     public static void shutdown() {
         SeasonLeafManager.save();
         LeafPileManager.save();
         saveData();
-        SeasonVisuals.stop();
         if (taskId != -1) Bukkit.getScheduler().cancelTask(taskId);
+        SeasonVisuals.stop();
     }
 
     private static void startScheduler() {
@@ -130,9 +133,22 @@ public class SeasonManager implements TabExecutor {
     public static void reloadConfig() {
         plugin.reloadConfig();
         FileConfiguration cfg = plugin.getConfig();
+        enabled = cfg.getBoolean("season.enabled", true);
         for (Season s : Season.values()) {
             int days = cfg.getInt("season.durations." + s.name().toLowerCase(), 1);
             seasonDurations.put(s, days);
+        }
+        if (enabled) {
+            if (taskId == -1) {
+                startScheduler();
+                SeasonVisuals.start();
+            }
+        } else {
+            if (taskId != -1) {
+                Bukkit.getScheduler().cancelTask(taskId);
+                taskId = -1;
+                SeasonVisuals.stop();
+            }
         }
     }
 
@@ -199,6 +215,7 @@ public class SeasonManager implements TabExecutor {
             sender.sendMessage("§e/season skip §7- 다음 시즌으로 이동");
             sender.sendMessage("§e/season reload §7- 설정 리로드");
             sender.sendMessage("§e/season rain §7- 우기 토글");
+            sender.sendMessage("§e/season toggle <on|off> §7- 계절 시스템 토글");
             return true;
         }
         if (args[0].equalsIgnoreCase("info")) {
@@ -239,13 +256,36 @@ public class SeasonManager implements TabExecutor {
             }
             return true;
         }
+        if (args[0].equalsIgnoreCase("toggle")) {
+            boolean enable;
+            if (args.length >= 2) {
+                enable = args[1].equalsIgnoreCase("on") || args[1].equalsIgnoreCase("enable") || args[1].equalsIgnoreCase("true");
+            } else {
+                enable = !enabled;
+            }
+            if (enable) {
+                enabled = true;
+                startScheduler();
+                SeasonVisuals.start();
+                sender.sendMessage("§a계절 시스템을 활성화했습니다.");
+            } else {
+                enabled = false;
+                if (taskId != -1) {
+                    Bukkit.getScheduler().cancelTask(taskId);
+                    taskId = -1;
+                }
+                SeasonVisuals.stop();
+                sender.sendMessage("§c계절 시스템을 비활성화했습니다.");
+            }
+            return true;
+        }
         sender.sendMessage("§c알 수 없는 하위 명령어입니다.");
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> subs = Arrays.asList("info", "set", "skip", "reload", "rain");
+        List<String> subs = Arrays.asList("info", "set", "skip", "reload", "rain", "toggle");
 
         if (args.length == 1) {
             return subs.stream()
@@ -258,6 +298,12 @@ public class SeasonManager implements TabExecutor {
                     .map(Enum::name)
                     .map(String::toLowerCase)
                     .filter(n -> n.startsWith(args[1].toLowerCase()))
+                    .toList();
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("toggle")) {
+            return Arrays.asList("on", "off").stream()
+                    .filter(s -> s.startsWith(args[1].toLowerCase()))
                     .toList();
         }
 
