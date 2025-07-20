@@ -7,6 +7,7 @@ import me.continent.command.GoldCommand;
 import me.continent.command.VillageCommand;
 import me.continent.command.KingdomCommand;
 import me.continent.war.WarCommand;
+import me.continent.command.SeasonGuideCommand;
 import me.continent.economy.CentralBankDataManager;
 import me.continent.listener.TerritoryListener;
 import me.continent.listener.MaintenanceJoinListener;
@@ -41,6 +42,7 @@ public class ContinentPlugin extends JavaPlugin {
         getCommand("kingdom").setExecutor(new KingdomCommand());
         getCommand("war").setExecutor(new WarCommand());
         getCommand("season").setExecutor(new SeasonManager());
+        getCommand("seasonguide").setExecutor(new SeasonGuideCommand());
 
         // 중앙은행 데이터 로딩
         CentralBankDataManager.load();
