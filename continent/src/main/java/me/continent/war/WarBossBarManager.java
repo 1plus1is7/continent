@@ -24,18 +24,33 @@ public class WarBossBarManager {
     public static void createWar(War war) {
         Kingdom atk = KingdomManager.getByName(war.getAttacker());
         Kingdom def = KingdomManager.getByName(war.getDefender());
-        if (atk != null) createBarsForKingdom(war, atk);
-        if (def != null) createBarsForKingdom(war, def);
+        if (atk != null && def != null) {
+            createBarsForKingdom(war, atk, def);
+            createBarsForKingdom(war, def, atk);
+        } else {
+            if (atk != null) createBarsForKingdom(war, atk, null);
+            if (def != null) createBarsForKingdom(war, def, null);
+        }
     }
 
-    private static void createBarsForKingdom(War war, Kingdom kingdom) {
-        for (String vName : kingdom.getVillages()) {
-            String k = key(war, vName);
-            BossBar bar = Bukkit.createBossBar(vName + " 코어 HP", BarColor.RED, BarStyle.SEGMENTED_10);
+    private static void createBarsForKingdom(War war, Kingdom viewer, Kingdom enemy) {
+        for (String vName : viewer.getVillages()) {
+            createBarForVillage(war, vName, viewer);
+        }
+        if (enemy != null && enemy.getCapital() != null) {
+            createBarForVillage(war, enemy.getCapital(), viewer);
+        }
+    }
+
+    private static void createBarForVillage(War war, String village, Kingdom viewer) {
+        String k = key(war, village);
+        BossBar bar = bars.get(k);
+        if (bar == null) {
+            bar = Bukkit.createBossBar(village + " 코어 HP", BarColor.RED, BarStyle.SEGMENTED_10);
             bar.setProgress(1.0);
             bars.put(k, bar);
-            addPlayers(bar, kingdom);
         }
+        addPlayers(bar, viewer);
     }
 
     private static void addPlayers(BossBar bar, Kingdom kingdom) {

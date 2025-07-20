@@ -41,7 +41,11 @@ public class CoreProtectionListener implements Listener {
                 return;
             }
             Village attackerVillage = VillageManager.getByPlayer(event.getPlayer().getUniqueId());
-            boolean allowed = attackerVillage != null && owner.getKingdom() != null && attackerVillage.getKingdom() != null && WarManager.isAtWar(owner.getKingdom(), attackerVillage.getKingdom());
+            boolean allowed = attackerVillage != null
+                    && owner.getKingdom() != null
+                    && attackerVillage.getKingdom() != null
+                    && WarManager.isAtWar(owner.getKingdom(), attackerVillage.getKingdom())
+                    && !owner.getKingdom().equalsIgnoreCase(attackerVillage.getKingdom());
             if (!allowed) {
                 event.setCancelled(true);
                 event.getPlayer().sendMessage("§c코어는 명령어로만 제거할 수 있습니다.");
@@ -60,6 +64,8 @@ public class CoreProtectionListener implements Listener {
                         return;
                     } else {
                         WarBossBarManager.remove(war, owner.getName());
+                        event.setCancelled(false);
+                        event.getBlock().setType(org.bukkit.Material.AIR);
                     }
                 }
                 WarManager.coreDestroyed(owner, me.continent.kingdom.KingdomManager.getByName(attackerVillage.getKingdom()));
