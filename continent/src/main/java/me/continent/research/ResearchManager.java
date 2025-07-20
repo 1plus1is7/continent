@@ -121,12 +121,23 @@ public class ResearchManager {
                 return;
             }
         }
+        double cost = node.getGoldCost();
+        if (kingdom.getTreasury() < cost) {
+            player.sendMessage("§c국고가 부족합니다.");
+            return;
+        }
+
+        kingdom.removeGold(cost);
+        me.continent.kingdom.KingdomStorage.save(kingdom);
+
         player.sendMessage("§a연구를 시작합니다: " + node.getId());
+        player.sendMessage("§e연구 비용 " + cost + "G 차감");
         new BukkitRunnable() {
             @Override
             public void run() {
                 kingdom.getResearchedNodes().add(node.getId());
                 player.sendMessage("§e연구 완료: " + node.getId());
+                me.continent.kingdom.KingdomStorage.save(kingdom);
             }
         }.runTaskLater(ContinentPlugin.getInstance(), 20L * 5); // 5초 테스트용
     }
