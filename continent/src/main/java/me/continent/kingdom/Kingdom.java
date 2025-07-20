@@ -16,6 +16,9 @@ public class Kingdom {
     private final Map<UUID, String> roles = new HashMap<>();
     private final Set<String> researchedNodes = new HashSet<>();
     private final Set<String> specialties = new HashSet<>();
+    private final Set<String> selectedResearchTrees = new HashSet<>();
+    private final Set<String> selectedT4Nodes = new HashSet<>();
+    private int researchSlots = 1;
 
     public Kingdom(String name, UUID leader, Village capital) {
         this.name = name;
@@ -102,5 +105,21 @@ public class Kingdom {
 
     public Set<String> getSpecialties() {
         return specialties;
+    }
+
+    public Set<String> getSelectedResearchTrees() {
+        return selectedResearchTrees;
+    }
+
+    public Set<String> getSelectedT4Nodes() {
+        return selectedT4Nodes;
+    }
+
+    public int getResearchSlots() {
+        return researchSlots;
+    }
+
+    public void setResearchSlots(int researchSlots) {
+        this.researchSlots = researchSlots;
     }
 }
