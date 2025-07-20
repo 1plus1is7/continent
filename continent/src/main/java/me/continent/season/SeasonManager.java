@@ -1,0 +1,169 @@
+package me.continent.season;
+
+import me.continent.ContinentPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class SeasonManager implements CommandExecutor {
+    private static ContinentPlugin plugin;
+    private static Season currentSeason = Season.SPRING;
+    private static final EnumMap<Season, Integer> seasonDurations = new EnumMap<>(Season.class);
+    private static int daysLeft = 0;
+    private static final Set<ChunkCoord> processedChunks = ConcurrentHashMap.newKeySet();
+    private static File dataFile;
+    private static int taskId = -1;
+
+    public static void init(ContinentPlugin pl) {
+        plugin = pl;
+        dataFile = new File(plugin.getDataFolder(), "season.yml");
+        loadData();
+        SeasonLeafManager.init(plugin);
+        startScheduler();
+        SeasonVisuals.start();
+    }
+
+    public static void shutdown() {
+        SeasonLeafManager.save();
+        saveData();
+        SeasonVisuals.stop();
+        if (taskId != -1) Bukkit.getScheduler().cancelTask(taskId);
+    }
+
+    private static void startScheduler() {
+        if (taskId != -1) Bukkit.getScheduler().cancelTask(taskId);
+        long dayTicks = 24000L;
+        taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, SeasonManager::tick, dayTicks, dayTicks);
+    }
+
+    private static void tick() {
+        daysLeft--;
+        if (daysLeft <= 0) {
+            skipSeason();
+        }
+    }
+
+    public static Season getCurrentSeason() {
+        return currentSeason;
+    }
+
+    public static int getParticleCount(Season s) {
+        String key = "season.particles." + s.name().toLowerCase();
+        return plugin.getConfig().getInt(key, 10);
+    }
+
+    public static int getDaysLeft() {
+        return daysLeft;
+    }
+
+    public static int getProcessedChunkCount() {
+        return processedChunks.size();
+    }
+
+    public static void skipSeason() {
+        setSeason(currentSeason.next());
+    }
+
+    public static void setSeason(Season season) {
+        currentSeason = season;
+        daysLeft = seasonDurations.getOrDefault(season, 1);
+        processedChunks.clear();
+        switch (season) {
+            case AUTUMN -> {
+                for (World world : Bukkit.getWorlds()) {
+                    SeasonLeafManager.generateLeavesAsync(Arrays.asList(world.getLoadedChunks()), processedChunks);
+                }
+            }
+            case WINTER -> SeasonLeafManager.removeLeafPiles();
+            case SPRING -> SeasonTreeController.onSpring();
+            case SUMMER -> SeasonTreeController.onSummer();
+        }
+        SeasonVisuals.start();
+    }
+
+    public static void reloadConfig() {
+        plugin.reloadConfig();
+        FileConfiguration cfg = plugin.getConfig();
+        for (Season s : Season.values()) {
+            int days = cfg.getInt("season.durations." + s.name().toLowerCase(), 1);
+            seasonDurations.put(s, days);
+        }
+    }
+
+    private static void loadData() {
+        reloadConfig();
+        if (dataFile.exists()) {
+            FileConfiguration cfg = YamlConfiguration.loadConfiguration(dataFile);
+            try {
+                currentSeason = Season.valueOf(cfg.getString("season", "SPRING"));
+            } catch (IllegalArgumentException e) {
+                currentSeason = Season.SPRING;
+            }
+            daysLeft = cfg.getInt("daysLeft", seasonDurations.getOrDefault(currentSeason, 1));
+        } else {
+            currentSeason = Season.SPRING;
+            daysLeft = seasonDurations.getOrDefault(currentSeason, 1);
+        }
+    }
+
+    private static void saveData() {
+        FileConfiguration cfg = new YamlConfiguration();
+        cfg.set("season", currentSeason.name());
+        cfg.set("daysLeft", daysLeft);
+        try {
+            cfg.save(dataFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (args.length == 0) {
+            sender.sendMessage("§6[Season Command]");
+            sender.sendMessage("§e/season info §7- 현재 시즌 정보");
+            sender.sendMessage("§e/season set <season> §7- 시즌 설정");
+            sender.sendMessage("§e/season skip §7- 다음 시즌으로 이동");
+            sender.sendMessage("§e/season reload §7- 설정 리로드");
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("info")) {
+            sender.sendMessage("§6[Season] §f현재 시즌: §e" + currentSeason);
+            sender.sendMessage("§6[Season] §f남은 일수: §e" + daysLeft);
+            sender.sendMessage("§6[Season] §f처리된 청크: §e" + processedChunks.size());
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("set") && args.length >= 2) {
+            try {
+                Season season = Season.valueOf(args[1].toUpperCase());
+                setSeason(season);
+                sender.sendMessage("§a시즌을 " + season + " 로 설정했습니다.");
+            } catch (IllegalArgumentException e) {
+                sender.sendMessage("§c잘못된 시즌입니다.");
+            }
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("skip")) {
+            skipSeason();
+            sender.sendMessage("§a다음 시즌으로 이동했습니다: " + currentSeason);
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("reload")) {
+            reloadConfig();
+            sender.sendMessage("§a시즌 설정을 리로드했습니다.");
+            return true;
+        }
+        sender.sendMessage("§c알 수 없는 하위 명령어입니다.");
+        return true;
+    }
+}
