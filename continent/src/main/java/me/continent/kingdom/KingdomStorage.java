@@ -29,6 +29,7 @@ public class KingdomStorage {
         config.set("unpaidWeeks", kingdom.getUnpaidWeeks());
         config.set("lastMaintenance", kingdom.getLastMaintenance());
         config.set("researched", new ArrayList<>(kingdom.getResearchedNodes()));
+        config.set("specialties", new ArrayList<>(kingdom.getSpecialties()));
 
         Map<String, String> roleMap = new HashMap<>();
         for (Map.Entry<UUID, String> e : kingdom.getRoles().entrySet()) {
@@ -58,6 +59,7 @@ public class KingdomStorage {
             int unpaidWeeks = config.getInt("unpaidWeeks", 0);
             long lastMaintenance = config.getLong("lastMaintenance", 0);
             List<String> researched = config.getStringList("researched");
+            List<String> specialties = config.getStringList("specialties");
             Map<String, Object> rolesObj = config.getConfigurationSection("roles") != null ? config.getConfigurationSection("roles").getValues(false) : new HashMap<>();
 
             Kingdom kingdom = new Kingdom(name, leader, VillageManager.getByName(capitalName));
@@ -67,6 +69,7 @@ public class KingdomStorage {
             kingdom.setUnpaidWeeks(unpaidWeeks);
             kingdom.setLastMaintenance(lastMaintenance);
             kingdom.getResearchedNodes().addAll(researched);
+            kingdom.getSpecialties().addAll(specialties);
             for (Map.Entry<String, Object> e : rolesObj.entrySet()) {
                 kingdom.getRoles().put(UUID.fromString(e.getKey()), Objects.toString(e.getValue(), ""));
             }

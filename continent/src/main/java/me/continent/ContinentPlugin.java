@@ -32,6 +32,7 @@ import me.continent.research.ResearchListener;
 import me.continent.research.ResearchManager;
 import me.continent.specialty.SpecialtyManager;
 import me.continent.specialty.SpecialtyListener;
+import me.continent.kingdom.service.KingdomSpecialtyListener;
 
 public class ContinentPlugin extends JavaPlugin {
     private static ContinentPlugin instance;
@@ -83,6 +84,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CropListener(), this);
         getServer().getPluginManager().registerEvents(new ResearchListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.specialty.SpecialtyListener(), this);
+        getServer().getPluginManager().registerEvents(new KingdomSpecialtyListener(), this);
 
 
 
