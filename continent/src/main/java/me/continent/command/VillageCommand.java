@@ -16,11 +16,10 @@ import org.bukkit.block.Block;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 
-public class VillageCommand implements CommandExecutor {
+public class VillageCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
@@ -606,5 +605,36 @@ public class VillageCommand implements CommandExecutor {
             return true;
         }
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> subs = Arrays.asList(
+                "create", "disband", "claim", "invite", "invites", "accept", "deny",
+                "members", "leave", "kick", "rename", "list", "setspawn", "setcore",
+                "spawn", "chest", "ignite", "upkeep", "treasury", "confirm", "chat"
+        );
+
+        if (args.length == 1) {
+            return subs.stream()
+                    .filter(s -> s.startsWith(args[0].toLowerCase()))
+                    .toList();
+        }
+
+        if (args.length == 2 && (args[0].equalsIgnoreCase("invite") || args[0].equalsIgnoreCase("kick")
+                || args[0].equalsIgnoreCase("pay"))) {
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(n -> n.toLowerCase().startsWith(args[1].toLowerCase()))
+                    .toList();
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("ignite")) {
+            return Arrays.asList("on", "off").stream()
+                    .filter(s -> s.startsWith(args[1].toLowerCase()))
+                    .toList();
+        }
+
+        return Collections.emptyList();
     }
 }

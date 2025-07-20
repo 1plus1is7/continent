@@ -7,11 +7,10 @@ import me.continent.player.PlayerDataManager;
 import org.bukkit.Material;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import org.bukkit.inventory.ItemStack;
 
-public class GoldCommand implements CommandExecutor {
+public class GoldCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -158,5 +157,25 @@ public class GoldCommand implements CommandExecutor {
         // ✅ 알 수 없는 명령어
         player.sendMessage("§c알 수 없는 하위 명령어입니다. /gold 를 입력해 도움말을 확인하세요.");
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> subs = Arrays.asList("convert", "exchange", "balance", "pay");
+
+        if (args.length == 1) {
+            return subs.stream()
+                    .filter(s -> s.startsWith(args[0].toLowerCase()))
+                    .toList();
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("pay")) {
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(n -> n.toLowerCase().startsWith(args[1].toLowerCase()))
+                    .toList();
+        }
+
+        return Collections.emptyList();
     }
 }

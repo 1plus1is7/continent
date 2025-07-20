@@ -11,12 +11,11 @@ import me.continent.storage.VillageStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import java.util.UUID;
+import java.util.*;
 
-public class KingdomCommand implements CommandExecutor {
+public class KingdomCommand implements TabExecutor {
     private static final int CREATE_COST = 100;
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -460,5 +459,30 @@ public class KingdomCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> subs = Arrays.asList(
+                "create", "disband", "info", "list", "members", "setcapital",
+                "setking", "addvillage", "removevillage", "accept", "deny",
+                "leave", "treasury", "specialty", "chat", "spawn"
+        );
+
+        if (args.length == 1) {
+            return subs.stream()
+                    .filter(s -> s.startsWith(args[0].toLowerCase()))
+                    .toList();
+        }
+
+        if (args.length == 2 && (args[0].equalsIgnoreCase("setking") || args[0].equalsIgnoreCase("addvillage")
+                || args[0].equalsIgnoreCase("removevillage"))) {
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(n -> n.toLowerCase().startsWith(args[1].toLowerCase()))
+                    .toList();
+        }
+
+        return Collections.emptyList();
     }
 }

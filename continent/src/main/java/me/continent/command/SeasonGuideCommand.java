@@ -1,14 +1,13 @@
 package me.continent.command;
 
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
+import java.util.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-public class SeasonGuideCommand implements CommandExecutor {
+public class SeasonGuideCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player player)) {
@@ -32,5 +31,10 @@ public class SeasonGuideCommand implements CommandExecutor {
         player.getInventory().addItem(book);
         player.sendMessage("§a계절 가이드 책을 받았습니다.");
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        return Collections.emptyList();
     }
 }
