@@ -23,3 +23,6 @@ commands:
   seasonguide:
     description: Gives a guide book about the season system
     usage: /seasonguide
+  specialty:
+    description: Specialty goods command
+    usage: /specialty <subcommand>
