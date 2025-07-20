@@ -26,7 +26,7 @@ public class KingdomCommand implements TabExecutor {
 
         if (args.length == 0) {
             player.sendMessage("§6[Kingdom 명령어]");
-            player.sendMessage("§e/kingdom create <이름> <수도> §7- 국가 생성");
+            player.sendMessage("§e/kingdom create <이름> [수도] §7- 국가 생성");
             player.sendMessage("§e/kingdom disband §7- 국가 해산");
             player.sendMessage("§e/kingdom info §7- 국가 정보");
             player.sendMessage("§e/kingdom list §7- 국가 목록");
@@ -45,14 +45,14 @@ public class KingdomCommand implements TabExecutor {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("create") && args.length >= 3) {
+        if (args[0].equalsIgnoreCase("create") && args.length >= 2) {
             String name = args[1];
-            String capitalName = args[2];
             Village village = VillageManager.getByPlayer(player.getUniqueId());
             if (village == null || !village.isAuthorized(player.getUniqueId())) {
                 player.sendMessage("§c자신의 마을의 국왕만 국가를 생성할 수 있습니다.");
                 return true;
             }
+            String capitalName = args.length >= 3 ? args[2] : village.getName();
             if (!village.getName().equalsIgnoreCase(capitalName)) {
                 player.sendMessage("§c수도 마을은 자신의 마을만 지정할 수 있습니다.");
                 return true;
