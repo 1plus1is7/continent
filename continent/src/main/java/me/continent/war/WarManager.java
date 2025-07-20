@@ -101,7 +101,17 @@ public class WarManager {
         if (war == null) return;
         war.addDestroyedVillage(village.getName(), attacker.getName());
         WarBossBarManager.remove(war, village.getName());
+        CoreService.removeCore(village);
         Bukkit.broadcastMessage("§c[전쟁] §f" + village.getName() + " 마을의 코어가 파괴되었습니다!");
+
+        Kingdom victim = KingdomManager.getByName(village.getKingdom());
+        if (victim != null && victim.getCapital() != null
+                && victim.getCapital().equalsIgnoreCase(village.getName())) {
+            Bukkit.broadcastMessage("§e[전쟁] §f" + victim.getName()
+                    + " 국가의 수도가 파괴되어 전쟁이 종료됩니다.");
+            surrender(victim);
+            return;
+        }
     }
 
     public static boolean isPlayerBanned(UUID uuid) {
