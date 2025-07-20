@@ -4,18 +4,16 @@ import me.continent.ContinentPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
+import java.util.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SeasonManager implements CommandExecutor {
+public class SeasonManager implements TabExecutor {
     private static ContinentPlugin plugin;
     private static Season currentSeason = Season.SPRING;
     private static final EnumMap<Season, Integer> seasonDurations = new EnumMap<>(Season.class);
@@ -243,5 +241,26 @@ public class SeasonManager implements CommandExecutor {
         }
         sender.sendMessage("§c알 수 없는 하위 명령어입니다.");
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> subs = Arrays.asList("info", "set", "skip", "reload", "rain");
+
+        if (args.length == 1) {
+            return subs.stream()
+                    .filter(s -> s.startsWith(args[0].toLowerCase()))
+                    .toList();
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("set")) {
+            return Arrays.stream(Season.values())
+                    .map(Enum::name)
+                    .map(String::toLowerCase)
+                    .filter(n -> n.startsWith(args[1].toLowerCase()))
+                    .toList();
+        }
+
+        return Collections.emptyList();
     }
 }

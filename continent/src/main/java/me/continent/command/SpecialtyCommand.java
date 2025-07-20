@@ -2,14 +2,12 @@ package me.continent.command;
 
 import me.continent.specialty.SpecialtyGood;
 import me.continent.specialty.SpecialtyManager;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
+import java.util.*;
 
-public class SpecialtyCommand implements CommandExecutor {
+public class SpecialtyCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player player)) {
@@ -64,5 +62,25 @@ public class SpecialtyCommand implements CommandExecutor {
 
         player.sendMessage("§c알 수 없는 하위 명령어입니다.");
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> subs = Arrays.asList("list", "produce");
+
+        if (args.length == 1) {
+            return subs.stream()
+                    .filter(s -> s.startsWith(args[0].toLowerCase()))
+                    .toList();
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("produce")) {
+            return SpecialtyManager.getAll().stream()
+                    .map(SpecialtyGood::getId)
+                    .filter(id -> id.toLowerCase().startsWith(args[1].toLowerCase()))
+                    .toList();
+        }
+
+        return Collections.emptyList();
     }
 }
