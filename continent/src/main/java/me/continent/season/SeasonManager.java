@@ -23,18 +23,23 @@ public class SeasonManager implements CommandExecutor {
     private static final Set<ChunkCoord> processedChunks = ConcurrentHashMap.newKeySet();
     private static File dataFile;
     private static int taskId = -1;
+    private static boolean rainySeason = false;
+    private static int rainyStart = -1;
+    private static int rainyDays = 0;
 
     public static void init(ContinentPlugin pl) {
         plugin = pl;
         dataFile = new File(plugin.getDataFolder(), "season.yml");
         loadData();
         SeasonLeafManager.init(plugin);
+        LeafPileManager.init(plugin);
         startScheduler();
         SeasonVisuals.start();
     }
 
     public static void shutdown() {
         SeasonLeafManager.save();
+        LeafPileManager.save();
         saveData();
         SeasonVisuals.stop();
         if (taskId != -1) Bukkit.getScheduler().cancelTask(taskId);
@@ -48,6 +53,21 @@ public class SeasonManager implements CommandExecutor {
 
     private static void tick() {
         daysLeft--;
+        if (currentSeason == Season.SUMMER) {
+            if (!rainySeason && rainyStart != -1 && daysLeft == rainyStart) {
+                startRainySeason();
+            } else if (rainySeason) {
+                if (rainyDays <= 0) {
+                    stopRainySeason();
+                } else {
+                    rainyDays--;
+                    for (World world : Bukkit.getWorlds()) {
+                        world.setStorm(true);
+                        world.setWeatherDuration(24000);
+                    }
+                }
+            }
+        }
         if (daysLeft <= 0) {
             skipSeason();
         }
@@ -70,6 +90,10 @@ public class SeasonManager implements CommandExecutor {
         return processedChunks.size();
     }
 
+    public static boolean isRainySeason() {
+        return rainySeason;
+    }
+
     public static void skipSeason() {
         setSeason(currentSeason.next());
     }
@@ -83,10 +107,24 @@ public class SeasonManager implements CommandExecutor {
                 for (World world : Bukkit.getWorlds()) {
                     SeasonLeafManager.generateLeavesAsync(Arrays.asList(world.getLoadedChunks()), processedChunks);
                 }
+                LeafPileManager.start();
+                stopRainySeason();
             }
-            case WINTER -> SeasonLeafManager.removeLeafPiles();
-            case SPRING -> SeasonTreeController.onSpring();
-            case SUMMER -> SeasonTreeController.onSummer();
+            case WINTER -> {
+                SeasonLeafManager.removeLeafPiles();
+                LeafPileManager.removeAll();
+                stopRainySeason();
+            }
+            case SPRING -> {
+                SeasonTreeController.onSpring();
+                LeafPileManager.stop();
+                stopRainySeason();
+            }
+            case SUMMER -> {
+                SeasonTreeController.onSummer();
+                scheduleRainySeason();
+                LeafPileManager.stop();
+            }
         }
         SeasonVisuals.start();
     }
@@ -127,6 +165,33 @@ public class SeasonManager implements CommandExecutor {
         }
     }
 
+    private static void scheduleRainySeason() {
+        int total = seasonDurations.getOrDefault(Season.SUMMER, daysLeft);
+        rainyDays = 3 + new Random().nextInt(3); // 3-5
+        int maxStart = Math.max(0, total - rainyDays);
+        rainyStart = total - new Random().nextInt(maxStart + 1);
+        rainySeason = false;
+    }
+
+    private static void startRainySeason() {
+        rainySeason = true;
+        rainyDays--; // current day counts as first
+        for (World world : Bukkit.getWorlds()) {
+            world.setStorm(true);
+            world.setWeatherDuration(24000);
+        }
+    }
+
+    private static void stopRainySeason() {
+        if (!rainySeason && rainyStart == -1) return;
+        rainySeason = false;
+        rainyStart = -1;
+        rainyDays = 0;
+        for (World world : Bukkit.getWorlds()) {
+            world.setStorm(false);
+        }
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 0) {
@@ -135,6 +200,7 @@ public class SeasonManager implements CommandExecutor {
             sender.sendMessage("§e/season set <season> §7- 시즌 설정");
             sender.sendMessage("§e/season skip §7- 다음 시즌으로 이동");
             sender.sendMessage("§e/season reload §7- 설정 리로드");
+            sender.sendMessage("§e/season rain §7- 우기 토글");
             return true;
         }
         if (args[0].equalsIgnoreCase("info")) {
@@ -161,6 +227,18 @@ public class SeasonManager implements CommandExecutor {
         if (args[0].equalsIgnoreCase("reload")) {
             reloadConfig();
             sender.sendMessage("§a시즌 설정을 리로드했습니다.");
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("rain")) {
+            if (rainySeason) {
+                stopRainySeason();
+                sender.sendMessage("§a우기를 종료했습니다.");
+            } else {
+                rainyDays = 3;
+                rainyStart = 0;
+                startRainySeason();
+                sender.sendMessage("§a우기를 시작했습니다.");
+            }
             return true;
         }
         sender.sendMessage("§c알 수 없는 하위 명령어입니다.");

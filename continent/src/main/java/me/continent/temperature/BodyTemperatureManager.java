@@ -4,10 +4,10 @@ import me.continent.ContinentPlugin;
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import me.continent.utils.ShelterLevel;
 
 public class BodyTemperatureManager {
     private static int taskId = -1;
@@ -46,9 +46,13 @@ public class BodyTemperatureManager {
         double change = 0.0;
         if (player.isInWater()) {
             change -= 3.0;
-        } else if (isIndoors(player)) {
-            change -= 3.0;
-        } else if (wearingIronArmor(player)) {
+        } else {
+            ShelterLevel level = ShelterLevel.getShelterLevel(player);
+            if (level == ShelterLevel.INDOOR) {
+                change -= 3.0;
+            }
+        }
+        if (wearingIronArmor(player)) {
             change += 2.5;
         }
 
@@ -56,12 +60,6 @@ public class BodyTemperatureManager {
         change += (env - 36.5) * 0.02;
 
         return change;
-    }
-
-    private static boolean isIndoors(Player player) {
-        Location loc = player.getLocation();
-        int highest = player.getWorld().getHighestBlockYAt(loc);
-        return highest > loc.getBlockY() + 1;
     }
 
     private static boolean wearingIronArmor(Player player) {
