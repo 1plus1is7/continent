@@ -36,12 +36,17 @@ public class VillageUtils {
         return true;
     }
 
-    // BFS 기반 연결 확인 함수
+    // BFS로 청크 연결 여부 확인
     private static boolean isConnected(Set<String> claims, String startKey) {
+        if (claims.isEmpty()) return true; // 영토가 없는 경우 연결 확인 필요 없음
+
         Set<String> visited = new HashSet<>();
-        Queue<String> queue = new LinkedList<>();
-        queue.add(startKey);
+        Deque<String> queue = new ArrayDeque<>();
         visited.add(startKey);
+        queue.add(startKey);
+
+        // 상하좌우 이동 벡터 미리 정의
+        final int[][] dirs = { {1,0}, {-1,0}, {0,1}, {0,-1} };
 
         while (!queue.isEmpty()) {
             String current = queue.poll();
@@ -50,17 +55,19 @@ public class VillageUtils {
             int x = Integer.parseInt(parts[1]);
             int z = Integer.parseInt(parts[2]);
 
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dz = -1; dz <= 1; dz++) {
-                    if (Math.abs(dx) + Math.abs(dz) != 1) continue; // 상하좌우만
-                    String neighbor = world + ":" + (x + dx) + ":" + (z + dz);
-                    if (claims.contains(neighbor) && visited.add(neighbor)) {
-                        queue.add(neighbor);
+            String base = world + ":";
+            for (int[] d : dirs) {
+                String neighbor = base + (x + d[0]) + ":" + (z + d[1]);
+                if (claims.contains(neighbor) && visited.add(neighbor)) {
+                    queue.add(neighbor);
+                    // 모든 영토를 방문하면 바로 종료
+                    if (visited.size() == claims.size()) {
+                        return true;
                     }
                 }
             }
         }
 
-        return visited.containsAll(claims);
+        return visited.size() == claims.size();
     }
 }
