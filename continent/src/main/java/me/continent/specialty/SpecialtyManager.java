@@ -34,4 +34,11 @@ public class SpecialtyManager {
     public static Collection<SpecialtyGood> getAll() {
         return goods.values();
     }
+
+    public static SpecialtyGood getByModel(int modelData) {
+        for (SpecialtyGood g : goods.values()) {
+            if (g.getModelData() == modelData) return g;
+        }
+        return null;
+    }
 }

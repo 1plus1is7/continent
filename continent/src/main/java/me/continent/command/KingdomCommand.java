@@ -40,6 +40,7 @@ public class KingdomCommand implements CommandExecutor {
             player.sendMessage("§e/kingdom deny <국가명> §7- 초대 거절");
             player.sendMessage("§e/kingdom leave §7- 국가 탈퇴");
             player.sendMessage("§e/kingdom treasury <subcommand> §7- 국고 관리");
+            player.sendMessage("§e/kingdom specialty §7- 특산품 관리 GUI 열기");
             player.sendMessage("§e/kingdom chat §7- 국가 채팅 토글");
             player.sendMessage("§e/kingdom spawn [마을명] §7- 마을 스폰으로 이동");
             return true;
@@ -386,6 +387,21 @@ public class KingdomCommand implements CommandExecutor {
                 return true;
             }
             player.sendMessage("§c잘못된 하위 명령어입니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("specialty")) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null || village.getKingdom() == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            if (!kingdom.getLeader().equals(player.getUniqueId())) {
+                player.sendMessage("§c국왕만 특산품을 관리할 수 있습니다.");
+                return true;
+            }
+            me.continent.kingdom.service.KingdomSpecialtyService.openMenu(player, kingdom);
             return true;
         }
 
