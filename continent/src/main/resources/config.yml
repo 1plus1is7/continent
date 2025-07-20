@@ -17,6 +17,7 @@ symbols:
 lobby-world: "lobby"
 land-world: "world"
 season:
+  enabled: true
   durations:
     spring: 500
     summer: 700
