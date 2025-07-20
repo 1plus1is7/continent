@@ -16,7 +16,14 @@ public class ResearchListener implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         Inventory inv = event.getInventory();
-        if (inv.getHolder() instanceof ResearchManager.ResearchHolder holder) {
+        if (inv.getHolder() instanceof ResearchManager.TreeHolder holder) {
+            event.setCancelled(true);
+            ItemStack item = event.getCurrentItem();
+            if (item == null) return;
+            String tree = item.getItemMeta() != null ? item.getItemMeta().getDisplayName() : null;
+            if (tree == null) return;
+            ResearchManager.openTreeMenu((org.bukkit.entity.Player) event.getWhoClicked(), tree);
+        } else if (inv.getHolder() instanceof ResearchManager.NodeHolder holder) {
             event.setCancelled(true);
             ItemStack item = event.getCurrentItem();
             if (item == null) return;

@@ -53,15 +53,45 @@ public class ResearchManager {
             player.sendMessage("§c소속된 국가가 없습니다.");
             return;
         }
-        Inventory inv = Bukkit.createInventory(new ResearchHolder(kingdom), 54, "Research");
-        ResearchHolder holder = (ResearchHolder) inv.getHolder();
+        Set<String> trees = new LinkedHashSet<>();
+        for (ResearchNode node : nodes.values()) {
+            trees.add(node.getTree());
+        }
+        int size = ((trees.size() - 1) / 9 + 1) * 9;
+        Inventory inv = Bukkit.createInventory(new TreeHolder(kingdom), size, "Research Trees");
+        TreeHolder holder = (TreeHolder) inv.getHolder();
         holder.setInventory(inv);
         int slot = 0;
-        for (ResearchNode node : nodes.values()) {
+        for (String tree : trees) {
+            ItemStack item = new ItemStack(Material.PAPER);
+            ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName(tree);
+            item.setItemMeta(meta);
+            inv.setItem(slot++, item);
+        }
+        player.openInventory(inv);
+    }
+
+    public static void openTreeMenu(Player player, String tree) {
+        Kingdom kingdom = getKingdom(player);
+        if (kingdom == null) {
+            player.sendMessage("§c소속된 국가가 없습니다.");
+            return;
+        }
+        List<ResearchNode> list = nodes.values().stream()
+                .filter(n -> n.getTree().equalsIgnoreCase(tree))
+                .sorted(Comparator.comparingInt(ResearchNode::getTier))
+                .toList();
+        Inventory inv = Bukkit.createInventory(new NodeHolder(kingdom, tree), 54, tree + " Research");
+        NodeHolder holder = (NodeHolder) inv.getHolder();
+        holder.setInventory(inv);
+        int slot = 0;
+        for (ResearchNode node : list) {
             ItemStack item = new ItemStack(Material.BOOK);
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(node.getId());
             List<String> lore = new ArrayList<>();
+            lore.add("Tier " + node.getTier());
             lore.add(node.getEffect());
             lore.add("Cost: " + node.getCost());
             lore.add("Time: " + node.getTime());
@@ -109,13 +139,28 @@ public class ResearchManager {
         return KingdomManager.getByName(kName);
     }
 
-    static class ResearchHolder implements org.bukkit.inventory.InventoryHolder {
+    static class TreeHolder implements org.bukkit.inventory.InventoryHolder {
         private final Kingdom kingdom;
         private Inventory inventory;
-        ResearchHolder(Kingdom kingdom) { this.kingdom = kingdom; }
+        TreeHolder(Kingdom kingdom) { this.kingdom = kingdom; }
         void setInventory(Inventory inv) { this.inventory = inv; }
         @Override
         public Inventory getInventory() { return inventory; }
         public Kingdom getKingdom() { return kingdom; }
+    }
+
+    static class NodeHolder implements org.bukkit.inventory.InventoryHolder {
+        private final Kingdom kingdom;
+        private final String tree;
+        private Inventory inventory;
+        NodeHolder(Kingdom kingdom, String tree) {
+            this.kingdom = kingdom;
+            this.tree = tree;
+        }
+        void setInventory(Inventory inv) { this.inventory = inv; }
+        @Override
+        public Inventory getInventory() { return inventory; }
+        public Kingdom getKingdom() { return kingdom; }
+        public String getTree() { return tree; }
     }
 }
