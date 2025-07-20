@@ -6,11 +6,13 @@ import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.ChatColor;
 
 public class ResearchListener implements Listener {
     @EventHandler
@@ -19,16 +21,24 @@ public class ResearchListener implements Listener {
         if (inv.getHolder() instanceof ResearchManager.TreeHolder holder) {
             event.setCancelled(true);
             ItemStack item = event.getCurrentItem();
-            if (item == null) return;
-            String tree = item.getItemMeta() != null ? item.getItemMeta().getDisplayName() : null;
-            if (tree == null) return;
-            ResearchManager.openTreeMenu((org.bukkit.entity.Player) event.getWhoClicked(), tree);
+            if (item == null || item.getItemMeta() == null) return;
+            String name = ChatColor.stripColor(item.getItemMeta().getDisplayName());
+            String tree = name.contains(" ") ? name.substring(name.indexOf(' ') + 1) : name;
+            if (event.getClick() == ClickType.DOUBLE_CLICK) {
+                ResearchManager.toggleTreeSelect((org.bukkit.entity.Player) event.getWhoClicked(), tree);
+            } else {
+                ResearchManager.openNodeMenu((org.bukkit.entity.Player) event.getWhoClicked(), tree);
+            }
         } else if (inv.getHolder() instanceof ResearchManager.NodeHolder holder) {
             event.setCancelled(true);
+            int slot = event.getRawSlot();
+            if (slot == 53) {
+                ResearchManager.openTreeSelect((org.bukkit.entity.Player) event.getWhoClicked());
+                return;
+            }
             ItemStack item = event.getCurrentItem();
-            if (item == null) return;
-            String id = item.getItemMeta() != null ? item.getItemMeta().getDisplayName() : null;
-            if (id == null) return;
+            if (item == null || item.getItemMeta() == null) return;
+            String id = ChatColor.stripColor(item.getItemMeta().getDisplayName());
             ResearchNode node = ResearchManager.getAllNodes().stream()
                     .filter(n -> n.getId().equals(id))
                     .findFirst().orElse(null);
@@ -57,6 +67,6 @@ public class ResearchListener implements Listener {
         }
 
         event.setCancelled(true);
-        ResearchManager.openMenu(event.getPlayer());
+        ResearchManager.openTreeSelect(event.getPlayer());
     }
 }
