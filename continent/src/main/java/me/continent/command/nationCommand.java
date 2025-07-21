@@ -533,12 +533,32 @@ public class nationCommand implements TabExecutor {
                     .toList();
         }
 
-        if (args.length == 2 && (args[0].equalsIgnoreCase("setking") || args[0].equalsIgnoreCase("addvillage")
-                || args[0].equalsIgnoreCase("removevillage"))) {
-            return Bukkit.getOnlinePlayers().stream()
-                    .map(Player::getName)
-                    .filter(n -> n.toLowerCase().startsWith(args[1].toLowerCase()))
-                    .toList();
+        if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("setking")) {
+                return Bukkit.getOnlinePlayers().stream()
+                        .map(Player::getName)
+                        .filter(n -> n.toLowerCase().startsWith(args[1].toLowerCase()))
+                        .toList();
+            }
+            if (args[0].equalsIgnoreCase("addvillage")) {
+                return VillageManager.getAll().stream()
+                        .filter(v -> v.getnation() == null)
+                        .map(Village::getName)
+                        .filter(n -> n.toLowerCase().startsWith(args[1].toLowerCase()))
+                        .toList();
+            }
+            if (args[0].equalsIgnoreCase("removevillage") && sender instanceof Player p) {
+                Village v = VillageManager.getByPlayer(p.getUniqueId());
+                if (v != null && v.getnation() != null) {
+                    nation kingdom = nationManager.getByName(v.getnation());
+                    if (kingdom != null) {
+                        return kingdom.getVillages().stream()
+                                .filter(name -> !name.equalsIgnoreCase(kingdom.getCapital()))
+                                .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
+                                .toList();
+                    }
+                }
+            }
         }
 
         return Collections.emptyList();
