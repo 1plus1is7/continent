@@ -25,7 +25,11 @@ public class nationManageListener implements Listener {
             } else if (slot == 14) {
                 nationVillageManageService.openMenu(player, kingdom);
             } else if (slot == 16) {
-                player.sendMessage("§e방어권 기능은 아직 구현되지 않았습니다.");
+                boolean newState = !kingdom.isTerritoryProtectionEnabled();
+                kingdom.setTerritoryProtectionEnabled(newState);
+                me.continent.nation.nationStorage.save(kingdom);
+                player.sendMessage("§a방어권이 " + (newState ? "활성화" : "비활성화") + "되었습니다.");
+                nationManageService.openMenu(player, kingdom);
             }
         }
     }

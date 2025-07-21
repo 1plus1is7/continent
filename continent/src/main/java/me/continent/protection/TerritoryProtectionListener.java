@@ -3,6 +3,8 @@ package me.continent.protection;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import me.continent.war.WarManager;
+import me.continent.nation.nationManager;
+import me.continent.nation.nation;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -29,6 +31,10 @@ public class TerritoryProtectionListener implements Listener {
 
         Village owner = VillageManager.getByChunk(chunk);
         if (owner == null) return; // 야생
+        if (owner.getnation() != null) {
+            nation k = nationManager.getByName(owner.getnation());
+            if (k != null && !k.isTerritoryProtectionEnabled()) return;
+        }
 
         Village playerVillage = VillageManager.getByPlayer(player.getUniqueId());
 
@@ -53,6 +59,10 @@ public class TerritoryProtectionListener implements Listener {
 
         Village owner = VillageManager.getByChunk(chunk);
         if (owner == null) return;
+        if (owner.getnation() != null) {
+            nation k = nationManager.getByName(owner.getnation());
+            if (k != null && !k.isTerritoryProtectionEnabled()) return;
+        }
 
         Village playerVillage = VillageManager.getByPlayer(player.getUniqueId());
 
@@ -76,9 +86,15 @@ public class TerritoryProtectionListener implements Listener {
             // farmland trampling
             if (event.getClickedBlock().getType() == Material.FARMLAND) {
                 Village owner = VillageManager.getByChunk(event.getClickedBlock().getChunk());
-                if (owner != null && !owner.getMembers().contains(event.getPlayer().getUniqueId())) {
-                    event.setCancelled(true);
-                    return;
+                if (owner != null) {
+                    if (owner.getnation() != null) {
+                        nation k = nationManager.getByName(owner.getnation());
+                        if (k != null && !k.isTerritoryProtectionEnabled()) return;
+                    }
+                    if (!owner.getMembers().contains(event.getPlayer().getUniqueId())) {
+                        event.setCancelled(true);
+                        return;
+                    }
                 }
             }
         }
@@ -86,6 +102,10 @@ public class TerritoryProtectionListener implements Listener {
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
             Village owner = VillageManager.getByChunk(event.getClickedBlock().getChunk());
             if (owner == null) return;
+            if (owner.getnation() != null) {
+                nation k = nationManager.getByName(owner.getnation());
+                if (k != null && !k.isTerritoryProtectionEnabled()) return;
+            }
 
             Village playerVillage = VillageManager.getByPlayer(event.getPlayer().getUniqueId());
             boolean allowed = false;
@@ -108,6 +128,14 @@ public class TerritoryProtectionListener implements Listener {
         Chunk chunk = event.getBlock().getChunk();
         Village owner = VillageManager.getByChunk(chunk);
         if (owner == null) return;
+        if (owner.getnation() != null) {
+            nation k = nationManager.getByName(owner.getnation());
+            if (k != null && !k.isTerritoryProtectionEnabled()) return;
+        }
+        if (owner.getnation() != null) {
+            nation k = nationManager.getByName(owner.getnation());
+            if (k != null && !k.isTerritoryProtectionEnabled()) return;
+        }
 
         Village playerVillage = VillageManager.getByPlayer(event.getPlayer().getUniqueId());
         boolean allowed = false;
@@ -152,6 +180,10 @@ public class TerritoryProtectionListener implements Listener {
 
         Village owner = VillageManager.getByChunk(event.getEntity().getLocation().getChunk());
         if (owner == null) return;
+        if (owner.getnation() != null) {
+            nation k = nationManager.getByName(owner.getnation());
+            if (k != null && !k.isTerritoryProtectionEnabled()) return;
+        }
 
         Village playerVillage = VillageManager.getByPlayer(player.getUniqueId());
         boolean allowed = false;
@@ -170,11 +202,27 @@ public class TerritoryProtectionListener implements Listener {
 
     @EventHandler
     public void onBlockExplode(BlockExplodeEvent event) {
-        event.blockList().removeIf(block -> VillageManager.getByChunk(block.getChunk()) != null);
+        event.blockList().removeIf(block -> {
+            Village v = VillageManager.getByChunk(block.getChunk());
+            if (v == null) return false;
+            if (v.getnation() != null) {
+                nation k = nationManager.getByName(v.getnation());
+                if (k != null && !k.isTerritoryProtectionEnabled()) return false;
+            }
+            return true;
+        });
     }
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
-        event.blockList().removeIf(block -> VillageManager.getByChunk(block.getChunk()) != null);
+        event.blockList().removeIf(block -> {
+            Village v = VillageManager.getByChunk(block.getChunk());
+            if (v == null) return false;
+            if (v.getnation() != null) {
+                nation k = nationManager.getByName(v.getnation());
+                if (k != null && !k.isTerritoryProtectionEnabled()) return false;
+            }
+            return true;
+        });
     }
 }

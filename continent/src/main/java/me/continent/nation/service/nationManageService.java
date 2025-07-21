@@ -23,7 +23,9 @@ public class nationManageService {
         inv.setItem(10, createItem(Material.NAME_TAG, "이름 변경"));
         inv.setItem(12, createItem(Material.BOOK, "설명 변경"));
         inv.setItem(14, createItem(Material.MAP, "마을 관리"));
-        inv.setItem(16, createItem(Material.SHIELD, "방어권"));
+        String state = kingdom.isTerritoryProtectionEnabled() ? "ON" : "OFF";
+        Material mat = kingdom.isTerritoryProtectionEnabled() ? Material.SHIELD : Material.BARRIER;
+        inv.setItem(16, createItem(mat, "방어권: " + state));
         player.openInventory(inv);
     }
 
