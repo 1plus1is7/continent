@@ -79,6 +79,7 @@ public class MaintenanceService {
     private static void run() {
         for (Kingdom kingdom : KingdomManager.getAll()) {
             charge(kingdom);
+            collectTax(kingdom);
         }
         for (Village village : VillageManager.getAll()) {
             if (village.getKingdom() == null) {
@@ -130,6 +131,38 @@ public class MaintenanceService {
         Player king = Bukkit.getPlayer(kingdom.getLeader());
         if (king != null) {
             king.sendMessage("§a국가 유지비 " + total + "G가 차감되었습니다.");
+        }
+    }
+
+    private static void collectTax(Kingdom kingdom) {
+        double rate = kingdom.getTaxRate() / 100.0;
+        if (rate <= 0) return;
+
+        double totalCollected = 0;
+        for (String vName : kingdom.getVillages()) {
+            Village village = VillageManager.getByName(vName);
+            if (village == null) continue;
+
+            double tax = village.getVault() * rate;
+            if (tax <= 0) continue;
+
+            village.removeGold(tax);
+            kingdom.addGold(tax);
+            VillageStorage.save(village);
+            totalCollected += tax;
+
+            Player king = Bukkit.getPlayer(village.getKing());
+            if (king != null) {
+                king.sendMessage("§a세금 " + tax + "G가 납부되었습니다.");
+            }
+        }
+
+        if (totalCollected > 0) {
+            KingdomStorage.save(kingdom);
+            Player k = Bukkit.getPlayer(kingdom.getLeader());
+            if (k != null) {
+                k.sendMessage("§a소속 마을에서 총 " + totalCollected + "G의 세금을 징수했습니다.");
+            }
         }
     }
 }
