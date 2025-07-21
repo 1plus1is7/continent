@@ -73,16 +73,19 @@ public class WarManager {
                 ? war.getDefender() : war.getAttacker();
         Kingdom winner = KingdomManager.getByName(winnerName);
 
+        Set<String> loserVillages = new HashSet<>(loser.getVillages());
+
         endWar(war);
 
+        KingdomManager.unregister(loser);
+
         if (winner != null) {
-            for (String vName : new HashSet<>(loser.getVillages())) {
+            for (String vName : loserVillages) {
                 Village v = VillageManager.getByName(vName);
                 if (v != null && !winner.getVillages().contains(vName)) {
                     KingdomManager.addVillage(winner, v);
                 }
             }
-            KingdomManager.unregister(loser);
             KingdomStorage.delete(loser);
             KingdomStorage.save(winner);
             for (String vName : winner.getVillages()) {
@@ -90,7 +93,6 @@ public class WarManager {
                 if (vv != null) VillageStorage.save(vv);
             }
         } else {
-            KingdomManager.unregister(loser);
             KingdomStorage.delete(loser);
         }
     }
