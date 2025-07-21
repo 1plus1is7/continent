@@ -30,6 +30,7 @@ public class nationStorage {
         config.set("description", kingdom.getDescription());
         config.set("chest", me.continent.storage.VillageStorage.serializeItems(kingdom.getChestContents()));
         config.set("taxRate", kingdom.getTaxRate());
+        config.set("territoryProtection", kingdom.isTerritoryProtectionEnabled());
         config.set("maintenanceCount", kingdom.getMaintenanceCount());
         config.set("unpaidWeeks", kingdom.getUnpaidWeeks());
         config.set("lastMaintenance", kingdom.getLastMaintenance());
@@ -67,6 +68,7 @@ public class nationStorage {
             String description = config.getString("description", "");
             org.bukkit.inventory.ItemStack[] chest = me.continent.storage.VillageStorage.deserializeItems(config.getString("chest"));
             double taxRate = config.getDouble("taxRate", 0);
+            boolean territoryProtection = config.getBoolean("territoryProtection", true);
             int maintenanceCount = config.getInt("maintenanceCount", 0);
             int unpaidWeeks = config.getInt("unpaidWeeks", 0);
             long lastMaintenance = config.getLong("lastMaintenance", 0);
@@ -84,6 +86,7 @@ public class nationStorage {
             kingdom.setDescription(description);
             kingdom.setChestContents(chest);
             kingdom.setTaxRate(taxRate);
+            kingdom.setTerritoryProtectionEnabled(territoryProtection);
             kingdom.setMaintenanceCount(maintenanceCount);
             kingdom.setUnpaidWeeks(unpaidWeeks);
             kingdom.setLastMaintenance(lastMaintenance);

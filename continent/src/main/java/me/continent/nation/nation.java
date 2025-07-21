@@ -23,6 +23,7 @@ public class nation {
     private String description = "";
     private org.bukkit.inventory.ItemStack[] chestContents = new org.bukkit.inventory.ItemStack[27];
     private double taxRate = 0;
+    private boolean territoryProtection = true;
 
     public nation(String name, UUID leader, Village capital) {
         this.name = name;
@@ -162,5 +163,13 @@ public class nation {
 
     public void setTaxRate(double taxRate) {
         this.taxRate = taxRate;
+    }
+
+    public boolean isTerritoryProtectionEnabled() {
+        return territoryProtection;
+    }
+
+    public void setTerritoryProtectionEnabled(boolean enabled) {
+        this.territoryProtection = enabled;
     }
 }

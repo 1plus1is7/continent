@@ -3,6 +3,8 @@ package me.continent.protection;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import me.continent.war.WarManager;
+import me.continent.nation.nationManager;
+import me.continent.nation.nation;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -36,6 +38,10 @@ public class CoreProtectionListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
+            if (owner.getnation() != null) {
+                nation k = nationManager.getByName(owner.getnation());
+                if (k != null && !k.isTerritoryProtectionEnabled()) return;
+            }
             Village attackerVillage = VillageManager.getByPlayer(event.getPlayer().getUniqueId());
             boolean allowed = attackerVillage != null
                     && owner.getnation() != null
@@ -53,11 +59,27 @@ public class CoreProtectionListener implements Listener {
 
     @EventHandler
     public void onBlockExplode(BlockExplodeEvent event) {
-        event.blockList().removeIf(this::isCoreBlock);
+        event.blockList().removeIf(block -> {
+            if (!isCoreBlock(block)) return false;
+            Village v = VillageManager.getByChunk(block.getChunk());
+            if (v != null && v.getnation() != null) {
+                nation k = nationManager.getByName(v.getnation());
+                if (k != null && !k.isTerritoryProtectionEnabled()) return false;
+            }
+            return true;
+        });
     }
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
-        event.blockList().removeIf(this::isCoreBlock);
+        event.blockList().removeIf(block -> {
+            if (!isCoreBlock(block)) return false;
+            Village v = VillageManager.getByChunk(block.getChunk());
+            if (v != null && v.getnation() != null) {
+                nation k = nationManager.getByName(v.getnation());
+                if (k != null && !k.isTerritoryProtectionEnabled()) return false;
+            }
+            return true;
+        });
     }
 }
