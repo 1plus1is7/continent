@@ -15,6 +15,7 @@ import org.bukkit.util.io.BukkitObjectOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
+import me.continent.utils.ItemSerialization;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +50,7 @@ public class VillageStorage {
         config.set("protectionEnd", village.getProtectionEnd());
         config.set("vault", village.getVault());
         config.set("chest", serializeItems(village.getChestContents()));
+        config.set("symbol", ItemSerialization.serializeItem(village.getSymbol()));
         config.set("memberIgnite", village.isMemberIgniteAllowed());
         config.set("maintenanceCount", village.getMaintenanceCount());
         config.set("unpaidWeeks", village.getUnpaidWeeks());
@@ -81,6 +83,7 @@ public class VillageStorage {
             long protectionEnd = config.getLong("protectionEnd");
             double vault = config.contains("vault") ? config.getDouble("vault") : config.getDouble("treasury");
             ItemStack[] chest = deserializeItems(config.getString("chest"));
+            org.bukkit.inventory.ItemStack symbol = ItemSerialization.deserializeItem(config.getString("symbol"));
             boolean memberIgnite = config.getBoolean("memberIgnite", false);
             int maintenanceCount = config.getInt("maintenanceCount", 0);
             int unpaidWeeks = config.getInt("unpaidWeeks", 0);
@@ -97,6 +100,9 @@ public class VillageStorage {
             village.setProtectionEnd(protectionEnd);
             village.setVault(vault);
             village.setChestContents(chest);
+            if (symbol != null) {
+                village.setSymbol(symbol);
+            }
             village.setMemberIgniteAllowed(memberIgnite);
             village.setMaintenanceCount(maintenanceCount);
             village.setUnpaidWeeks(unpaidWeeks);

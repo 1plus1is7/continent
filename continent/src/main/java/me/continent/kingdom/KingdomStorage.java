@@ -4,6 +4,8 @@ import me.continent.ContinentPlugin;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import me.continent.village.VillageManager;
+import me.continent.utils.ItemSerialization;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +30,7 @@ public class KingdomStorage {
         config.set("maintenanceCount", kingdom.getMaintenanceCount());
         config.set("unpaidWeeks", kingdom.getUnpaidWeeks());
         config.set("lastMaintenance", kingdom.getLastMaintenance());
+        config.set("flag", ItemSerialization.serializeItem(kingdom.getFlag()));
         config.set("researched", new ArrayList<>(kingdom.getResearchedNodes()));
         config.set("specialties", new ArrayList<>(kingdom.getSpecialties()));
         config.set("researchSlots", kingdom.getResearchSlots());
@@ -66,6 +69,7 @@ public class KingdomStorage {
             int researchSlots = config.getInt("researchSlots", 1);
             List<String> selectedTrees = config.getStringList("selectedTrees");
             List<String> selectedT4 = config.getStringList("selectedT4");
+            org.bukkit.inventory.ItemStack flag = ItemSerialization.deserializeItem(config.getString("flag"));
             Map<String, Object> rolesObj = config.getConfigurationSection("roles") != null ? config.getConfigurationSection("roles").getValues(false) : new HashMap<>();
 
             Kingdom kingdom = new Kingdom(name, leader, VillageManager.getByName(capitalName));
@@ -77,6 +81,9 @@ public class KingdomStorage {
             kingdom.getResearchedNodes().addAll(researched);
             kingdom.getSpecialties().addAll(specialties);
             kingdom.setResearchSlots(researchSlots);
+            if (flag != null) {
+                kingdom.setFlag(flag);
+            }
             kingdom.getSelectedResearchTrees().addAll(selectedTrees);
             kingdom.getSelectedT4Nodes().addAll(selectedT4);
             for (Map.Entry<String, Object> e : rolesObj.entrySet()) {

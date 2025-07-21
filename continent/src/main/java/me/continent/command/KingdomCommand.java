@@ -33,6 +33,7 @@ public class KingdomCommand implements TabExecutor {
             player.sendMessage("§e/kingdom members §7- 소속 마을 목록");
             player.sendMessage("§e/kingdom setcapital <마을명> §7- 수도 변경");
             player.sendMessage("§e/kingdom setking <플레이어> §7- 국왕 위임");
+            player.sendMessage("§e/kingdom setflag §7- 국기 설정");
             player.sendMessage("§e/kingdom addvillage <마을명> §7- 마을 초대");
             player.sendMessage("§e/kingdom removevillage <마을명> §7- 마을 제외");
             player.sendMessage("§e/kingdom accept <국가명> §7- 초대 수락");
@@ -201,6 +202,28 @@ public class KingdomCommand implements TabExecutor {
             kingdom.setLeader(tId);
             KingdomStorage.save(kingdom);
             Bukkit.broadcastMessage("§e[국가] " + kingdom.getName() + "의 새로운 국왕은 " + (target.getName() != null ? target.getName() : tId) + "입니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("setflag")) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null || village.getKingdom() == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            if (!kingdom.getLeader().equals(player.getUniqueId())) {
+                player.sendMessage("§c국왕만 국기를 변경할 수 있습니다.");
+                return true;
+            }
+            org.bukkit.inventory.ItemStack item = player.getInventory().getItemInMainHand();
+            if (item == null || item.getType() == org.bukkit.Material.AIR || !item.getType().name().endsWith("_BANNER")) {
+                player.sendMessage("§c손에 배너를 들고 있어야 합니다.");
+                return true;
+            }
+            kingdom.setFlag(item.clone());
+            KingdomStorage.save(kingdom);
+            player.sendMessage("§a국기가 업데이트되었습니다.");
             return true;
         }
 
@@ -465,7 +488,7 @@ public class KingdomCommand implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> subs = Arrays.asList(
                 "create", "disband", "info", "list", "members", "setcapital",
-                "setking", "addvillage", "removevillage", "accept", "deny",
+                "setking", "setflag", "addvillage", "removevillage", "accept", "deny",
                 "leave", "treasury", "specialty", "chat", "spawn"
         );
 
