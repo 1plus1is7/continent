@@ -1,4 +1,4 @@
-package me.continent.kingdom;
+package me.continent.nation;
 
 import me.continent.ContinentPlugin;
 import org.bukkit.configuration.file.FileConfiguration;

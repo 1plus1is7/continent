@@ -1,9 +1,9 @@
-package me.continent.kingdom.service;
+package me.continent.nation.service;
 
 import me.continent.specialty.SpecialtyGood;
 import me.continent.specialty.SpecialtyManager;
-import me.continent.kingdom.nation;
-import me.continent.kingdom.nationStorage;
+import me.continent.nation.nation;
+import me.continent.nation.nationStorage;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;

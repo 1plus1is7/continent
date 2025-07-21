@@ -7,7 +7,6 @@ import me.continent.command.GoldCommand;
 import me.continent.command.VillageCommand;
 import me.continent.command.nationCommand;
 import me.continent.war.WarCommand;
-import me.continent.command.SeasonGuideCommand;
 import me.continent.command.GuideCommand;
 import me.continent.command.SpecialtyCommand;
 import me.continent.command.AdminCommand;
@@ -21,20 +20,18 @@ import me.continent.war.WarDeathListener;
 import me.continent.protection.ProtectionStateListener;
 import me.continent.village.service.ChestListener;
 import me.continent.village.service.MaintenanceService;
-import me.continent.season.SeasonManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.continent.player.PlayerDataManager;
 import me.continent.storage.VillageStorage;
 import me.continent.scoreboard.ScoreboardService;
 import me.continent.temperature.BodyTemperatureManager;
-import me.continent.listener.RainListener;
 import me.continent.crop.CropGrowthManager;
 import me.continent.crop.CropListener;
 import me.continent.research.ResearchListener;
 import me.continent.research.ResearchManager;
 import me.continent.specialty.SpecialtyManager;
 import me.continent.specialty.SpecialtyListener;
-import me.continent.kingdom.service.nationSpecialtyListener;
+import me.continent.nation.service.nationSpecialtyListener;
 
 public class ContinentPlugin extends JavaPlugin {
     private static ContinentPlugin instance;
@@ -50,10 +47,8 @@ public class ContinentPlugin extends JavaPlugin {
         // 명령어 등록
         getCommand("gold").setExecutor(new GoldCommand());
         getCommand("village").setExecutor(new VillageCommand());
-        getCommand("kingdom").setExecutor(new nationCommand());
+        getCommand("nation").setExecutor(new nationCommand());
         getCommand("war").setExecutor(new WarCommand());
-        getCommand("season").setExecutor(new SeasonManager());
-        getCommand("seasonguide").setExecutor(new SeasonGuideCommand());
         getCommand("guide").setExecutor(new GuideCommand());
         getCommand("specialty").setExecutor(new SpecialtyCommand());
         getCommand("admin").setExecutor(new AdminCommand());
@@ -61,13 +56,12 @@ public class ContinentPlugin extends JavaPlugin {
         // 중앙은행 데이터 로딩
         CentralBankDataManager.load();
         VillageStorage.loadAll(); // 저장된 모든 마을 불러오기
-        me.continent.kingdom.nationStorage.loadAll();
+        me.continent.nation.nationStorage.loadAll();
         PlayerDataManager.loadAll();
 
         ResearchManager.loadNodes(this);
         me.continent.specialty.SpecialtyManager.load(this);
 
-        SeasonManager.init(this);
         CropGrowthManager.init(this);
 
         ScoreboardService.schedule();
@@ -84,16 +78,15 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChestListener(), this);
         getServer().getPluginManager().registerEvents(new ProtectionStateListener(), this);
         getServer().getPluginManager().registerEvents(new WarDeathListener(), this);
-        getServer().getPluginManager().registerEvents(new RainListener(), this);
         getServer().getPluginManager().registerEvents(new CropListener(), this);
         getServer().getPluginManager().registerEvents(new ResearchListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.specialty.SpecialtyListener(), this);
         getServer().getPluginManager().registerEvents(new nationSpecialtyListener(), this);
-        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.nationMenuListener(), this);
-        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.nationChestListener(), this);
-        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.nationTreasuryListener(), this);
-        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.nationManageListener(), this);
-        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.nationVillageManageListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.nation.service.nationMenuListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.nation.service.nationChestListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.nation.service.nationTreasuryListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.nation.service.nationManageListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.nation.service.nationVillageManageListener(), this);
 
 
 
@@ -104,10 +97,9 @@ public class ContinentPlugin extends JavaPlugin {
     public void onDisable() {
         // 중앙은행 데이터 저장
         CentralBankDataManager.save();
-        me.continent.kingdom.nationStorage.saveAll();
+        me.continent.nation.nationStorage.saveAll();
         PlayerDataManager.saveAll();
 
-        SeasonManager.shutdown();
         BodyTemperatureManager.stop();
         CropGrowthManager.shutdown();
 

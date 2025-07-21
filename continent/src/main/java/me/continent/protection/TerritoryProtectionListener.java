@@ -34,7 +34,8 @@ public class TerritoryProtectionListener implements Listener {
 
         boolean allowed = false;
         if (playerVillage != null && owner.getnation() != null && playerVillage.getnation() != null) {
-            if (WarManager.isAtWar(owner.getnation(), playerVillage.getnation())) {
+            if (owner.getnation().equalsIgnoreCase(playerVillage.getnation()) ||
+                WarManager.isAtWar(owner.getnation(), playerVillage.getnation())) {
                 allowed = true;
             }
         }
@@ -57,7 +58,8 @@ public class TerritoryProtectionListener implements Listener {
 
         boolean allowed = false;
         if (playerVillage != null && owner.getnation() != null && playerVillage.getnation() != null) {
-            if (WarManager.isAtWar(owner.getnation(), playerVillage.getnation())) {
+            if (owner.getnation().equalsIgnoreCase(playerVillage.getnation()) ||
+                WarManager.isAtWar(owner.getnation(), playerVillage.getnation())) {
                 allowed = true;
             }
         }
@@ -88,7 +90,8 @@ public class TerritoryProtectionListener implements Listener {
             Village playerVillage = VillageManager.getByPlayer(event.getPlayer().getUniqueId());
             boolean allowed = false;
             if (playerVillage != null && owner.getnation() != null && playerVillage.getnation() != null) {
-                if (WarManager.isAtWar(owner.getnation(), playerVillage.getnation())) {
+                if (owner.getnation().equalsIgnoreCase(playerVillage.getnation()) ||
+                    WarManager.isAtWar(owner.getnation(), playerVillage.getnation())) {
                     allowed = true;
                 }
             }
@@ -109,7 +112,8 @@ public class TerritoryProtectionListener implements Listener {
         Village playerVillage = VillageManager.getByPlayer(event.getPlayer().getUniqueId());
         boolean allowed = false;
         if (playerVillage != null && owner.getnation() != null && playerVillage.getnation() != null) {
-            if (WarManager.isAtWar(owner.getnation(), playerVillage.getnation())) {
+            if (owner.getnation().equalsIgnoreCase(playerVillage.getnation()) ||
+                WarManager.isAtWar(owner.getnation(), playerVillage.getnation())) {
                 allowed = true;
             }
         }
@@ -129,7 +133,8 @@ public class TerritoryProtectionListener implements Listener {
         Village playerVillage = VillageManager.getByPlayer(event.getPlayer().getUniqueId());
         boolean allowed = false;
         if (playerVillage != null && owner.getnation() != null && playerVillage.getnation() != null) {
-            if (WarManager.isAtWar(owner.getnation(), playerVillage.getnation())) {
+            if (owner.getnation().equalsIgnoreCase(playerVillage.getnation()) ||
+                WarManager.isAtWar(owner.getnation(), playerVillage.getnation())) {
                 allowed = true;
             }
         }
@@ -151,7 +156,8 @@ public class TerritoryProtectionListener implements Listener {
         Village playerVillage = VillageManager.getByPlayer(player.getUniqueId());
         boolean allowed = false;
         if (playerVillage != null && owner.getnation() != null && playerVillage.getnation() != null) {
-            if (WarManager.isAtWar(owner.getnation(), playerVillage.getnation())) {
+            if (owner.getnation().equalsIgnoreCase(playerVillage.getnation()) ||
+                WarManager.isAtWar(owner.getnation(), playerVillage.getnation())) {
                 allowed = true;
             }
         }

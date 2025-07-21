@@ -1,8 +1,8 @@
 package me.continent.war;
 
 import me.continent.ContinentPlugin;
-import me.continent.kingdom.nation;
-import me.continent.kingdom.nationManager;
+import me.continent.nation.nation;
+import me.continent.nation.nationManager;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import org.bukkit.Bukkit;
@@ -107,6 +107,7 @@ public class CoreAttackListener implements Listener {
         if (attackerVillage.getnation().equalsIgnoreCase(village.getnation())) return;
         lastAttack.put(village.getnation().toLowerCase(), System.currentTimeMillis());
         startAlert(village);
+        WarManager.damageCore(village, nationManager.getByName(attackerVillage.getnation()));
     }
 
     @EventHandler

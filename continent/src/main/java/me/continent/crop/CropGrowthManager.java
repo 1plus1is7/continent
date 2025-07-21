@@ -1,8 +1,6 @@
 package me.continent.crop;
 
 import me.continent.ContinentPlugin;
-import me.continent.season.Season;
-import me.continent.season.SeasonManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -91,12 +89,7 @@ public class CropGrowthManager {
     }
 
     private static double requiredDays(CropType type) {
-        boolean rainy = SeasonManager.isRainySeason();
-        Season season = SeasonManager.getCurrentSeason();
-        double days = type.getBaseDays();
-        if (rainy) days = type.getRainyDays();
-        if (type == CropType.BEET && season == Season.WINTER) days = 6.0;
-        return days;
+        return type.getBaseDays();
     }
 
     private static String formatTime(long ms) {

@@ -1,4 +1,4 @@
-package me.continent.kingdom;
+package me.continent.nation;
 
 import me.continent.village.Village;
 import me.continent.village.VillageManager;

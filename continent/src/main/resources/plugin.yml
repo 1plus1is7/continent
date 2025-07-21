@@ -10,19 +10,13 @@ commands:
   gold:
     description: Gold system command
     usage: /gold <subcommand>
-  kingdom:
+  nation:
     description: nation system command
-    aliases: [nation]
-    usage: /kingdom <subcommand>
+    aliases: [kingdom]
+    usage: /nation <subcommand>
   war:
     description: War system command
     usage: /war <subcommand>
-  season:
-    description: Season control command
-    usage: /season <subcommand>
-  seasonguide:
-    description: Gives a guide book about the season system
-    usage: /seasonguide
   guide:
     description: Provides guide books about kingdom, village and war
     usage: /guide <topic>

@@ -1,7 +1,5 @@
 package me.continent.temperature;
 
-import me.continent.season.Season;
-import me.continent.season.SeasonManager;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -14,16 +12,11 @@ public class TemperatureManager {
      * Returns the current temperature for the given world in degrees Celsius.
      */
     public static double getCurrentTemperature(World world) {
-        Season season = SeasonManager.getCurrentSeason();
         long time = world.getTime();
         boolean isDay = isDaytime(time);
-        double base = getBaseTemperature(season, isDay);
+        double base = isDay ? 20.0 : 10.0;
         double weight = getTimeWeight(time);
-        double temp = base + weight;
-        if (SeasonManager.isRainySeason()) {
-            temp -= 3.0;
-        }
-        return temp;
+        return base + weight;
     }
 
     /**
@@ -31,18 +24,6 @@ public class TemperatureManager {
      */
     public static double getCurrentTemperature(Player player) {
         return getCurrentTemperature(player.getWorld());
-    }
-
-    /**
-     * Returns the average temperature for the given season and time of day.
-     */
-    public static double getBaseTemperature(Season season, boolean isDaytime) {
-        return switch (season) {
-            case SPRING -> avg(isDaytime ? 10 : 4, isDaytime ? 18 : 10);
-            case SUMMER -> avg(isDaytime ? 24 : 20, isDaytime ? 35 : 27);
-            case AUTUMN -> avg(isDaytime ? 12 : 5, isDaytime ? 22 : 12);
-            case WINTER -> avg(isDaytime ? -5 : -15, isDaytime ? 5 : -3);
-        };
     }
 
     /**
@@ -67,9 +48,5 @@ public class TemperatureManager {
     private static boolean isDaytime(long time) {
         long t = time % 24000;
         return t < 12000;
-    }
-
-    private static double avg(double min, double max) {
-        return (min + max) / 2.0;
     }
 }

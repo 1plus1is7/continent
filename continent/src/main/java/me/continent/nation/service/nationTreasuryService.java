@@ -1,8 +1,8 @@
-package me.continent.kingdom.service;
+package me.continent.nation.service;
 
 import me.continent.ContinentPlugin;
-import me.continent.kingdom.nation;
-import me.continent.kingdom.nationStorage;
+import me.continent.nation.nation;
+import me.continent.nation.nationStorage;
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
 import org.bukkit.Bukkit;
