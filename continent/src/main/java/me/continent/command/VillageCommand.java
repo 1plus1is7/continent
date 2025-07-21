@@ -46,6 +46,7 @@ public class VillageCommand implements TabExecutor {
             player.sendMessage("§e/village setcore §7- 코어 위치 이동");
             player.sendMessage("§e/village spawn §7- 마을 스폰으로 이동");
             player.sendMessage("§e/village chest §7- 마을 창고 열기");
+            player.sendMessage("§e/village setsymbol §7- 상징 아이템 설정");
             player.sendMessage("§e/village ignite <on|off> §7- 아군 점화 허용 토글");
             player.sendMessage("§e/village upkeep §7- 현재 유지비 확인");
             player.sendMessage("§e/village treasury <subcommand> §7- 금고 관리");
@@ -525,6 +526,23 @@ public class VillageCommand implements TabExecutor {
             return true;
         }
 
+        if (args[0].equalsIgnoreCase("setsymbol")) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null || !village.isAuthorized(player.getUniqueId())) {
+                player.sendMessage("§c국왕만 상징 아이템을 변경할 수 있습니다.");
+                return true;
+            }
+            org.bukkit.inventory.ItemStack item = player.getInventory().getItemInMainHand();
+            if (item == null || item.getType() == org.bukkit.Material.AIR) {
+                player.sendMessage("§c손에 아이템을 들고 있어야 합니다.");
+                return true;
+            }
+            village.setSymbol(item.clone());
+            VillageStorage.save(village);
+            player.sendMessage("§a상징 아이템이 업데이트되었습니다.");
+            return true;
+        }
+
         if (args[0].equalsIgnoreCase("upkeep")) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
             if (village == null) {
@@ -612,7 +630,7 @@ public class VillageCommand implements TabExecutor {
         List<String> subs = Arrays.asList(
                 "create", "disband", "claim", "invite", "invites", "accept", "deny",
                 "members", "leave", "kick", "rename", "list", "setspawn", "setcore",
-                "spawn", "chest", "ignite", "upkeep", "treasury", "confirm", "chat"
+                "spawn", "chest", "setsymbol", "ignite", "upkeep", "treasury", "confirm", "chat"
         );
 
         if (args.length == 1) {
