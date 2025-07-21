@@ -1,8 +1,8 @@
 package me.continent.command;
 
-import me.continent.kingdom.nation;
-import me.continent.kingdom.nationManager;
-import me.continent.kingdom.nationStorage;
+import me.continent.nation.nation;
+import me.continent.nation.nationManager;
+import me.continent.nation.nationStorage;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import me.continent.player.PlayerDataManager;
@@ -35,29 +35,30 @@ public class nationCommand implements TabExecutor {
                 player.sendMessage("§c국가 정보를 불러올 수 없습니다.");
                 return true;
             }
-            me.continent.kingdom.service.nationMenuService.openMenu(player, kingdom);
+            me.continent.nation.service.nationMenuService.openMenu(player, kingdom);
             return true;
         }
 
         if (args[0].equalsIgnoreCase("help")) {
             player.sendMessage("§6[nation 명령어]");
-            player.sendMessage("§e/kingdom create <이름> [수도] §7- 국가 생성");
-            player.sendMessage("§e/kingdom disband §7- 국가 해산");
-            player.sendMessage("§e/kingdom info §7- 국가 정보");
-            player.sendMessage("§e/kingdom list §7- 국가 목록");
-            player.sendMessage("§e/kingdom members §7- 소속 마을 목록");
-            player.sendMessage("§e/kingdom setcapital <마을명> §7- 수도 변경");
-            player.sendMessage("§e/kingdom setking <플레이어> §7- 국왕 위임");
-            player.sendMessage("§e/kingdom setflag §7- 국기 설정");
-            player.sendMessage("§e/kingdom addvillage <마을명> §7- 마을 초대");
-            player.sendMessage("§e/kingdom removevillage <마을명> §7- 마을 제외");
-            player.sendMessage("§e/kingdom accept <국가명> §7- 초대 수락");
-            player.sendMessage("§e/kingdom deny <국가명> §7- 초대 거절");
-            player.sendMessage("§e/kingdom leave §7- 국가 탈퇴");
-            player.sendMessage("§e/kingdom treasury <subcommand> §7- 국고 관리");
-            player.sendMessage("§e/kingdom specialty §7- 특산품 관리 GUI 열기");
-            player.sendMessage("§e/kingdom chat §7- 국가 채팅 토글");
-            player.sendMessage("§e/kingdom spawn [마을명] §7- 마을 스폰으로 이동");
+            player.sendMessage("§e/nation create <이름> [수도] §7- 국가 생성");
+            player.sendMessage("§e/nation disband §7- 국가 해산");
+            player.sendMessage("§e/nation info §7- 국가 정보");
+            player.sendMessage("§e/nation list §7- 국가 목록");
+            player.sendMessage("§e/nation members §7- 소속 마을 목록");
+            player.sendMessage("§e/nation setcapital <마을명> §7- 수도 변경");
+            player.sendMessage("§e/nation setking <플레이어> §7- 국왕 위임");
+            player.sendMessage("§e/nation setflag §7- 국기 설정");
+            player.sendMessage("§e/nation setdesc <설명> §7- 국가 설명 설정");
+            player.sendMessage("§e/nation addvillage <마을명> §7- 마을 초대");
+            player.sendMessage("§e/nation removevillage <마을명> §7- 마을 제외");
+            player.sendMessage("§e/nation accept <국가명> §7- 초대 수락");
+            player.sendMessage("§e/nation deny <국가명> §7- 초대 거절");
+            player.sendMessage("§e/nation leave §7- 국가 탈퇴");
+            player.sendMessage("§e/nation treasury <subcommand> §7- 국고 관리");
+            player.sendMessage("§e/nation specialty §7- 특산품 관리 GUI 열기");
+            player.sendMessage("§e/nation chat §7- 국가 채팅 토글");
+            player.sendMessage("§e/nation spawn [마을명] §7- 마을 스폰으로 이동");
             return true;
         }
 
@@ -134,6 +135,7 @@ public class nationCommand implements TabExecutor {
             OfflinePlayer king = Bukkit.getOfflinePlayer(kingdom.getLeader());
             player.sendMessage("§6[국가 정보]");
             player.sendMessage("§f이름: §e" + kingdom.getName());
+            player.sendMessage("§f설명: §e" + kingdom.getDescription());
             player.sendMessage("§f국왕: §e" + (king.getName() != null ? king.getName() : king.getUniqueId()));
             player.sendMessage("§f수도: §e" + kingdom.getCapital());
             player.sendMessage("§f소속 마을: §e" + String.join(", ", kingdom.getVillages()));
@@ -239,6 +241,24 @@ public class nationCommand implements TabExecutor {
             kingdom.setFlag(item.clone());
             nationStorage.save(kingdom);
             player.sendMessage("§a국기가 업데이트되었습니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("setdesc")) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null || village.getnation() == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            nation kingdom = nationManager.getByName(village.getnation());
+            if (!kingdom.getLeader().equals(player.getUniqueId())) {
+                player.sendMessage("§c국왕만 설명을 수정할 수 있습니다.");
+                return true;
+            }
+            String desc = args.length >= 2 ? String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length)) : "";
+            kingdom.setDescription(desc);
+            nationStorage.save(kingdom);
+            player.sendMessage("§a국가 설명이 업데이트되었습니다.");
             return true;
         }
 
@@ -359,7 +379,7 @@ public class nationCommand implements TabExecutor {
 
             nation kingdom = nationManager.getByName(village.getnation());
             if (args.length < 2) {
-                player.sendMessage("§e/kingdom treasury balance§7, §e/kingdom treasury deposit <금액>§7, §e/kingdom treasury withdraw <금액>");
+                player.sendMessage("§e/nation treasury balance§7, §e/nation treasury deposit <금액>§7, §e/nation treasury withdraw <금액>");
                 return true;
             }
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
@@ -438,7 +458,7 @@ public class nationCommand implements TabExecutor {
                 player.sendMessage("§c국왕만 특산품을 관리할 수 있습니다.");
                 return true;
             }
-            me.continent.kingdom.service.nationSpecialtyService.openMenu(player, kingdom);
+            me.continent.nation.service.nationSpecialtyService.openMenu(player, kingdom);
             return true;
         }
 
@@ -503,7 +523,7 @@ public class nationCommand implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> subs = Arrays.asList(
                 "create", "disband", "info", "list", "members", "setcapital",
-                "setking", "setflag", "addvillage", "removevillage", "accept", "deny",
+                "setking", "setflag", "setdesc", "addvillage", "removevillage", "accept", "deny",
                 "leave", "treasury", "specialty", "chat", "spawn", "help"
         );
 

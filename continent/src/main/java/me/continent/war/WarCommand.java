@@ -1,7 +1,7 @@
 package me.continent.war;
 
-import me.continent.kingdom.nation;
-import me.continent.kingdom.nationManager;
+import me.continent.nation.nation;
+import me.continent.nation.nationManager;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import org.bukkit.Bukkit;

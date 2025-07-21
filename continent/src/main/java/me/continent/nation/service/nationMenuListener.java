@@ -1,6 +1,6 @@
-package me.continent.kingdom.service;
+package me.continent.nation.service;
 
-import me.continent.kingdom.nation;
+import me.continent.nation.nation;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import org.bukkit.Bukkit;

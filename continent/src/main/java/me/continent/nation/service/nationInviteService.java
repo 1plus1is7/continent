@@ -1,4 +1,4 @@
-package me.continent.kingdom.service;
+package me.continent.nation.service;
 
 import me.continent.village.Village;
 

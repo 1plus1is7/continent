@@ -1,6 +1,6 @@
-package me.continent.kingdom.service;
+package me.continent.nation.service;
 
-import me.continent.kingdom.nation;
+import me.continent.nation.nation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

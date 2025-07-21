@@ -1,7 +1,7 @@
-package me.continent.kingdom.service;
+package me.continent.nation.service;
 
-import me.continent.kingdom.nation;
-import me.continent.kingdom.nationStorage;
+import me.continent.nation.nation;
+import me.continent.nation.nationStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;

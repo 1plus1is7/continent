@@ -1,8 +1,8 @@
-package me.continent.kingdom.service;
+package me.continent.nation.service;
 
-import me.continent.kingdom.nation;
-import me.continent.kingdom.nationManager;
-import me.continent.kingdom.nationStorage;
+import me.continent.nation.nation;
+import me.continent.nation.nationManager;
+import me.continent.nation.nationStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.conversations.ConversationFactory;

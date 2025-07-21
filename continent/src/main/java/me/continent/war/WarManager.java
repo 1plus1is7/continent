@@ -1,12 +1,12 @@
 package me.continent.war;
 
-import me.continent.kingdom.nation;
-import me.continent.kingdom.nationManager;
+import me.continent.nation.nation;
+import me.continent.nation.nationManager;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import me.continent.village.service.CoreService;
 import me.continent.war.WarBossBarManager;
-import me.continent.kingdom.nationStorage;
+import me.continent.nation.nationStorage;
 import me.continent.storage.VillageStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -133,5 +133,22 @@ public class WarManager {
     public static int getInitialHp(nation kingdom, String villageName) {
         if (kingdom == null || villageName == null) return VILLAGE_CORE_HP;
         return villageName.equalsIgnoreCase(kingdom.getCapital()) ? CAPITAL_CORE_HP : VILLAGE_CORE_HP;
+    }
+
+    public static void damageCore(Village village, nation attacker) {
+        if (village == null || attacker == null) return;
+        War war = getWar(village.getnation());
+        if (war == null) return;
+        int hp = war.getCoreHp(village.getName());
+        if (hp <= 0) {
+            hp = getInitialHp(nationManager.getByName(village.getnation()), village.getName());
+        }
+        hp--;
+        war.setCoreHp(village.getName(), hp);
+        WarBossBarManager.update(war, village.getName(), hp);
+        if (hp <= 0) {
+            WarBossBarManager.remove(war, village.getName());
+            coreDestroyed(village, attacker);
+        }
     }
 }

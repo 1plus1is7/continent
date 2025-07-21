@@ -2,7 +2,7 @@ package me.continent.command;
 
 import me.continent.war.War;
 import me.continent.war.WarManager;
-import me.continent.kingdom.nationManager;
+import me.continent.nation.nationManager;
 import me.continent.economy.CentralBank;
 import me.continent.village.service.MaintenanceService;
 import org.bukkit.command.Command;

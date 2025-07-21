@@ -1,6 +1,6 @@
-package me.continent.kingdom.service;
+package me.continent.nation.service;
 
-import me.continent.kingdom.nation;
+import me.continent.nation.nation;
 import me.continent.specialty.SpecialtyGood;
 import me.continent.specialty.SpecialtyManager;
 import org.bukkit.Bukkit;
