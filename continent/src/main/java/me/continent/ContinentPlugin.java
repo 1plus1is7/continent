@@ -87,6 +87,11 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ResearchListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.specialty.SpecialtyListener(), this);
         getServer().getPluginManager().registerEvents(new KingdomSpecialtyListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.KingdomMenuListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.KingdomChestListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.KingdomTreasuryListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.KingdomManageListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.KingdomVillageManageListener(), this);
 
 
 

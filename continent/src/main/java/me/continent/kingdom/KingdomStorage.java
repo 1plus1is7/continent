@@ -27,6 +27,9 @@ public class KingdomStorage {
         config.set("capital", kingdom.getCapital());
         config.set("villages", new ArrayList<>(kingdom.getVillages()));
         config.set("treasury", kingdom.getTreasury());
+        config.set("description", kingdom.getDescription());
+        config.set("chest", me.continent.storage.VillageStorage.serializeItems(kingdom.getChestContents()));
+        config.set("taxRate", kingdom.getTaxRate());
         config.set("maintenanceCount", kingdom.getMaintenanceCount());
         config.set("unpaidWeeks", kingdom.getUnpaidWeeks());
         config.set("lastMaintenance", kingdom.getLastMaintenance());
@@ -61,6 +64,9 @@ public class KingdomStorage {
             String capitalName = config.getString("capital");
             List<String> villages = config.getStringList("villages");
             double treasury = config.getDouble("treasury");
+            String description = config.getString("description", "");
+            org.bukkit.inventory.ItemStack[] chest = me.continent.storage.VillageStorage.deserializeItems(config.getString("chest"));
+            double taxRate = config.getDouble("taxRate", 0);
             int maintenanceCount = config.getInt("maintenanceCount", 0);
             int unpaidWeeks = config.getInt("unpaidWeeks", 0);
             long lastMaintenance = config.getLong("lastMaintenance", 0);
@@ -75,6 +81,9 @@ public class KingdomStorage {
             Kingdom kingdom = new Kingdom(name, leader, VillageManager.getByName(capitalName));
             kingdom.getVillages().addAll(villages);
             kingdom.setTreasury(treasury);
+            kingdom.setDescription(description);
+            kingdom.setChestContents(chest);
+            kingdom.setTaxRate(taxRate);
             kingdom.setMaintenanceCount(maintenanceCount);
             kingdom.setUnpaidWeeks(unpaidWeeks);
             kingdom.setLastMaintenance(lastMaintenance);
@@ -102,5 +111,13 @@ public class KingdomStorage {
     public static void delete(Kingdom kingdom) {
         File file = new File(folder, kingdom.getName().toLowerCase() + ".yml");
         if (file.exists()) file.delete();
+    }
+
+    public static void rename(String oldName, String newName) {
+        File oldFile = new File(folder, oldName.toLowerCase() + ".yml");
+        File newFile = new File(folder, newName.toLowerCase() + ".yml");
+        if (oldFile.exists()) {
+            oldFile.renameTo(newFile);
+        }
     }
 }
