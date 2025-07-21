@@ -71,8 +71,8 @@ public class ProtectionStateListener implements Listener {
         if (block == null) return;
 
         Village village = VillageManager.getByChunk(block.getChunk());
-        if (village != null && village.isUnderProtection()
-                && !village.getMembers().contains(event.getPlayer().getUniqueId())) {
+        if (inProtectedVillage(block) &&
+                !village.getMembers().contains(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
     }
@@ -81,7 +81,7 @@ public class ProtectionStateListener implements Listener {
     public void onIgnite(BlockIgniteEvent event) {
         Block block = event.getBlock();
         Village village = VillageManager.getByChunk(block.getChunk());
-        if (village == null || !village.isUnderProtection()) return;
+        if (!inProtectedVillage(block)) return;
 
         Player player = event.getPlayer();
         if (player != null && village.getMembers().contains(player.getUniqueId()) && village.isMemberIgniteAllowed()) {
