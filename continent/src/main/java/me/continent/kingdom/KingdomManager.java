@@ -60,4 +60,23 @@ public class KingdomManager {
         capital.setVault(0);
         return kingdom;
     }
+
+    public static boolean renameKingdom(Kingdom kingdom, String newName) {
+        if (kingdomsByName.containsKey(newName.toLowerCase())) return false;
+        String old = kingdom.getName();
+        kingdomsByName.remove(old.toLowerCase());
+        kingdom.setName(newName);
+        kingdomsByName.put(newName.toLowerCase(), kingdom);
+        for (String vName : kingdom.getVillages()) {
+            kingdomsByVillage.put(vName.toLowerCase(), kingdom);
+            Village v = VillageManager.getByName(vName);
+            if (v != null) {
+                v.setKingdom(newName);
+                me.continent.storage.VillageStorage.save(v);
+            }
+        }
+        KingdomStorage.rename(old, newName);
+        KingdomStorage.save(kingdom);
+        return true;
+    }
 }

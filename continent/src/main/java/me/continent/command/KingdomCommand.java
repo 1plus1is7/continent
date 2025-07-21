@@ -25,6 +25,21 @@ public class KingdomCommand implements TabExecutor {
         }
 
         if (args.length == 0) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null || village.getKingdom() == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            if (kingdom == null) {
+                player.sendMessage("§c국가 정보를 불러올 수 없습니다.");
+                return true;
+            }
+            me.continent.kingdom.service.KingdomMenuService.openMenu(player, kingdom);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("help")) {
             player.sendMessage("§6[Kingdom 명령어]");
             player.sendMessage("§e/kingdom create <이름> [수도] §7- 국가 생성");
             player.sendMessage("§e/kingdom disband §7- 국가 해산");
@@ -489,7 +504,7 @@ public class KingdomCommand implements TabExecutor {
         List<String> subs = Arrays.asList(
                 "create", "disband", "info", "list", "members", "setcapital",
                 "setking", "setflag", "addvillage", "removevillage", "accept", "deny",
-                "leave", "treasury", "specialty", "chat", "spawn"
+                "leave", "treasury", "specialty", "chat", "spawn", "help"
         );
 
         if (args.length == 1) {
