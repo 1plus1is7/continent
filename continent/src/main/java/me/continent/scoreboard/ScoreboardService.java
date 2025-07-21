@@ -55,7 +55,6 @@ public class ScoreboardService {
         double gold = PlayerDataManager.get(uuid).getGold();
         lines.add("골드: " + String.format("%.2f", gold) + "G");
 
-
         if (showCoordinates) {
             int x = player.getLocation().getBlockX();
             int y = player.getLocation().getBlockY();
@@ -132,9 +131,9 @@ public class ScoreboardService {
 
     private static String getDirection(float yaw) {
         yaw = (yaw % 360 + 360) % 360;
-        if (yaw >= 45 && yaw < 135) return "WEST";
+        if (yaw >= 45 && yaw < 135) return "EAST";
         if (yaw >= 135 && yaw < 225) return "NORTH";
-        if (yaw >= 225 && yaw < 315) return "EAST";
+        if (yaw >= 225 && yaw < 315) return "WEST";
         return "SOUTH";
     }
 
