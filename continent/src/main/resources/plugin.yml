@@ -5,14 +5,14 @@ api-version: '1.21'
 commands:
   village:
     description: Village system command
-    aliases: [k]
+    aliases: [v]
     usage: /village <subcommand>
   gold:
     description: Gold system command
     usage: /gold <subcommand>
   nation:
     description: nation system command
-    aliases: [kingdom]
+    aliases: [n]
     usage: /nation <subcommand>
   war:
     description: War system command
