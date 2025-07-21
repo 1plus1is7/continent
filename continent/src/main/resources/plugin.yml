@@ -3,6 +3,9 @@ version: '1.0-SNAPSHOT'
 main: me.continent.ContinentPlugin
 api-version: '1.21'
 commands:
+  market:
+    description: Player market
+    usage: /market
   village:
     description: Village system command
     aliases: [v]
