@@ -53,11 +53,19 @@ public class WarManager {
             Village village = VillageManager.getByName(entry.getKey());
             nation capturer = nationManager.getByName(entry.getValue());
             if (village == null || capturer == null) continue;
-            if (village.getCoreLocation() != null && village.getCoreLocation().getBlock().getType() != Material.BEACON) {
+
+            // restore core block if missing
+            if (village.getCoreLocation() != null
+                    && village.getCoreLocation().getBlock().getType() != Material.BEACON) {
                 CoreService.placeCore(village, village.getCoreLocation());
             }
+
+            // transfer village ownership
             if (!capturer.getVillages().contains(village.getName())) {
                 nationManager.addVillage(capturer, village);
+                // persist updated data for both capturer nation and village
+                nationStorage.save(capturer);
+                VillageStorage.save(village);
             }
         }
 
