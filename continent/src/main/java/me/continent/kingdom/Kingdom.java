@@ -20,6 +20,9 @@ public class Kingdom {
     private final Set<String> selectedT4Nodes = new HashSet<>();
     private int researchSlots = 1;
     private org.bukkit.inventory.ItemStack flag;
+    private String description = "";
+    private org.bukkit.inventory.ItemStack[] chestContents = new org.bukkit.inventory.ItemStack[27];
+    private double taxRate = 0;
 
     public Kingdom(String name, UUID leader, Village capital) {
         this.name = name;
@@ -131,5 +134,33 @@ public class Kingdom {
 
     public void setFlag(org.bukkit.inventory.ItemStack flag) {
         this.flag = flag;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description == null ? "" : description;
+    }
+
+    public org.bukkit.inventory.ItemStack[] getChestContents() {
+        return chestContents;
+    }
+
+    public void setChestContents(org.bukkit.inventory.ItemStack[] items) {
+        if (items == null) {
+            this.chestContents = new org.bukkit.inventory.ItemStack[27];
+        } else {
+            this.chestContents = java.util.Arrays.copyOf(items, 27);
+        }
+    }
+
+    public double getTaxRate() {
+        return taxRate;
+    }
+
+    public void setTaxRate(double taxRate) {
+        this.taxRate = taxRate;
     }
 }
