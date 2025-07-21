@@ -1,8 +1,8 @@
 package me.continent.kingdom.service;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
-import me.continent.kingdom.KingdomStorage;
+import me.continent.kingdom.nation;
+import me.continent.kingdom.nationManager;
+import me.continent.kingdom.nationStorage;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import me.continent.storage.VillageStorage;
@@ -12,14 +12,14 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.entity.Player;
 
-public class KingdomVillageManageListener implements Listener {
+public class nationVillageManageListener implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         Inventory inv = event.getInventory();
-        if (inv.getHolder() instanceof KingdomVillageManageService.VillageHolder holder) {
+        if (inv.getHolder() instanceof nationVillageManageService.VillageHolder holder) {
             event.setCancelled(true);
             Player player = (Player) event.getWhoClicked();
-            Kingdom kingdom = holder.getKingdom();
+            nation kingdom = holder.getnation();
             int slot = event.getRawSlot();
             if (slot >= inv.getSize()) return;
             var item = inv.getItem(slot);
@@ -29,19 +29,19 @@ public class KingdomVillageManageListener implements Listener {
             if (v == null) return;
             if (event.isLeftClick()) {
                 kingdom.setCapital(name);
-                KingdomStorage.save(kingdom);
+                nationStorage.save(kingdom);
                 player.sendMessage("§a수도가 변경되었습니다.");
-                KingdomVillageManageService.openMenu(player, kingdom);
+                nationVillageManageService.openMenu(player, kingdom);
             } else if (event.isRightClick()) {
                 if (name.equalsIgnoreCase(kingdom.getCapital())) {
                     player.sendMessage("§c수도는 제외할 수 없습니다.");
                     return;
                 }
-                KingdomManager.removeVillage(kingdom, v);
-                KingdomStorage.save(kingdom);
+                nationManager.removeVillage(kingdom, v);
+                nationStorage.save(kingdom);
                 VillageStorage.save(v);
                 player.sendMessage("§e" + name + " 마을이 제외되었습니다.");
-                KingdomVillageManageService.openMenu(player, kingdom);
+                nationVillageManageService.openMenu(player, kingdom);
             }
         }
     }

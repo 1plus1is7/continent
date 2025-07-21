@@ -48,8 +48,8 @@ public class ScoreboardService {
         String villageName = (village != null) ? village.getName() : "없음";
         lines.add("마을: " + villageName);
         String kingdomName = "없음";
-        if (village != null && village.getKingdom() != null) {
-            kingdomName = village.getKingdom();
+        if (village != null && village.getnation() != null) {
+            kingdomName = village.getnation();
         }
         lines.add("국가: " + kingdomName);
 

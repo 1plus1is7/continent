@@ -1,7 +1,7 @@
 package me.continent.war;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
+import me.continent.kingdom.nation;
+import me.continent.kingdom.nationManager;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import org.bukkit.Bukkit;
@@ -22,18 +22,18 @@ public class WarBossBarManager {
     }
 
     public static void createWar(War war) {
-        Kingdom atk = KingdomManager.getByName(war.getAttacker());
-        Kingdom def = KingdomManager.getByName(war.getDefender());
+        nation atk = nationManager.getByName(war.getAttacker());
+        nation def = nationManager.getByName(war.getDefender());
         if (atk != null && def != null) {
-            createBarsForKingdom(war, atk, def);
-            createBarsForKingdom(war, def, atk);
+            createBarsFornation(war, atk, def);
+            createBarsFornation(war, def, atk);
         } else {
-            if (atk != null) createBarsForKingdom(war, atk, null);
-            if (def != null) createBarsForKingdom(war, def, null);
+            if (atk != null) createBarsFornation(war, atk, null);
+            if (def != null) createBarsFornation(war, def, null);
         }
     }
 
-    private static void createBarsForKingdom(War war, Kingdom viewer, Kingdom enemy) {
+    private static void createBarsFornation(War war, nation viewer, nation enemy) {
         for (String vName : viewer.getVillages()) {
             createBarForVillage(war, vName, viewer);
         }
@@ -42,7 +42,7 @@ public class WarBossBarManager {
         }
     }
 
-    private static void createBarForVillage(War war, String village, Kingdom viewer) {
+    private static void createBarForVillage(War war, String village, nation viewer) {
         String k = key(war, village);
         BossBar bar = bars.get(k);
         if (bar == null) {
@@ -53,7 +53,7 @@ public class WarBossBarManager {
         addPlayers(bar, viewer);
     }
 
-    private static void addPlayers(BossBar bar, Kingdom kingdom) {
+    private static void addPlayers(BossBar bar, nation kingdom) {
         for (String vName : kingdom.getVillages()) {
             Village v = VillageManager.getByName(vName);
             if (v == null) continue;
@@ -70,7 +70,7 @@ public class WarBossBarManager {
         String k = key(war, villageName);
         BossBar bar = bars.get(k);
         if (bar == null) return;
-        Kingdom kingdom = KingdomManager.getByVillage(villageName);
+        nation kingdom = nationManager.getByVillage(villageName);
         if (kingdom == null) return;
         int maxHp = WarManager.getInitialHp(kingdom, villageName);
         bar.setTitle(villageName + " 코어 HP: " + Math.max(hp, 0) + "/" + maxHp);

@@ -25,7 +25,7 @@ public class PlayerStorage {
         config.set("gold", data.getGold());
         config.set("invites", new HashSet<>(data.getPendingInvites()));
         config.set("maintenance", data.getKnownMaintenance());
-        config.set("kingdomChat", data.isKingdomChatEnabled());
+        config.set("kingdomChat", data.isnationChatEnabled());
         config.set("bodyTemp", data.getBodyTemperature());
 
         try {
@@ -44,7 +44,7 @@ public class PlayerStorage {
         data.setGold(config.getDouble("gold"));
         data.getPendingInvites().addAll(config.getStringList("invites"));
         data.setKnownMaintenance(config.getInt("maintenance", 0));
-        data.setKingdomChatEnabled(config.getBoolean("kingdomChat", false));
+        data.setnationChatEnabled(config.getBoolean("kingdomChat", false));
         data.setBodyTemperature(config.getDouble("bodyTemp", 36.5));
         return data;
     }

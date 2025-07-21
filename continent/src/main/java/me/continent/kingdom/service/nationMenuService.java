@@ -1,6 +1,6 @@
 package me.continent.kingdom.service;
 
-import me.continent.kingdom.Kingdom;
+import me.continent.kingdom.nation;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Material;
@@ -13,10 +13,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KingdomMenuService {
-    public static void openMenu(Player player, Kingdom kingdom) {
-        KingdomMenuHolder holder = new KingdomMenuHolder(kingdom);
-        Inventory inv = Bukkit.createInventory(holder, 36, "Kingdom Menu");
+public class nationMenuService {
+    public static void openMenu(Player player, nation kingdom) {
+        nationMenuHolder holder = new nationMenuHolder(kingdom);
+        Inventory inv = Bukkit.createInventory(holder, 36, "nation Menu");
         holder.setInventory(inv);
 
         // banner
@@ -51,12 +51,12 @@ public class KingdomMenuService {
         return item;
     }
 
-    static class KingdomMenuHolder implements InventoryHolder {
-        private final Kingdom kingdom;
+    static class nationMenuHolder implements InventoryHolder {
+        private final nation kingdom;
         private Inventory inv;
-        KingdomMenuHolder(Kingdom kingdom) { this.kingdom = kingdom; }
+        nationMenuHolder(nation kingdom) { this.kingdom = kingdom; }
         void setInventory(Inventory inv) { this.inv = inv; }
         @Override public Inventory getInventory() { return inv; }
-        public Kingdom getKingdom() { return kingdom; }
+        public nation getnation() { return kingdom; }
     }
 }

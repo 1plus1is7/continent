@@ -1,8 +1,8 @@
 package me.continent.kingdom.service;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
-import me.continent.kingdom.KingdomStorage;
+import me.continent.kingdom.nation;
+import me.continent.kingdom.nationManager;
+import me.continent.kingdom.nationStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.conversations.ConversationFactory;
@@ -15,10 +15,10 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class KingdomManageService {
-    public static void openMenu(Player player, Kingdom kingdom) {
+public class nationManageService {
+    public static void openMenu(Player player, nation kingdom) {
         ManageHolder holder = new ManageHolder(kingdom);
-        Inventory inv = Bukkit.createInventory(holder, 27, "Kingdom Manage");
+        Inventory inv = Bukkit.createInventory(holder, 27, "nation Manage");
         holder.setInventory(inv);
         inv.setItem(10, createItem(Material.NAME_TAG, "이름 변경"));
         inv.setItem(12, createItem(Material.BOOK, "설명 변경"));
@@ -36,16 +36,16 @@ public class KingdomManageService {
     }
 
     static class ManageHolder implements InventoryHolder {
-        private final Kingdom kingdom;
+        private final nation kingdom;
         private Inventory inv;
-        ManageHolder(Kingdom kingdom) { this.kingdom = kingdom; }
+        ManageHolder(nation kingdom) { this.kingdom = kingdom; }
         void setInventory(Inventory inv) { this.inv = inv; }
         @Override public Inventory getInventory() { return inv; }
-        public Kingdom getKingdom() { return kingdom; }
+        public nation getnation() { return kingdom; }
     }
 
     // ---- Prompts ----
-    public static void promptRename(Player player, Kingdom kingdom) {
+    public static void promptRename(Player player, nation kingdom) {
         new ConversationFactory(Bukkit.getPluginManager().getPlugin("continent"))
                 .withFirstPrompt(new StringPrompt() {
                     @Override
@@ -56,7 +56,7 @@ public class KingdomManageService {
                     @Override
                     public Prompt acceptInput(ConversationContext context, String input) {
                         if (input == null || input.isEmpty()) return END_OF_CONVERSATION;
-                        if (!KingdomManager.renameKingdom(kingdom, input)) {
+                        if (!nationManager.renamenation(kingdom, input)) {
                             player.sendMessage("§c이미 존재하는 이름입니다.");
                         } else {
                             player.sendMessage("§a이름이 변경되었습니다.");
@@ -68,7 +68,7 @@ public class KingdomManageService {
                 .buildConversation(player).begin();
     }
 
-    public static void promptDescription(Player player, Kingdom kingdom) {
+    public static void promptDescription(Player player, nation kingdom) {
         new ConversationFactory(Bukkit.getPluginManager().getPlugin("continent"))
                 .withFirstPrompt(new StringPrompt() {
                     @Override
@@ -79,7 +79,7 @@ public class KingdomManageService {
                     @Override
                     public Prompt acceptInput(ConversationContext context, String input) {
                         kingdom.setDescription(input);
-                        KingdomStorage.save(kingdom);
+                        nationStorage.save(kingdom);
                         player.sendMessage("§a설명이 변경되었습니다.");
                         return END_OF_CONVERSATION;
                     }

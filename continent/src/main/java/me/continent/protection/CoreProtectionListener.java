@@ -6,7 +6,7 @@ import me.continent.war.WarManager;
 import me.continent.war.WarBossBarManager;
 import me.continent.war.War;
 import me.continent.village.service.CoreService;
-import me.continent.kingdom.KingdomManager;
+import me.continent.kingdom.nationManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -42,19 +42,19 @@ public class CoreProtectionListener implements Listener {
             }
             Village attackerVillage = VillageManager.getByPlayer(event.getPlayer().getUniqueId());
             boolean allowed = attackerVillage != null
-                    && owner.getKingdom() != null
-                    && attackerVillage.getKingdom() != null
-                    && WarManager.isAtWar(owner.getKingdom(), attackerVillage.getKingdom())
-                    && !owner.getKingdom().equalsIgnoreCase(attackerVillage.getKingdom());
+                    && owner.getnation() != null
+                    && attackerVillage.getnation() != null
+                    && WarManager.isAtWar(owner.getnation(), attackerVillage.getnation())
+                    && !owner.getnation().equalsIgnoreCase(attackerVillage.getnation());
             if (!allowed) {
                 event.setCancelled(true);
                 event.getPlayer().sendMessage("§c코어는 명령어로만 제거할 수 있습니다.");
             } else {
-                War war = WarManager.getWar(owner.getKingdom());
+                War war = WarManager.getWar(owner.getnation());
                 if (war != null) {
                     int hp = war.getCoreHp(owner.getName());
                     if (hp <= 0) {
-                        hp = WarManager.getInitialHp(KingdomManager.getByName(owner.getKingdom()), owner.getName());
+                        hp = WarManager.getInitialHp(nationManager.getByName(owner.getnation()), owner.getName());
                     }
                     hp--;
                     war.setCoreHp(owner.getName(), hp);
@@ -68,7 +68,7 @@ public class CoreProtectionListener implements Listener {
                         event.getBlock().setType(org.bukkit.Material.AIR);
                     }
                 }
-                WarManager.coreDestroyed(owner, me.continent.kingdom.KingdomManager.getByName(attackerVillage.getKingdom()));
+                WarManager.coreDestroyed(owner, me.continent.kingdom.nationManager.getByName(attackerVillage.getnation()));
             }
         }
     }

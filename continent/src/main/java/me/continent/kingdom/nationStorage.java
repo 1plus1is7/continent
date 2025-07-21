@@ -11,14 +11,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class KingdomStorage {
+public class nationStorage {
     private static final File folder = new File(ContinentPlugin.getInstance().getDataFolder(), "kingdoms");
 
     static {
         if (!folder.exists()) folder.mkdirs();
     }
 
-    public static void save(Kingdom kingdom) {
+    public static void save(nation kingdom) {
         File file = new File(folder, kingdom.getName().toLowerCase() + ".yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 
@@ -78,7 +78,7 @@ public class KingdomStorage {
             org.bukkit.inventory.ItemStack flag = ItemSerialization.deserializeItem(config.getString("flag"));
             Map<String, Object> rolesObj = config.getConfigurationSection("roles") != null ? config.getConfigurationSection("roles").getValues(false) : new HashMap<>();
 
-            Kingdom kingdom = new Kingdom(name, leader, VillageManager.getByName(capitalName));
+            nation kingdom = new nation(name, leader, VillageManager.getByName(capitalName));
             kingdom.getVillages().addAll(villages);
             kingdom.setTreasury(treasury);
             kingdom.setDescription(description);
@@ -98,17 +98,17 @@ public class KingdomStorage {
             for (Map.Entry<String, Object> e : rolesObj.entrySet()) {
                 kingdom.getRoles().put(UUID.fromString(e.getKey()), Objects.toString(e.getValue(), ""));
             }
-            KingdomManager.register(kingdom);
+            nationManager.register(kingdom);
         }
     }
 
     public static void saveAll() {
-        for (Kingdom k : KingdomManager.getAll()) {
+        for (nation k : nationManager.getAll()) {
             save(k);
         }
     }
 
-    public static void delete(Kingdom kingdom) {
+    public static void delete(nation kingdom) {
         File file = new File(folder, kingdom.getName().toLowerCase() + ".yml");
         if (file.exists()) file.delete();
     }

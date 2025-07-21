@@ -1,8 +1,8 @@
 package me.continent.war;
 
 import me.continent.ContinentPlugin;
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
+import me.continent.kingdom.nation;
+import me.continent.kingdom.nationManager;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import org.bukkit.Bukkit;
@@ -45,7 +45,7 @@ public class CoreAttackListener implements Listener {
     }
 
     private void startAlert(Village village) {
-        String kingdomName = village.getKingdom();
+        String kingdomName = village.getnation();
         if (kingdomName == null) return;
         String key = kingdomName.toLowerCase();
         lastAttack.put(key, System.currentTimeMillis());
@@ -80,7 +80,7 @@ public class CoreAttackListener implements Listener {
     }
 
     private void sendAlert(String kingdomName, String villageName) {
-        Kingdom kingdom = KingdomManager.getByName(kingdomName);
+        nation kingdom = nationManager.getByName(kingdomName);
         if (kingdom == null) return;
         for (String vName : kingdom.getVillages()) {
             Village v = VillageManager.getByName(vName);
@@ -100,12 +100,12 @@ public class CoreAttackListener implements Listener {
 
     private void handle(Block block, Player attacker) {
         Village village = getVillageByCore(block);
-        if (village == null || village.getKingdom() == null) return;
+        if (village == null || village.getnation() == null) return;
         Village attackerVillage = VillageManager.getByPlayer(attacker.getUniqueId());
-        if (attackerVillage == null || attackerVillage.getKingdom() == null) return;
-        if (!WarManager.isAtWar(attackerVillage.getKingdom(), village.getKingdom())) return;
-        if (attackerVillage.getKingdom().equalsIgnoreCase(village.getKingdom())) return;
-        lastAttack.put(village.getKingdom().toLowerCase(), System.currentTimeMillis());
+        if (attackerVillage == null || attackerVillage.getnation() == null) return;
+        if (!WarManager.isAtWar(attackerVillage.getnation(), village.getnation())) return;
+        if (attackerVillage.getnation().equalsIgnoreCase(village.getnation())) return;
+        lastAttack.put(village.getnation().toLowerCase(), System.currentTimeMillis());
         startAlert(village);
     }
 

@@ -4,19 +4,19 @@ import me.continent.village.Village;
 
 import java.util.Set;
 
-public class KingdomInviteService {
+public class nationInviteService {
 
     public static void sendInvite(String kingdomName, Village village) {
-        village.addKingdomInvite(kingdomName);
+        village.addnationInvite(kingdomName);
         me.continent.storage.VillageStorage.save(village);
     }
 
     public static void removeInvite(String kingdomName, Village village) {
-        village.removeKingdomInvite(kingdomName);
+        village.removenationInvite(kingdomName);
         me.continent.storage.VillageStorage.save(village);
     }
 
     public static Set<String> getInvites(Village village) {
-        return village.getKingdomInvites();
+        return village.getnationInvites();
     }
 }

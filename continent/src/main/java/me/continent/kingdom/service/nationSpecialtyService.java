@@ -1,6 +1,6 @@
 package me.continent.kingdom.service;
 
-import me.continent.kingdom.Kingdom;
+import me.continent.kingdom.nation;
 import me.continent.specialty.SpecialtyGood;
 import me.continent.specialty.SpecialtyManager;
 import org.bukkit.Bukkit;
@@ -10,11 +10,11 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class KingdomSpecialtyService {
-    public static void openMenu(Player player, Kingdom kingdom) {
+public class nationSpecialtyService {
+    public static void openMenu(Player player, nation kingdom) {
         int size = ((SpecialtyManager.getAll().size() - 1) / 9 + 1) * 9;
         SpecialtyHolder holder = new SpecialtyHolder(kingdom);
-        Inventory inv = Bukkit.createInventory(holder, size, "Kingdom Specialties");
+        Inventory inv = Bukkit.createInventory(holder, size, "nation Specialties");
         holder.setInventory(inv);
         int slot = 0;
         for (SpecialtyGood good : SpecialtyManager.getAll()) {
@@ -32,14 +32,14 @@ public class KingdomSpecialtyService {
     }
 
     static class SpecialtyHolder implements InventoryHolder {
-        private final Kingdom kingdom;
+        private final nation kingdom;
         private Inventory inventory;
-        SpecialtyHolder(Kingdom kingdom) {
+        SpecialtyHolder(nation kingdom) {
             this.kingdom = kingdom;
         }
         void setInventory(Inventory inv) { this.inventory = inv; }
         @Override
         public Inventory getInventory() { return inventory; }
-        public Kingdom getKingdom() { return kingdom; }
+        public nation getnation() { return kingdom; }
     }
 }

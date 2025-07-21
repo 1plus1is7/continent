@@ -1,8 +1,8 @@
 package me.continent.kingdom.service;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
-import me.continent.kingdom.KingdomStorage;
+import me.continent.kingdom.nation;
+import me.continent.kingdom.nationManager;
+import me.continent.kingdom.nationStorage;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import me.continent.storage.VillageStorage;
@@ -17,8 +17,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KingdomVillageManageService {
-    public static void openMenu(Player player, Kingdom kingdom) {
+public class nationVillageManageService {
+    public static void openMenu(Player player, nation kingdom) {
         int size = ((kingdom.getVillages().size() + 8) / 9) * 9;
         VillageHolder holder = new VillageHolder(kingdom);
         Inventory inv = Bukkit.createInventory(holder, Math.max(9, size), "Village Manage");
@@ -44,11 +44,11 @@ public class KingdomVillageManageService {
     }
 
     static class VillageHolder implements InventoryHolder {
-        private final Kingdom kingdom;
+        private final nation kingdom;
         private Inventory inv;
-        VillageHolder(Kingdom k) { this.kingdom = k; }
+        VillageHolder(nation k) { this.kingdom = k; }
         void setInventory(Inventory inv) { this.inv = inv; }
         @Override public Inventory getInventory() { return inv; }
-        public Kingdom getKingdom() { return kingdom; }
+        public nation getnation() { return kingdom; }
     }
 }

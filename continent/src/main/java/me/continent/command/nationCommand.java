@@ -1,8 +1,8 @@
 package me.continent.command;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
-import me.continent.kingdom.KingdomStorage;
+import me.continent.kingdom.nation;
+import me.continent.kingdom.nationManager;
+import me.continent.kingdom.nationStorage;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import me.continent.player.PlayerDataManager;
@@ -15,7 +15,7 @@ import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import java.util.*;
 
-public class KingdomCommand implements TabExecutor {
+public class nationCommand implements TabExecutor {
     private static final int CREATE_COST = 100;
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -26,21 +26,21 @@ public class KingdomCommand implements TabExecutor {
 
         if (args.length == 0) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             if (kingdom == null) {
                 player.sendMessage("§c국가 정보를 불러올 수 없습니다.");
                 return true;
             }
-            me.continent.kingdom.service.KingdomMenuService.openMenu(player, kingdom);
+            me.continent.kingdom.service.nationMenuService.openMenu(player, kingdom);
             return true;
         }
 
         if (args[0].equalsIgnoreCase("help")) {
-            player.sendMessage("§6[Kingdom 명령어]");
+            player.sendMessage("§6[nation 명령어]");
             player.sendMessage("§e/kingdom create <이름> [수도] §7- 국가 생성");
             player.sendMessage("§e/kingdom disband §7- 국가 해산");
             player.sendMessage("§e/kingdom info §7- 국가 정보");
@@ -73,11 +73,11 @@ public class KingdomCommand implements TabExecutor {
                 player.sendMessage("§c수도 마을은 자신의 마을만 지정할 수 있습니다.");
                 return true;
             }
-            if (village.getKingdom() != null) {
+            if (village.getnation() != null) {
                 player.sendMessage("§c이미 다른 국가에 속한 마을입니다.");
                 return true;
             }
-            if (KingdomManager.getByName(name) != null) {
+            if (nationManager.getByName(name) != null) {
                 player.sendMessage("§c이미 존재하는 국가 이름입니다.");
                 return true;
             }
@@ -88,8 +88,8 @@ public class KingdomCommand implements TabExecutor {
             }
 
             data.removeGold(CREATE_COST);
-            Kingdom kingdom = KingdomManager.createKingdom(name, village);
-            KingdomStorage.save(kingdom);
+            nation kingdom = nationManager.createnation(name, village);
+            nationStorage.save(kingdom);
             VillageStorage.save(village);
             Bukkit.broadcastMessage("§e[국가] §f" + name + " 국가가 건국되었습니다!");
             return true;
@@ -97,36 +97,36 @@ public class KingdomCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("disband")) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             if (kingdom == null || !kingdom.getLeader().equals(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 국가를 해산할 수 있습니다.");
                 return true;
             }
 
-            KingdomManager.unregister(kingdom);
+            nationManager.unregister(kingdom);
             for (String vName : kingdom.getVillages()) {
                 Village v = VillageManager.getByName(vName);
                 if (v != null) {
-                    v.setKingdom(null);
+                    v.setnation(null);
                     VillageStorage.save(v);
                 }
             }
-            KingdomStorage.delete(kingdom);
+            nationStorage.delete(kingdom);
             Bukkit.broadcastMessage("§c[국가] " + kingdom.getName() + " 국가가 해산되었습니다.");
             return true;
         }
 
         if (args[0].equalsIgnoreCase("info")) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             if (kingdom == null) {
                 player.sendMessage("§c국가 정보를 불러올 수 없습니다.");
                 return true;
@@ -142,7 +142,7 @@ public class KingdomCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("list")) {
             player.sendMessage("§6[국가 목록]");
-            for (Kingdom k : KingdomManager.getAll()) {
+            for (nation k : nationManager.getAll()) {
                 player.sendMessage("§f- " + k.getName() + " (§e수도: " + k.getCapital() + "§f)");
             }
             return true;
@@ -150,11 +150,11 @@ public class KingdomCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("members")) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             player.sendMessage("§6[국가 소속 마을]");
             for (String vName : kingdom.getVillages()) {
                 String prefix = vName.equalsIgnoreCase(kingdom.getCapital()) ? "§e* " : "- ";
@@ -165,11 +165,11 @@ public class KingdomCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("setcapital") && args.length >= 2) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             if (!kingdom.getLeader().equals(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 수도를 변경할 수 있습니다.");
                 return true;
@@ -182,18 +182,18 @@ public class KingdomCommand implements TabExecutor {
             }
 
             kingdom.setCapital(targetName);
-            KingdomStorage.save(kingdom);
+            nationStorage.save(kingdom);
             Bukkit.broadcastMessage("§e[국가] " + kingdom.getName() + "의 수도가 " + targetName + "(으)로 변경되었습니다.");
             return true;
         }
 
         if (args[0].equalsIgnoreCase("setking") && args.length >= 2) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             if (!kingdom.getLeader().equals(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 왕위을 위임할 수 있습니다.");
                 return true;
@@ -215,18 +215,18 @@ public class KingdomCommand implements TabExecutor {
             }
 
             kingdom.setLeader(tId);
-            KingdomStorage.save(kingdom);
+            nationStorage.save(kingdom);
             Bukkit.broadcastMessage("§e[국가] " + kingdom.getName() + "의 새로운 국왕은 " + (target.getName() != null ? target.getName() : tId) + "입니다.");
             return true;
         }
 
         if (args[0].equalsIgnoreCase("setflag")) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             if (!kingdom.getLeader().equals(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 국기를 변경할 수 있습니다.");
                 return true;
@@ -237,18 +237,18 @@ public class KingdomCommand implements TabExecutor {
                 return true;
             }
             kingdom.setFlag(item.clone());
-            KingdomStorage.save(kingdom);
+            nationStorage.save(kingdom);
             player.sendMessage("§a국기가 업데이트되었습니다.");
             return true;
         }
 
         if (args[0].equalsIgnoreCase("addvillage") && args.length >= 2) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             if (!kingdom.getLeader().equals(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 마을을 초대할 수 있습니다.");
                 return true;
@@ -260,12 +260,12 @@ public class KingdomCommand implements TabExecutor {
                 player.sendMessage("§c해당 마을이 존재하지 않습니다.");
                 return true;
             }
-            if (target.getKingdom() != null) {
+            if (target.getnation() != null) {
                 player.sendMessage("§c이미 다른 국가에 속한 마을입니다.");
                 return true;
             }
 
-            target.addKingdomInvite(kingdom.getName());
+            target.addnationInvite(kingdom.getName());
             VillageStorage.save(target);
             player.sendMessage("§a초대장을 보냈습니다.");
             return true;
@@ -273,11 +273,11 @@ public class KingdomCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("removevillage") && args.length >= 2) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             if (!kingdom.getLeader().equals(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 마을을 제외할 수 있습니다.");
                 return true;
@@ -294,8 +294,8 @@ public class KingdomCommand implements TabExecutor {
                 return true;
             }
 
-            KingdomManager.removeVillage(kingdom, target);
-            KingdomStorage.save(kingdom);
+            nationManager.removeVillage(kingdom, target);
+            nationStorage.save(kingdom);
             VillageStorage.save(target);
             Bukkit.broadcastMessage("§e[국가] " + targetName + " 마을이 " + kingdom.getName() + "에서 제외되었습니다.");
             return true;
@@ -309,24 +309,24 @@ public class KingdomCommand implements TabExecutor {
             }
 
             String kingdomName = args[1];
-            if (!village.getKingdomInvites().contains(kingdomName.toLowerCase())) {
+            if (!village.getnationInvites().contains(kingdomName.toLowerCase())) {
                 player.sendMessage("§c해당 국가로부터 초대받지 않았습니다.");
                 return true;
             }
-            if (village.getKingdom() != null) {
+            if (village.getnation() != null) {
                 player.sendMessage("§c이미 다른 국가에 속해 있습니다.");
                 return true;
             }
 
-            Kingdom kingdom = KingdomManager.getByName(kingdomName);
+            nation kingdom = nationManager.getByName(kingdomName);
             if (kingdom == null) {
                 player.sendMessage("§c해당 국가가 존재하지 않습니다.");
                 return true;
             }
 
-            KingdomManager.addVillage(kingdom, village);
-            village.removeKingdomInvite(kingdomName);
-            KingdomStorage.save(kingdom);
+            nationManager.addVillage(kingdom, village);
+            village.removenationInvite(kingdomName);
+            nationStorage.save(kingdom);
             VillageStorage.save(village);
             Bukkit.broadcastMessage("§e[국가] " + village.getName() + " 마을이 " + kingdom.getName() + "에 가입했습니다.");
             return true;
@@ -340,11 +340,11 @@ public class KingdomCommand implements TabExecutor {
             }
 
             String kingdomName = args[1];
-            if (!village.getKingdomInvites().contains(kingdomName.toLowerCase())) {
+            if (!village.getnationInvites().contains(kingdomName.toLowerCase())) {
                 player.sendMessage("§c해당 국가로부터 초대받지 않았습니다.");
                 return true;
             }
-            village.removeKingdomInvite(kingdomName);
+            village.removenationInvite(kingdomName);
             VillageStorage.save(village);
             player.sendMessage("§e초대가 거절되었습니다.");
             return true;
@@ -352,12 +352,12 @@ public class KingdomCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("treasury")) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
 
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             if (args.length < 2) {
                 player.sendMessage("§e/kingdom treasury balance§7, §e/kingdom treasury deposit <금액>§7, §e/kingdom treasury withdraw <금액>");
                 return true;
@@ -390,7 +390,7 @@ public class KingdomCommand implements TabExecutor {
                 data.removeGold(amount);
                 kingdom.addGold(amount);
                 PlayerDataManager.save(player.getUniqueId());
-                KingdomStorage.save(kingdom);
+                nationStorage.save(kingdom);
                 Bukkit.getLogger().info(player.getName() + " deposited " + amount + "G to kingdom " + kingdom.getName());
                 player.sendMessage("§a국고에 " + amount + "G 를 입금했습니다.");
                 return true;
@@ -418,7 +418,7 @@ public class KingdomCommand implements TabExecutor {
                 kingdom.removeGold(amount);
                 data.addGold(amount);
                 PlayerDataManager.save(player.getUniqueId());
-                KingdomStorage.save(kingdom);
+                nationStorage.save(kingdom);
                 Bukkit.getLogger().info(player.getName() + " withdrew " + amount + "G from kingdom " + kingdom.getName());
                 player.sendMessage("§a국고에서 " + amount + "G 를 출금했습니다.");
                 return true;
@@ -429,35 +429,35 @@ public class KingdomCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("specialty")) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             if (!kingdom.getLeader().equals(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 특산품을 관리할 수 있습니다.");
                 return true;
             }
-            me.continent.kingdom.service.KingdomSpecialtyService.openMenu(player, kingdom);
+            me.continent.kingdom.service.nationSpecialtyService.openMenu(player, kingdom);
             return true;
         }
 
         if (args[0].equalsIgnoreCase("chat")) {
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
-            boolean current = data.isKingdomChatEnabled();
-            data.setKingdomChatEnabled(!current);
+            boolean current = data.isnationChatEnabled();
+            data.setnationChatEnabled(!current);
             PlayerDataManager.save(player.getUniqueId());
-            player.sendMessage("§a국가 채팅이 " + (data.isKingdomChatEnabled() ? "§b활성화§a되었습니다." : "§c비활성화§a되었습니다."));
+            player.sendMessage("§a국가 채팅이 " + (data.isnationChatEnabled() ? "§b활성화§a되었습니다." : "§c비활성화§a되었습니다."));
             return true;
         }
 
         if (args[0].equalsIgnoreCase("spawn")) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             String targetName = args.length >= 2 ? args[1] : kingdom.getCapital();
             if (!kingdom.getVillages().contains(targetName)) {
                 player.sendMessage("§c해당 마을은 같은 국가에 속해 있지 않습니다.");
@@ -475,7 +475,7 @@ public class KingdomCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("leave")) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
@@ -483,14 +483,14 @@ public class KingdomCommand implements TabExecutor {
                 player.sendMessage("§c마을 국왕만 사용할 수 있습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             if (kingdom.getCapital().equalsIgnoreCase(village.getName())) {
                 player.sendMessage("§c수도 마을은 탈퇴할 수 없습니다.");
                 return true;
             }
 
-            KingdomManager.removeVillage(kingdom, village);
-            KingdomStorage.save(kingdom);
+            nationManager.removeVillage(kingdom, village);
+            nationStorage.save(kingdom);
             VillageStorage.save(village);
             Bukkit.broadcastMessage("§e[국가] " + village.getName() + " 마을이 " + kingdom.getName() + "에서 탈퇴했습니다.");
             return true;

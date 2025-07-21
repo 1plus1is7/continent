@@ -30,8 +30,8 @@ public class WarDeathListener implements Listener {
     public void onDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         Village village = VillageManager.getByPlayer(player.getUniqueId());
-        if (village == null || village.getKingdom() == null) return;
-        War war = WarManager.getWar(village.getKingdom());
+        if (village == null || village.getnation() == null) return;
+        War war = WarManager.getWar(village.getnation());
         if (war == null) return;
         if (!war.isVillageDestroyed(village.getName())) return;
 

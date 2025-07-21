@@ -3,10 +3,10 @@ package me.continent.village.service;
 import me.continent.ContinentPlugin;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
+import me.continent.kingdom.nation;
+import me.continent.kingdom.nationManager;
 import me.continent.storage.VillageStorage;
-import me.continent.kingdom.KingdomStorage;
+import me.continent.kingdom.nationStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -77,12 +77,12 @@ public class MaintenanceService {
     }
 
     private static void run() {
-        for (Kingdom kingdom : KingdomManager.getAll()) {
+        for (nation kingdom : nationManager.getAll()) {
             charge(kingdom);
             collectTax(kingdom);
         }
         for (Village village : VillageManager.getAll()) {
-            if (village.getKingdom() == null) {
+            if (village.getnation() == null) {
                 charge(village);
             }
         }
@@ -111,7 +111,7 @@ public class MaintenanceService {
         }
     }
 
-    private static void charge(Kingdom kingdom) {
+    private static void charge(nation kingdom) {
         double total = 0;
         for (String vName : kingdom.getVillages()) {
             Village v = VillageManager.getByName(vName);
@@ -127,14 +127,14 @@ public class MaintenanceService {
         }
         kingdom.setMaintenanceCount(kingdom.getMaintenanceCount() + 1);
         kingdom.setLastMaintenance(System.currentTimeMillis());
-        KingdomStorage.save(kingdom);
+        nationStorage.save(kingdom);
         Player king = Bukkit.getPlayer(kingdom.getLeader());
         if (king != null) {
             king.sendMessage("§a국가 유지비 " + total + "G가 차감되었습니다.");
         }
     }
 
-    private static void collectTax(Kingdom kingdom) {
+    private static void collectTax(nation kingdom) {
         double rate = kingdom.getTaxRate() / 100.0;
         if (rate <= 0) return;
 
@@ -158,7 +158,7 @@ public class MaintenanceService {
         }
 
         if (totalCollected > 0) {
-            KingdomStorage.save(kingdom);
+            nationStorage.save(kingdom);
             Player k = Bukkit.getPlayer(kingdom.getLeader());
             if (k != null) {
                 k.sendMessage("§a소속 마을에서 총 " + totalCollected + "G의 세금을 징수했습니다.");

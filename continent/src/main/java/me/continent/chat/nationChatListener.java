@@ -1,7 +1,7 @@
 package me.continent.chat;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
+import me.continent.kingdom.nation;
+import me.continent.kingdom.nationManager;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import me.continent.player.PlayerData;
@@ -15,16 +15,16 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.UUID;
 
-public class KingdomChatListener implements Listener {
+public class nationChatListener implements Listener {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         PlayerData data = PlayerDataManager.get(player.getUniqueId());
-        if (data == null || !data.isKingdomChatEnabled()) return;
+        if (data == null || !data.isnationChatEnabled()) return;
 
         Village village = VillageManager.getByPlayer(player.getUniqueId());
-        if (village == null || village.getKingdom() == null) return;
-        Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+        if (village == null || village.getnation() == null) return;
+        nation kingdom = nationManager.getByName(village.getnation());
         if (kingdom == null) return;
 
         event.setCancelled(true);
