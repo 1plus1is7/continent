@@ -41,8 +41,8 @@ public class War {
     }
 
     // ---- Core destruction tracking ----
-    public void addDestroyedVillage(String village, String attackerKingdom) {
-        destroyedVillages.put(village.toLowerCase(), attackerKingdom);
+    public void addDestroyedVillage(String village, String attackernation) {
+        destroyedVillages.put(village.toLowerCase(), attackernation);
     }
 
     public boolean isVillageDestroyed(String village) {

@@ -27,7 +27,7 @@ public class ProtectionStateListener implements Listener {
         Village village = VillageManager.getByChunk(block.getChunk());
         if (village == null) return false;
         if (!village.isUnderProtection()) return false;
-        if (village.getKingdom() != null && me.continent.war.WarManager.getWar(village.getKingdom()) != null) {
+        if (village.getnation() != null && me.continent.war.WarManager.getWar(village.getnation()) != null) {
             return false;
         }
         return true;
@@ -38,7 +38,7 @@ public class ProtectionStateListener implements Listener {
         Village village = VillageManager.getByChunk(chunk);
         if (village == null) return false;
         if (!village.isUnderProtection()) return false;
-        if (village.getKingdom() != null && me.continent.war.WarManager.getWar(village.getKingdom()) != null) {
+        if (village.getnation() != null && me.continent.war.WarManager.getWar(village.getnation()) != null) {
             return false;
         }
         return true;

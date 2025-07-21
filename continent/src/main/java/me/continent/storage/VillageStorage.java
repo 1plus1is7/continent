@@ -56,8 +56,8 @@ public class VillageStorage {
         config.set("unpaidWeeks", village.getUnpaidWeeks());
         config.set("lastMaintenance", village.getLastMaintenance());
         config.set("nation", village.isNation());
-        config.set("kingdom", village.getKingdom());
-        config.set("kingdomInvites", new ArrayList<>(village.getKingdomInvites()));
+        config.set("kingdom", village.getnation());
+        config.set("kingdomInvites", new ArrayList<>(village.getnationInvites()));
 
         try {
             config.save(file);
@@ -108,8 +108,8 @@ public class VillageStorage {
             village.setUnpaidWeeks(unpaidWeeks);
             village.setLastMaintenance(lastMaintenance);
             village.setNation(nation);
-            village.setKingdom(kingdomName);
-            village.getKingdomInvites().addAll(kingdomInvites);
+            village.setnation(kingdomName);
+            village.getnationInvites().addAll(kingdomInvites);
             village.setCoreChunkKey(config.getString("core-chunk"));
             village.setSpawnChunkKey(config.getString("spawn-chunk"));
 

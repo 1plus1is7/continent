@@ -1,29 +1,29 @@
 package me.continent.kingdom.service;
 
-import me.continent.kingdom.Kingdom;
+import me.continent.kingdom.nation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
-public class KingdomTreasuryListener implements Listener {
+public class nationTreasuryListener implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         Inventory inv = event.getInventory();
-        if (inv.getHolder() instanceof KingdomTreasuryService.TreasuryHolder holder) {
+        if (inv.getHolder() instanceof nationTreasuryService.TreasuryHolder holder) {
             event.setCancelled(true);
             Player player = (Player) event.getWhoClicked();
             int slot = event.getRawSlot();
-            Kingdom kingdom = holder.getKingdom();
+            nation kingdom = holder.getnation();
             if (slot == 2) {
-                KingdomTreasuryService.promptDeposit(player, kingdom);
+                nationTreasuryService.promptDeposit(player, kingdom);
                 player.closeInventory();
             } else if (slot == 4) {
-                KingdomTreasuryService.promptWithdraw(player, kingdom);
+                nationTreasuryService.promptWithdraw(player, kingdom);
                 player.closeInventory();
             } else if (slot == 6) {
-                KingdomTreasuryService.promptTax(player, kingdom);
+                nationTreasuryService.promptTax(player, kingdom);
                 player.closeInventory();
             }
         }

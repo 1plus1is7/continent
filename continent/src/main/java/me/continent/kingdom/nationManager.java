@@ -4,64 +4,64 @@ import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import java.util.*;
 
-public class KingdomManager {
-    private static final Map<String, Kingdom> kingdomsByName = new HashMap<>();
-    private static final Map<String, Kingdom> kingdomsByVillage = new HashMap<>();
+public class nationManager {
+    private static final Map<String, nation> kingdomsByName = new HashMap<>();
+    private static final Map<String, nation> kingdomsByVillage = new HashMap<>();
 
-    public static Kingdom getByName(String name) {
+    public static nation getByName(String name) {
         return kingdomsByName.get(name.toLowerCase());
     }
 
-    public static Kingdom getByVillage(String village) {
+    public static nation getByVillage(String village) {
         return kingdomsByVillage.get(village.toLowerCase());
     }
 
-    public static Collection<Kingdom> getAll() {
+    public static Collection<nation> getAll() {
         return kingdomsByName.values();
     }
 
-    public static void register(Kingdom kingdom) {
+    public static void register(nation kingdom) {
         kingdomsByName.put(kingdom.getName().toLowerCase(), kingdom);
         for (String v : kingdom.getVillages()) {
             kingdomsByVillage.put(v.toLowerCase(), kingdom);
             Village vil = VillageManager.getByName(v);
-            if (vil != null) vil.setKingdom(kingdom.getName());
+            if (vil != null) vil.setnation(kingdom.getName());
         }
     }
 
-    public static void addVillage(Kingdom kingdom, Village village) {
+    public static void addVillage(nation kingdom, Village village) {
         kingdom.getVillages().add(village.getName());
         kingdomsByVillage.put(village.getName().toLowerCase(), kingdom);
-        village.setKingdom(kingdom.getName());
+        village.setnation(kingdom.getName());
         kingdom.addGold(village.getVault());
         village.setVault(0);
     }
 
-    public static void removeVillage(Kingdom kingdom, Village village) {
+    public static void removeVillage(nation kingdom, Village village) {
         kingdom.getVillages().remove(village.getName());
         kingdomsByVillage.remove(village.getName().toLowerCase());
-        village.setKingdom(null);
+        village.setnation(null);
     }
 
-    public static void unregister(Kingdom kingdom) {
+    public static void unregister(nation kingdom) {
         kingdomsByName.remove(kingdom.getName().toLowerCase());
         for (String v : kingdom.getVillages()) {
             kingdomsByVillage.remove(v.toLowerCase());
             Village vil = VillageManager.getByName(v);
-            if (vil != null) vil.setKingdom(null);
+            if (vil != null) vil.setnation(null);
         }
     }
 
-    public static Kingdom createKingdom(String name, Village capital) {
+    public static nation createnation(String name, Village capital) {
         if (getByName(name) != null) return null;
-        Kingdom kingdom = new Kingdom(name, capital.getKing(), capital);
+        nation kingdom = new nation(name, capital.getKing(), capital);
         register(kingdom);
         kingdom.addGold(capital.getVault());
         capital.setVault(0);
         return kingdom;
     }
 
-    public static boolean renameKingdom(Kingdom kingdom, String newName) {
+    public static boolean renamenation(nation kingdom, String newName) {
         if (kingdomsByName.containsKey(newName.toLowerCase())) return false;
         String old = kingdom.getName();
         kingdomsByName.remove(old.toLowerCase());
@@ -71,12 +71,12 @@ public class KingdomManager {
             kingdomsByVillage.put(vName.toLowerCase(), kingdom);
             Village v = VillageManager.getByName(vName);
             if (v != null) {
-                v.setKingdom(newName);
+                v.setnation(newName);
                 me.continent.storage.VillageStorage.save(v);
             }
         }
-        KingdomStorage.rename(old, newName);
-        KingdomStorage.save(kingdom);
+        nationStorage.rename(old, newName);
+        nationStorage.save(kingdom);
         return true;
     }
 }

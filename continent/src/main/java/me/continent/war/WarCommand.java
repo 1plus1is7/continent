@@ -1,7 +1,7 @@
 package me.continent.war;
 
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomManager;
+import me.continent.kingdom.nation;
+import me.continent.kingdom.nationManager;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import org.bukkit.Bukkit;
@@ -27,16 +27,16 @@ public class WarCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("declare") && args.length >= 2) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom attacker = KingdomManager.getByName(village.getKingdom());
+            nation attacker = nationManager.getByName(village.getnation());
             if (!attacker.getLeader().equals(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 전쟁을 선포할 수 있습니다.");
                 return true;
             }
-            Kingdom defender = KingdomManager.getByName(args[1]);
+            nation defender = nationManager.getByName(args[1]);
             if (defender == null) {
                 player.sendMessage("§c해당 국가가 존재하지 않습니다.");
                 return true;
@@ -52,11 +52,11 @@ public class WarCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("status")) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            War war = WarManager.getWar(village.getKingdom());
+            War war = WarManager.getWar(village.getnation());
             if (war == null) {
                 player.sendMessage("§c현재 진행 중인 전쟁이 없습니다.");
                 return true;
@@ -69,11 +69,11 @@ public class WarCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("surrender")) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
-            if (village == null || village.getKingdom() == null) {
+            if (village == null || village.getnation() == null) {
                 player.sendMessage("§c소속된 국가가 없습니다.");
                 return true;
             }
-            Kingdom kingdom = KingdomManager.getByName(village.getKingdom());
+            nation kingdom = nationManager.getByName(village.getnation());
             if (!kingdom.getLeader().equals(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 항복할 수 있습니다.");
                 return true;
@@ -103,8 +103,8 @@ public class WarCommand implements TabExecutor {
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("declare")) {
-            return KingdomManager.getAll().stream()
-                    .map(Kingdom::getName)
+            return nationManager.getAll().stream()
+                    .map(nation::getName)
                     .filter(n -> n.toLowerCase().startsWith(args[1].toLowerCase()))
                     .toList();
         }

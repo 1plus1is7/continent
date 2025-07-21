@@ -171,7 +171,7 @@ public class VillageCommand implements TabExecutor {
                 return true;
             }
 
-            if (village.getKingdom() != null) {
+            if (village.getnation() != null) {
                 player.sendMessage("§c국가에 속한 마을의 금고는 국가 국고에 포함되어 개별 관리할 수 없습니다.");
                 return true;
             }

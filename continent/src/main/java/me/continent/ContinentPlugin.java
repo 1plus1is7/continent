@@ -2,10 +2,10 @@ package me.continent;
 
 import me.continent.chat.VillageChatListener;
 import me.continent.chat.GlobalChatListener;
-import me.continent.chat.KingdomChatListener;
+import me.continent.chat.nationChatListener;
 import me.continent.command.GoldCommand;
 import me.continent.command.VillageCommand;
-import me.continent.command.KingdomCommand;
+import me.continent.command.nationCommand;
 import me.continent.war.WarCommand;
 import me.continent.command.SeasonGuideCommand;
 import me.continent.command.GuideCommand;
@@ -34,7 +34,7 @@ import me.continent.research.ResearchListener;
 import me.continent.research.ResearchManager;
 import me.continent.specialty.SpecialtyManager;
 import me.continent.specialty.SpecialtyListener;
-import me.continent.kingdom.service.KingdomSpecialtyListener;
+import me.continent.kingdom.service.nationSpecialtyListener;
 
 public class ContinentPlugin extends JavaPlugin {
     private static ContinentPlugin instance;
@@ -50,7 +50,7 @@ public class ContinentPlugin extends JavaPlugin {
         // 명령어 등록
         getCommand("gold").setExecutor(new GoldCommand());
         getCommand("village").setExecutor(new VillageCommand());
-        getCommand("kingdom").setExecutor(new KingdomCommand());
+        getCommand("kingdom").setExecutor(new nationCommand());
         getCommand("war").setExecutor(new WarCommand());
         getCommand("season").setExecutor(new SeasonManager());
         getCommand("seasonguide").setExecutor(new SeasonGuideCommand());
@@ -61,7 +61,7 @@ public class ContinentPlugin extends JavaPlugin {
         // 중앙은행 데이터 로딩
         CentralBankDataManager.load();
         VillageStorage.loadAll(); // 저장된 모든 마을 불러오기
-        me.continent.kingdom.KingdomStorage.loadAll();
+        me.continent.kingdom.nationStorage.loadAll();
         PlayerDataManager.loadAll();
 
         ResearchManager.loadNodes(this);
@@ -76,7 +76,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new TerritoryListener(), this);
         getServer().getPluginManager().registerEvents(new VillageChatListener(), this);
         getServer().getPluginManager().registerEvents(new GlobalChatListener(), this);
-        getServer().getPluginManager().registerEvents(new KingdomChatListener(), this);
+        getServer().getPluginManager().registerEvents(new nationChatListener(), this);
         getServer().getPluginManager().registerEvents(new MaintenanceJoinListener(), this);
         getServer().getPluginManager().registerEvents(new TerritoryProtectionListener(), this);
         getServer().getPluginManager().registerEvents(new CoreProtectionListener(), this);
@@ -88,12 +88,12 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CropListener(), this);
         getServer().getPluginManager().registerEvents(new ResearchListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.specialty.SpecialtyListener(), this);
-        getServer().getPluginManager().registerEvents(new KingdomSpecialtyListener(), this);
-        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.KingdomMenuListener(), this);
-        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.KingdomChestListener(), this);
-        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.KingdomTreasuryListener(), this);
-        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.KingdomManageListener(), this);
-        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.KingdomVillageManageListener(), this);
+        getServer().getPluginManager().registerEvents(new nationSpecialtyListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.nationMenuListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.nationChestListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.nationTreasuryListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.nationManageListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.kingdom.service.nationVillageManageListener(), this);
 
 
 
@@ -104,7 +104,7 @@ public class ContinentPlugin extends JavaPlugin {
     public void onDisable() {
         // 중앙은행 데이터 저장
         CentralBankDataManager.save();
-        me.continent.kingdom.KingdomStorage.saveAll();
+        me.continent.kingdom.nationStorage.saveAll();
         PlayerDataManager.saveAll();
 
         SeasonManager.shutdown();

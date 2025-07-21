@@ -44,11 +44,11 @@ public class PlayerData {
         this.villageChatEnabled = enabled;
     }
 
-    public boolean isKingdomChatEnabled() {
+    public boolean isnationChatEnabled() {
         return kingdomChatEnabled;
     }
 
-    public void setKingdomChatEnabled(boolean enabled) {
+    public void setnationChatEnabled(boolean enabled) {
         this.kingdomChatEnabled = enabled;
     }
 

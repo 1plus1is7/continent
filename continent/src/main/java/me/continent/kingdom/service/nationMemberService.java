@@ -1,6 +1,6 @@
 package me.continent.kingdom.service;
 
-import me.continent.kingdom.Kingdom;
+import me.continent.kingdom.nation;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import org.bukkit.Bukkit;
@@ -15,10 +15,10 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.*;
 
-public class KingdomMemberService {
-    public static void openMenu(Player player, Kingdom kingdom) {
+public class nationMemberService {
+    public static void openMenu(Player player, nation kingdom) {
         MemberHolder holder = new MemberHolder(kingdom);
-        Inventory inv = Bukkit.createInventory(holder, 27, "Kingdom Members");
+        Inventory inv = Bukkit.createInventory(holder, 27, "nation Members");
         holder.setInventory(inv);
 
         OfflinePlayer king = Bukkit.getOfflinePlayer(kingdom.getLeader());
@@ -51,11 +51,11 @@ public class KingdomMemberService {
     }
 
     static class MemberHolder implements InventoryHolder {
-        private final Kingdom kingdom;
+        private final nation kingdom;
         private Inventory inv;
-        MemberHolder(Kingdom k) { this.kingdom = k; }
+        MemberHolder(nation k) { this.kingdom = k; }
         void setInventory(Inventory inv) { this.inv = inv; }
         @Override public Inventory getInventory() { return inv; }
-        public Kingdom getKingdom() { return kingdom; }
+        public nation getnation() { return kingdom; }
     }
 }

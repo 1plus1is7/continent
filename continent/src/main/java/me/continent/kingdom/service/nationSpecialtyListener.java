@@ -2,8 +2,8 @@ package me.continent.kingdom.service;
 
 import me.continent.specialty.SpecialtyGood;
 import me.continent.specialty.SpecialtyManager;
-import me.continent.kingdom.Kingdom;
-import me.continent.kingdom.KingdomStorage;
+import me.continent.kingdom.nation;
+import me.continent.kingdom.nationStorage;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -11,18 +11,18 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public class KingdomSpecialtyListener implements Listener {
+public class nationSpecialtyListener implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         Inventory inv = event.getInventory();
-        if (inv.getHolder() instanceof KingdomSpecialtyService.SpecialtyHolder holder) {
+        if (inv.getHolder() instanceof nationSpecialtyService.SpecialtyHolder holder) {
             event.setCancelled(true);
             ItemStack item = event.getCurrentItem();
             if (item == null || !item.hasItemMeta() || !item.getItemMeta().hasCustomModelData()) return;
             int model = item.getItemMeta().getCustomModelData();
             SpecialtyGood good = SpecialtyManager.getByModel(model);
             if (good == null) return;
-            Kingdom kingdom = holder.getKingdom();
+            nation kingdom = holder.getnation();
             if (kingdom.getSpecialties().contains(good.getId())) {
                 kingdom.getSpecialties().remove(good.getId());
             } else {
@@ -43,8 +43,8 @@ public class KingdomSpecialtyListener implements Listener {
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
         Inventory inv = event.getInventory();
-        if (inv.getHolder() instanceof KingdomSpecialtyService.SpecialtyHolder holder) {
-            KingdomStorage.save(holder.getKingdom());
+        if (inv.getHolder() instanceof nationSpecialtyService.SpecialtyHolder holder) {
+            nationStorage.save(holder.getnation());
         }
     }
 }

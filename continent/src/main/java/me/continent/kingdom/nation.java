@@ -4,7 +4,7 @@ import me.continent.village.Village;
 
 import java.util.*;
 
-public class Kingdom {
+public class nation {
     private String name;
     private UUID leader;
     private String capital; // village name
@@ -24,7 +24,7 @@ public class Kingdom {
     private org.bukkit.inventory.ItemStack[] chestContents = new org.bukkit.inventory.ItemStack[27];
     private double taxRate = 0;
 
-    public Kingdom(String name, UUID leader, Village capital) {
+    public nation(String name, UUID leader, Village capital) {
         this.name = name;
         this.leader = leader;
         this.capital = capital.getName();
