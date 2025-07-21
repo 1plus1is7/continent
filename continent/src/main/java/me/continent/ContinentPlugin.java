@@ -22,6 +22,9 @@ import me.continent.village.service.ChestListener;
 import me.continent.village.service.MaintenanceService;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.continent.player.PlayerDataManager;
+import me.continent.command.MarketCommand;
+import me.continent.market.MarketManager;
+import me.continent.market.MarketListener;
 import me.continent.storage.VillageStorage;
 import me.continent.scoreboard.ScoreboardService;
 import me.continent.crop.CropGrowthManager;
@@ -50,6 +53,7 @@ public class ContinentPlugin extends JavaPlugin {
         getCommand("war").setExecutor(new WarCommand());
         getCommand("guide").setExecutor(new GuideCommand());
         getCommand("specialty").setExecutor(new SpecialtyCommand());
+        getCommand("market").setExecutor(new MarketCommand());
         getCommand("admin").setExecutor(new AdminCommand());
 
         // 중앙은행 데이터 로딩
@@ -65,6 +69,7 @@ public class ContinentPlugin extends JavaPlugin {
 
         ScoreboardService.schedule();
 
+        MarketManager.load(this);
         getServer().getPluginManager().registerEvents(new TerritoryListener(), this);
         getServer().getPluginManager().registerEvents(new VillageChatListener(), this);
         getServer().getPluginManager().registerEvents(new GlobalChatListener(), this);
@@ -87,6 +92,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new me.continent.nation.service.nationVillageManageListener(), this);
 
 
+        getServer().getPluginManager().registerEvents(new MarketListener(), this);
 
         getLogger().info("Continent 플러그인 활성화됨");
     }
@@ -96,6 +102,7 @@ public class ContinentPlugin extends JavaPlugin {
         // 중앙은행 데이터 저장
         CentralBankDataManager.save();
         me.continent.nation.nationStorage.saveAll();
+        MarketManager.save();
         PlayerDataManager.saveAll();
 
         CropGrowthManager.shutdown();
