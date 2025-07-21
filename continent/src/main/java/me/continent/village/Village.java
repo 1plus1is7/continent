@@ -38,6 +38,9 @@ public class Village {
     // 마을 창고 (27칸 단일 체스트)
     private org.bukkit.inventory.ItemStack[] chestContents = new org.bukkit.inventory.ItemStack[27];
 
+    // Village symbol item
+    private org.bukkit.inventory.ItemStack symbol;
+
 
     public Village(String name, UUID king) {
         this.name = name;
@@ -46,6 +49,7 @@ public class Village {
         this.vault = 0;
         this.kingdom = null;
         this.protectionUntil = System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000L; // 7일
+        this.symbol = new org.bukkit.inventory.ItemStack(org.bukkit.Material.WOODEN_SWORD);
     }
 
     public static Location getGroundLocation(Location loc) {
@@ -156,6 +160,14 @@ public class Village {
         } else {
             this.chestContents = java.util.Arrays.copyOf(items, 27);
         }
+    }
+
+    public org.bukkit.inventory.ItemStack getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(org.bukkit.inventory.ItemStack symbol) {
+        this.symbol = symbol;
     }
 
 

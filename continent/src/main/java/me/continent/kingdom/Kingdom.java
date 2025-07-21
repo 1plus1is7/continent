@@ -19,12 +19,14 @@ public class Kingdom {
     private final Set<String> selectedResearchTrees = new HashSet<>();
     private final Set<String> selectedT4Nodes = new HashSet<>();
     private int researchSlots = 1;
+    private org.bukkit.inventory.ItemStack flag;
 
     public Kingdom(String name, UUID leader, Village capital) {
         this.name = name;
         this.leader = leader;
         this.capital = capital.getName();
         this.villages.add(capital.getName());
+        this.flag = new org.bukkit.inventory.ItemStack(org.bukkit.Material.WHITE_BANNER);
     }
 
     public String getName() {
@@ -121,5 +123,13 @@ public class Kingdom {
 
     public void setResearchSlots(int researchSlots) {
         this.researchSlots = researchSlots;
+    }
+
+    public org.bukkit.inventory.ItemStack getFlag() {
+        return flag;
+    }
+
+    public void setFlag(org.bukkit.inventory.ItemStack flag) {
+        this.flag = flag;
     }
 }
