@@ -146,20 +146,29 @@ public class ResearchManager {
 
     /** Determine slot index for node in GUI. */
     private static int getSlotForNode(ResearchNode node) {
-        return switch (node.getTier()) {
-            case 1 -> node.getId().endsWith("1") ? 19 : 28;
-            case 2 -> node.getId().endsWith("1") ? 21 : 30;
-            case 3 -> node.getId().endsWith("1") ? 23 : 32;
-            case 4 -> {
-                List<ResearchNode> t4 = nodes.values().stream()
-                        .filter(n -> n.getTree().equals(node.getTree()) && n.getTier() == 4)
-                        .sorted(Comparator.comparing(ResearchNode::getId))
-                        .toList();
-                int idx = t4.indexOf(node);
-                yield 16 + idx * 9;
-            }
-            default -> -1;
-        };
+        int tier = node.getTier();
+        if (tier >= 1 && tier <= 3) {
+            List<ResearchNode> list = nodes.values().stream()
+                    .filter(n -> n.getTree().equals(node.getTree()) && n.getTier() == tier)
+                    .sorted(Comparator.comparing(ResearchNode::getId))
+                    .toList();
+            int idx = list.indexOf(node);
+            return switch (tier) {
+                case 1 -> idx == 0 ? 19 : 28;
+                case 2 -> idx == 0 ? 21 : 30;
+                case 3 -> idx == 0 ? 23 : 32;
+                default -> -1; // never
+            };
+        }
+        if (tier == 4) {
+            List<ResearchNode> t4 = nodes.values().stream()
+                    .filter(n -> n.getTree().equals(node.getTree()) && n.getTier() == 4)
+                    .sorted(Comparator.comparing(ResearchNode::getId))
+                    .toList();
+            int idx = t4.indexOf(node);
+            return 16 + idx * 9;
+        }
+        return -1;
     }
 
     /** Create node item with state-specific display. */
