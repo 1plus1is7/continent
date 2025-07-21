@@ -8,6 +8,7 @@ import me.continent.command.VillageCommand;
 import me.continent.command.KingdomCommand;
 import me.continent.war.WarCommand;
 import me.continent.command.SeasonGuideCommand;
+import me.continent.command.GuideCommand;
 import me.continent.command.SpecialtyCommand;
 import me.continent.command.AdminCommand;
 import me.continent.economy.CentralBankDataManager;
@@ -53,6 +54,7 @@ public class ContinentPlugin extends JavaPlugin {
         getCommand("war").setExecutor(new WarCommand());
         getCommand("season").setExecutor(new SeasonManager());
         getCommand("seasonguide").setExecutor(new SeasonGuideCommand());
+        getCommand("guide").setExecutor(new GuideCommand());
         getCommand("specialty").setExecutor(new SpecialtyCommand());
         getCommand("admin").setExecutor(new AdminCommand());
 

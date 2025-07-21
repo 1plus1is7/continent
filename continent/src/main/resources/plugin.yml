@@ -23,6 +23,9 @@ commands:
   seasonguide:
     description: Gives a guide book about the season system
     usage: /seasonguide
+  guide:
+    description: Provides guide books about kingdom, village and war
+    usage: /guide <topic>
   specialty:
     description: Specialty goods command
     usage: /specialty <subcommand>
