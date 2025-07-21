@@ -24,7 +24,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.continent.player.PlayerDataManager;
 import me.continent.storage.VillageStorage;
 import me.continent.scoreboard.ScoreboardService;
-import me.continent.temperature.BodyTemperatureManager;
 import me.continent.crop.CropGrowthManager;
 import me.continent.crop.CropListener;
 import me.continent.research.ResearchListener;
@@ -65,7 +64,6 @@ public class ContinentPlugin extends JavaPlugin {
         CropGrowthManager.init(this);
 
         ScoreboardService.schedule();
-        BodyTemperatureManager.start();
 
         getServer().getPluginManager().registerEvents(new TerritoryListener(), this);
         getServer().getPluginManager().registerEvents(new VillageChatListener(), this);
@@ -100,7 +98,6 @@ public class ContinentPlugin extends JavaPlugin {
         me.continent.nation.nationStorage.saveAll();
         PlayerDataManager.saveAll();
 
-        BodyTemperatureManager.stop();
         CropGrowthManager.shutdown();
 
         getLogger().info("Continent 플러그인 비활성화됨");

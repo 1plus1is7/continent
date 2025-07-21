@@ -46,9 +46,17 @@ public class ProtectionStateListener implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
-        if (inProtectedVillage(event.getEntity())) {
-            event.setCancelled(true);
+        if (!inProtectedVillage(event.getEntity())) return;
+
+        Entity damager = event.getDamager();
+        if (damager instanceof Player player) {
+            Village village = VillageManager.getByChunk(event.getEntity().getLocation().getChunk());
+            if (village != null && village.getMembers().contains(player.getUniqueId())) {
+                return; // allow members to attack
+            }
         }
+
+        event.setCancelled(true);
     }
 
     @EventHandler
