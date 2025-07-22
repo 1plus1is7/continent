@@ -33,12 +33,14 @@ public class MarketManager {
         List<Map<?, ?>> list = config.getMapList("items");
         for (Map<?, ?> m : list) {
             try {
-                UUID id = UUID.fromString((String) m.get("id"));
-                UUID seller = UUID.fromString((String) m.get("seller"));
-                ItemStack item = ItemSerialization.deserializeItem((String) m.get("item"));
-                int price = (int) m.get("price");
-                int stock = (int) m.get("stock");
-                String time = (String) m.get("time");
+                UUID id = UUID.fromString(String.valueOf(m.get("id")));
+                UUID seller = UUID.fromString(String.valueOf(m.get("seller")));
+                ItemStack item = ItemSerialization.deserializeItem(String.valueOf(m.get("item")));
+                Object priceObj = m.get("price");
+                int price = priceObj instanceof Number ? ((Number) priceObj).intValue() : Integer.parseInt(String.valueOf(priceObj));
+                Object stockObj = m.get("stock");
+                int stock = stockObj instanceof Number ? ((Number) stockObj).intValue() : Integer.parseInt(String.valueOf(stockObj));
+                String time = String.valueOf(m.get("time"));
                 LocalDateTime listed = LocalDateTime.parse(time);
                 items.add(new MarketItem(id, seller, item, price, stock, listed));
             } catch (Exception e) {

@@ -43,13 +43,19 @@ public class ResearchManager {
         for (String tree : config.getKeys(false)) {
             for (String tierKey : Objects.requireNonNull(config.getConfigurationSection(tree)).getKeys(false)) {
                 int tier = Integer.parseInt(tierKey.substring(1));
-                for (Map<?, ?> map : config.getMapList(tree + "." + tierKey)) {
+                List<Map<?, ?>> list = config.getMapList(tree + "." + tierKey);
+                for (Map<?, ?> map : list) {
                     String id = Objects.toString(map.get("id"));
                     String effect = Objects.toString(map.get("effect"));
                     String cost = Objects.toString(map.get("cost"));
                     String time = Objects.toString(map.get("time"));
-                    List<String> prereq = (List<String>) map.get("prereq");
-                    if (prereq == null) prereq = new ArrayList<>();
+                    List<String> prereq = new ArrayList<>();
+                    Object preObj = map.get("prereq");
+                    if (preObj instanceof List<?> preList) {
+                        for (Object o : preList) {
+                            if (o != null) prereq.add(o.toString());
+                        }
+                    }
                     ResearchNode node = new ResearchNode(id, effect, cost, time, prereq, tree, tier);
                     nodes.put(id, node);
                 }
