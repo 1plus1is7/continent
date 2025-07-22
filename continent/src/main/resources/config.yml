@@ -16,3 +16,5 @@ symbols:
   chunk: "▩"
 lobby-world: "lobby"
 land-world: "world"
+war:
+  declare-cost: 0

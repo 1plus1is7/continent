@@ -71,6 +71,23 @@ public class WarManager {
 
         war.getBannedPlayers().clear();
         WarBossBarManager.endWar(war);
+
+        String winner = null;
+        nation atk = nationManager.getByName(war.getAttacker());
+        nation def = nationManager.getByName(war.getDefender());
+        if (atk != null && atk.getCapital() != null &&
+                war.isVillageDestroyed(atk.getCapital())) {
+            winner = def != null ? def.getName() : war.getDefender();
+        } else if (def != null && def.getCapital() != null &&
+                war.isVillageDestroyed(def.getCapital())) {
+            winner = atk != null ? atk.getName() : war.getAttacker();
+        }
+        String msg = "§e[전쟁] §f" + war.getAttacker() + " 국가와 "
+                + war.getDefender() + " 국가의 전쟁이 종료되었습니다.";
+        if (winner != null) {
+            msg += " 승자는 " + winner + " 국가입니다.";
+        }
+        Bukkit.broadcastMessage(msg);
     }
 
     public static void surrender(nation loser) {

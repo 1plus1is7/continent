@@ -1,7 +1,9 @@
 package me.continent.war;
 
+import me.continent.ContinentPlugin;
 import me.continent.nation.nation;
 import me.continent.nation.nationManager;
+import me.continent.nation.nationStorage;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import org.bukkit.Bukkit;
@@ -45,6 +47,18 @@ public class WarCommand implements TabExecutor {
                 player.sendMessage("§c이미 해당 국가와 전쟁 중입니다.");
                 return true;
             }
+
+            double cost = ContinentPlugin.getInstance().getConfig()
+                    .getDouble("war.declare-cost", 0);
+            if (cost > 0 && attacker.getTreasury() < cost) {
+                player.sendMessage("§c국고가 부족합니다. 전쟁 선포 비용: " + cost + "G");
+                return true;
+            }
+            if (cost > 0) {
+                attacker.removeGold(cost);
+                nationStorage.save(attacker);
+            }
+
             WarManager.declareWar(attacker, defender);
             Bukkit.broadcastMessage("§c[전쟁] §f" + attacker.getName() + " 국가가 " + defender.getName() + " 국가에 전쟁을 선포했습니다!");
             return true;
