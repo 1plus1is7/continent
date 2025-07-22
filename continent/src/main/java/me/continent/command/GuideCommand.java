@@ -32,7 +32,7 @@ public class GuideCommand implements TabExecutor {
 
         GUIDES.put("war", Arrays.asList(
                 "Continent 전쟁 가이드\n\n국가 간 전쟁 시스템을 소개합니다.",
-                "§l전쟁 선포\n- 국왕만 /war declare <국가명>\n- 관리자 /admin war start",
+                "§l전쟁 선포\n- 국왕만 /war declare <국가명> (비용: config.yml의 war.declare-cost)\n- 관리자 /admin war start",
                 "§l전쟁 진행\n- /war status 로 전황 확인\n- 코어 파괴 또는 /war surrender 로 종료",
                 "§l전쟁 중 특징\n- 적 영토 파괴와 코어 공격 허용\n- 수도 코어 파괴 시 즉시 종전",
                 "§l마을 점령\n- 파괴된 마을의 소유권은 전쟁 후 공격국으로 이전",
