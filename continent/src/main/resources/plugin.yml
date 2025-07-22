@@ -13,10 +13,6 @@ commands:
   gold:
     description: Gold system command
     usage: /gold <subcommand>
-  nation:
-    description: nation system command
-    aliases: [n]
-    usage: /nation <subcommand>
   war:
     description: War system command
     usage: /war <subcommand>

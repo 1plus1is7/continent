@@ -1,12 +1,8 @@
 package me.continent.war;
 
-import me.continent.nation.nation;
-import me.continent.nation.nationManager;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import me.continent.village.service.CoreService;
-import me.continent.war.WarBossBarManager;
-import me.continent.nation.nationStorage;
 import me.continent.storage.VillageStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,11 +10,10 @@ import org.bukkit.Material;
 import java.util.*;
 
 public class WarManager {
-    public static final int CAPITAL_CORE_HP = 30;
     public static final int VILLAGE_CORE_HP = 20;
     private static final Map<String, War> wars = new HashMap<>();
 
-    public static War declareWar(nation attacker, nation defender) {
+    public static War declareWar(Village attacker, Village defender) {
         if (attacker == null || defender == null) return null;
         War war = new War(attacker.getName(), defender.getName());
         wars.put(attacker.getName().toLowerCase(), war);
@@ -29,18 +24,18 @@ public class WarManager {
         return war;
     }
 
-    public static War getWar(String kingdom) {
-        return wars.get(kingdom.toLowerCase());
+    public static War getWar(String village) {
+        return wars.get(village.toLowerCase());
     }
 
     public static Collection<War> getWars() {
         return new HashSet<>(wars.values());
     }
 
-    public static boolean isAtWar(String kingdom1, String kingdom2) {
-        War war = wars.get(kingdom1.toLowerCase());
+    public static boolean isAtWar(String village1, String village2) {
+        War war = wars.get(village1.toLowerCase());
         if (war == null) return false;
-        return war.getAttacker().equalsIgnoreCase(kingdom2) || war.getDefender().equalsIgnoreCase(kingdom2);
+        return war.getAttacker().equalsIgnoreCase(village2) || war.getDefender().equalsIgnoreCase(village2);
     }
 
     public static void endWar(War war) {
@@ -48,97 +43,43 @@ public class WarManager {
         wars.remove(war.getAttacker().toLowerCase());
         wars.remove(war.getDefender().toLowerCase());
 
-        // restore captured villages and transfer ownership
-        for (Map.Entry<String, String> entry : war.getDestroyedVillages().entrySet()) {
-            Village village = VillageManager.getByName(entry.getKey());
-            nation capturer = nationManager.getByName(entry.getValue());
-            if (village == null || capturer == null) continue;
-
-            // restore core block if missing
-            if (village.getCoreLocation() != null
-                    && village.getCoreLocation().getBlock().getType() != Material.BEACON) {
-                CoreService.placeCore(village, village.getCoreLocation());
+        // restore core blocks for destroyed villages
+        for (String vName : war.getDestroyedVillages().keySet()) {
+            Village v = VillageManager.getByName(vName);
+            if (v != null && v.getCoreLocation() != null
+                    && v.getCoreLocation().getBlock().getType() != Material.BEACON) {
+                CoreService.placeCore(v, v.getCoreLocation());
             }
-
-            // transfer village ownership
-            if (!capturer.getVillages().contains(village.getName())) {
-                nationManager.addVillage(capturer, village);
-                // persist updated data for both capturer nation and village
-                nationStorage.save(capturer);
-                VillageStorage.save(village);
-            }
+            if (v != null) VillageStorage.save(v);
         }
 
         war.getBannedPlayers().clear();
         WarBossBarManager.endWar(war);
 
-        String winner = null;
-        nation atk = nationManager.getByName(war.getAttacker());
-        nation def = nationManager.getByName(war.getDefender());
-        if (atk != null && atk.getCapital() != null &&
-                war.isVillageDestroyed(atk.getCapital())) {
-            winner = def != null ? def.getName() : war.getDefender();
-        } else if (def != null && def.getCapital() != null &&
-                war.isVillageDestroyed(def.getCapital())) {
-            winner = atk != null ? atk.getName() : war.getAttacker();
-        }
-        String msg = "§e[전쟁] §f" + war.getAttacker() + " 국가와 "
-                + war.getDefender() + " 국가의 전쟁이 종료되었습니다.";
-        if (winner != null) {
-            msg += " 승자는 " + winner + " 국가입니다.";
-        }
+        String msg = "§e[전쟁] §f" + war.getAttacker() + " 마을과 "
+                + war.getDefender() + " 마을의 전쟁이 종료되었습니다.";
         Bukkit.broadcastMessage(msg);
     }
 
-    public static void surrender(nation loser) {
+    public static void surrender(Village loser) {
         if (loser == null) return;
         War war = getWar(loser.getName());
         if (war == null) return;
-        String winnerName = war.getAttacker().equalsIgnoreCase(loser.getName())
-                ? war.getDefender() : war.getAttacker();
-        nation winner = nationManager.getByName(winnerName);
-
-        Set<String> loserVillages = new HashSet<>(loser.getVillages());
-
         endWar(war);
-
-        nationManager.unregister(loser);
-
-        if (winner != null) {
-            for (String vName : loserVillages) {
-                Village v = VillageManager.getByName(vName);
-                if (v != null && !winner.getVillages().contains(vName)) {
-                    nationManager.addVillage(winner, v);
-                }
-            }
-            nationStorage.delete(loser);
-            nationStorage.save(winner);
-            for (String vName : winner.getVillages()) {
-                Village vv = VillageManager.getByName(vName);
-                if (vv != null) VillageStorage.save(vv);
-            }
-        } else {
-            nationStorage.delete(loser);
-        }
+        String winner = war.getAttacker().equalsIgnoreCase(loser.getName())
+                ? war.getDefender() : war.getAttacker();
+        Bukkit.broadcastMessage("§e[전쟁] §f" + loser.getName() + " 마을이 항복했습니다. 승자는 " + winner + " 마을입니다.");
     }
 
-    public static void coreDestroyed(Village village, nation attacker) {
+    public static void coreDestroyed(Village village, Village attacker) {
         if (village == null || attacker == null) return;
-        War war = getWar(village.getnation());
+        War war = getWar(village.getName());
         if (war == null) return;
         war.addDestroyedVillage(village.getName(), attacker.getName());
         WarBossBarManager.remove(war, village.getName());
         CoreService.removeCore(village);
         Bukkit.broadcastMessage("§c[전쟁] §f" + village.getName() + " 마을의 코어가 파괴되었습니다!");
-
-        nation victim = nationManager.getByName(village.getnation());
-        if (victim != null && victim.getCapital() != null
-                && victim.getCapital().equalsIgnoreCase(village.getName())) {
-            Bukkit.broadcastMessage("§e[전쟁] §f" + victim.getName()
-                    + " 국가의 수도가 파괴되어 전쟁이 종료됩니다.");
-            surrender(victim);
-            return;
-        }
+        surrender(village);
     }
 
     public static boolean isPlayerBanned(UUID uuid) {
@@ -148,25 +89,22 @@ public class WarManager {
         return false;
     }
 
-    private static void initCoreHp(War war, nation kingdom) {
-        if (kingdom == null) return;
-        for (String vName : kingdom.getVillages()) {
-            war.setCoreHp(vName, getInitialHp(kingdom, vName));
-        }
+    private static void initCoreHp(War war, Village village) {
+        if (village == null) return;
+        war.setCoreHp(village.getName(), getInitialHp(village));
     }
 
-    public static int getInitialHp(nation kingdom, String villageName) {
-        if (kingdom == null || villageName == null) return VILLAGE_CORE_HP;
-        return villageName.equalsIgnoreCase(kingdom.getCapital()) ? CAPITAL_CORE_HP : VILLAGE_CORE_HP;
+    public static int getInitialHp(Village village) {
+        return VILLAGE_CORE_HP;
     }
 
-    public static void damageCore(Village village, nation attacker) {
+    public static void damageCore(Village village, Village attacker) {
         if (village == null || attacker == null) return;
-        War war = getWar(village.getnation());
+        War war = getWar(village.getName());
         if (war == null) return;
         int hp = war.getCoreHp(village.getName());
         if (hp <= 0) {
-            hp = getInitialHp(nationManager.getByName(village.getnation()), village.getName());
+            hp = getInitialHp(village);
         }
         hp--;
         war.setCoreHp(village.getName(), hp);

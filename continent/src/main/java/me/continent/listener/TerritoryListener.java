@@ -2,8 +2,6 @@ package me.continent.listener;
 
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
-import me.continent.nation.nationManager;
-import me.continent.nation.nation;
 import me.continent.ContinentPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -49,10 +47,6 @@ public class TerritoryListener implements Listener {
         Village playerVillage = VillageManager.getByPlayer(uuid);
 
         if (toVillage != null && (playerVillage == null || !toVillage.getMembers().contains(uuid))) {
-            if (toVillage.getnation() != null) {
-                nation k = nationManager.getByName(toVillage.getnation());
-                if (k != null && !k.isTerritoryProtectionEnabled()) return;
-            }
             // entering foreign village
             if (!toVillage.equals(currentIntrusion.get(uuid))) {
                 cancelAlert(uuid);

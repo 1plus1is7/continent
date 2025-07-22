@@ -2,7 +2,8 @@ package me.continent.command;
 
 import me.continent.war.War;
 import me.continent.war.WarManager;
-import me.continent.nation.nationManager;
+import me.continent.village.VillageManager;
+import me.continent.village.Village;
 import me.continent.economy.CentralBank;
 import me.continent.village.service.MaintenanceService;
 import org.bukkit.command.Command;
@@ -50,10 +51,10 @@ public class AdminCommand implements TabExecutor {
                 return true;
             }
             if (args.length >= 4 && args[1].equalsIgnoreCase("start")) {
-                var atk = nationManager.getByName(args[2]);
-                var def = nationManager.getByName(args[3]);
+                Village atk = VillageManager.getByName(args[2]);
+                Village def = VillageManager.getByName(args[3]);
                 if (atk == null || def == null) {
-                    sender.sendMessage("§c국가를 찾을 수 없습니다.");
+                    sender.sendMessage("§c마을을 찾을 수 없습니다.");
                     return true;
                 }
                 if (WarManager.isAtWar(atk.getName(), def.getName())) {
@@ -67,7 +68,7 @@ public class AdminCommand implements TabExecutor {
             if (args.length >= 3 && args[1].equalsIgnoreCase("end")) {
                 War war = WarManager.getWar(args[2]);
                 if (war == null) {
-                    sender.sendMessage("§c해당 국가의 전쟁이 존재하지 않습니다.");
+                    sender.sendMessage("§c해당 마을의 전쟁이 존재하지 않습니다.");
                     return true;
                 }
                 WarManager.endWar(war);
@@ -194,22 +195,22 @@ public class AdminCommand implements TabExecutor {
         }
 
         if (args.length == 3 && args[0].equalsIgnoreCase("war") && args[1].equalsIgnoreCase("start")) {
-            return nationManager.getAll().stream()
-                    .map(k -> k.getName())
+            return VillageManager.getAll().stream()
+                    .map(Village::getName)
                     .filter(n -> n.toLowerCase().startsWith(args[2].toLowerCase()))
                     .toList();
         }
 
         if (args.length == 4 && args[0].equalsIgnoreCase("war") && args[1].equalsIgnoreCase("start")) {
-            return nationManager.getAll().stream()
-                    .map(k -> k.getName())
+            return VillageManager.getAll().stream()
+                    .map(Village::getName)
                     .filter(n -> n.toLowerCase().startsWith(args[3].toLowerCase()))
                     .toList();
         }
 
         if (args.length == 3 && args[0].equalsIgnoreCase("war") && (args[1].equalsIgnoreCase("end") || args[1].equalsIgnoreCase("info"))) {
-            return nationManager.getAll().stream()
-                    .map(k -> k.getName())
+            return VillageManager.getAll().stream()
+                    .map(Village::getName)
                     .filter(n -> n.toLowerCase().startsWith(args[2].toLowerCase()))
                     .toList();
         }

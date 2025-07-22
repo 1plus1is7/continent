@@ -1,7 +1,5 @@
 package me.continent.war;
 
-import me.continent.nation.nation;
-import me.continent.nation.nationManager;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import org.bukkit.Bukkit;
@@ -22,46 +20,27 @@ public class WarBossBarManager {
     }
 
     public static void createWar(War war) {
-        nation atk = nationManager.getByName(war.getAttacker());
-        nation def = nationManager.getByName(war.getDefender());
-        if (atk != null && def != null) {
-            createBarsFornation(war, atk, def);
-            createBarsFornation(war, def, atk);
-        } else {
-            if (atk != null) createBarsFornation(war, atk, null);
-            if (def != null) createBarsFornation(war, def, null);
-        }
+        createBarForVillage(war, war.getAttacker());
+        createBarForVillage(war, war.getDefender());
     }
 
-    private static void createBarsFornation(War war, nation viewer, nation enemy) {
-        for (String vName : viewer.getVillages()) {
-            createBarForVillage(war, vName, viewer);
-        }
-        if (enemy != null && enemy.getCapital() != null) {
-            createBarForVillage(war, enemy.getCapital(), viewer);
-        }
-    }
-
-    private static void createBarForVillage(War war, String village, nation viewer) {
-        String k = key(war, village);
+    private static void createBarForVillage(War war, String villageName) {
+        String k = key(war, villageName);
         BossBar bar = bars.get(k);
         if (bar == null) {
-            bar = Bukkit.createBossBar(village + " 코어 HP", BarColor.RED, BarStyle.SEGMENTED_10);
+            bar = Bukkit.createBossBar(villageName + " 코어 HP", BarColor.RED, BarStyle.SEGMENTED_10);
             bar.setProgress(1.0);
             bars.put(k, bar);
         }
-        addPlayers(bar, viewer);
+        Village village = VillageManager.getByName(villageName);
+        if (village != null) addPlayers(bar, village);
     }
 
-    private static void addPlayers(BossBar bar, nation kingdom) {
-        for (String vName : kingdom.getVillages()) {
-            Village v = VillageManager.getByName(vName);
-            if (v == null) continue;
-            for (UUID uuid : v.getMembers()) {
-                Player p = Bukkit.getPlayer(uuid);
-                if (p != null && p.isOnline()) {
-                    bar.addPlayer(p);
-                }
+    private static void addPlayers(BossBar bar, Village village) {
+        for (UUID uuid : village.getMembers()) {
+            Player p = Bukkit.getPlayer(uuid);
+            if (p != null && p.isOnline()) {
+                bar.addPlayer(p);
             }
         }
     }
@@ -70,9 +49,9 @@ public class WarBossBarManager {
         String k = key(war, villageName);
         BossBar bar = bars.get(k);
         if (bar == null) return;
-        nation kingdom = nationManager.getByVillage(villageName);
-        if (kingdom == null) return;
-        int maxHp = WarManager.getInitialHp(kingdom, villageName);
+        Village village = VillageManager.getByName(villageName);
+        if (village == null) return;
+        int maxHp = WarManager.getInitialHp(village);
         bar.setTitle(villageName + " 코어 HP: " + Math.max(hp, 0) + "/" + maxHp);
         bar.setProgress(Math.max(0.0, Math.min(1.0, hp / (double) maxHp)));
     }

@@ -1,11 +1,9 @@
 package me.continent.research;
 
 import me.continent.ContinentPlugin;
-import me.continent.nation.nation;
-import me.continent.nation.nationManager;
-import me.continent.nation.nationStorage;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
+import me.continent.storage.VillageStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
@@ -71,29 +69,29 @@ public class ResearchManager {
 
     /** Open tree selection GUI. */
     public static void openTreeSelect(Player player) {
-        nation kingdom = getnation(player);
-        if (kingdom == null) {
-            player.sendMessage("§c소속된 국가가 없습니다.");
+        Village village = getVillage(player);
+        if (village == null) {
+            player.sendMessage("§c소속된 마을이 없습니다.");
             return;
         }
-        Inventory inv = Bukkit.createInventory(new TreeHolder(kingdom), 9, "연구 트리 선택");
+        Inventory inv = Bukkit.createInventory(new TreeHolder(village), 9, "연구 트리 선택");
         TreeHolder holder = (TreeHolder) inv.getHolder();
         holder.setInventory(inv);
 
-        setTreeItem(inv, 1, "MILITARY", kingdom);
-        setTreeItem(inv, 2, "NAVAL", kingdom);
-        setTreeItem(inv, 4, "INFRA", kingdom);
-        setTreeItem(inv, 6, "CIVIL", kingdom);
-        setTreeItem(inv, 7, "INDUSTRY", kingdom);
+        setTreeItem(inv, 1, "MILITARY", village);
+        setTreeItem(inv, 2, "NAVAL", village);
+        setTreeItem(inv, 4, "INFRA", village);
+        setTreeItem(inv, 6, "CIVIL", village);
+        setTreeItem(inv, 7, "INDUSTRY", village);
 
         player.openInventory(inv);
     }
 
     /** Update or create a tree item based on selection state. */
-    private static void setTreeItem(Inventory inv, int slot, String tree, nation k) {
-        boolean selected = k.getSelectedResearchTrees().contains(tree) || tree.equals("INFRA");
-        if (tree.equals("INFRA")) k.getSelectedResearchTrees().add("INFRA");
-        boolean disabled = !selected && k.getSelectedResearchTrees().size() >= k.getResearchSlots();
+    private static void setTreeItem(Inventory inv, int slot, String tree, Village v) {
+        boolean selected = v.getSelectedResearchTrees().contains(tree) || tree.equals("INFRA");
+        if (tree.equals("INFRA")) v.getSelectedResearchTrees().add("INFRA");
+        boolean disabled = !selected && v.getSelectedResearchTrees().size() >= v.getResearchSlots();
         String prefix = selected ? "✅ " : disabled ? "⛔ " : "📂 ";
 
         ItemStack item = new ItemStack(Material.PAPER);
@@ -116,12 +114,12 @@ public class ResearchManager {
 
     /** Open detailed node GUI for the given tree. */
     public static void openNodeMenu(Player player, String tree) {
-        nation kingdom = getnation(player);
-        if (kingdom == null) {
-            player.sendMessage("§c소속된 국가가 없습니다.");
+        Village village = getVillage(player);
+        if (village == null) {
+            player.sendMessage("§c소속된 마을이 없습니다.");
             return;
         }
-        Inventory inv = Bukkit.createInventory(new NodeHolder(kingdom, tree), 54, tree + " 연구");
+        Inventory inv = Bukkit.createInventory(new NodeHolder(village, tree), 54, tree + " 연구");
         NodeHolder holder = (NodeHolder) inv.getHolder();
         holder.setInventory(inv);
 
@@ -138,7 +136,7 @@ public class ResearchManager {
                 .toList();
         for (ResearchNode node : list) {
             int slot = getSlotForNode(node);
-            if (slot >= 0) inv.setItem(slot, createNodeItem(kingdom, node));
+            if (slot >= 0) inv.setItem(slot, createNodeItem(village, node));
         }
 
         ItemStack back = new ItemStack(Material.ARROW);
@@ -178,8 +176,8 @@ public class ResearchManager {
     }
 
     /** Create node item with state-specific display. */
-    private static ItemStack createNodeItem(nation k, ResearchNode node) {
-        ResearchState state = getState(k, node);
+    private static ItemStack createNodeItem(Village v, ResearchNode node) {
+        ResearchState state = getState(v, node);
         ItemStack item = switch (state) {
             case LOCKED -> new ItemStack(Material.BARRIER);
             case AVAILABLE, IN_PROGRESS -> new ItemStack(Material.BOOK);
@@ -217,74 +215,74 @@ public class ResearchManager {
 
     /** Toggle tree selection on double click. */
     public static void toggleTreeSelect(Player player, String tree) {
-        nation k = getnation(player);
-        if (k == null || tree.equals("INFRA")) return;
-        Set<String> set = k.getSelectedResearchTrees();
+        Village v = getVillage(player);
+        if (v == null || tree.equals("INFRA")) return;
+        Set<String> set = v.getSelectedResearchTrees();
         if (set.contains(tree)) {
             set.remove(tree);
         } else {
-            if (set.size() >= k.getResearchSlots()) {
+            if (set.size() >= v.getResearchSlots()) {
                 player.sendMessage("§c연구 슬롯이 부족합니다.");
                 return;
             }
             set.add(tree);
         }
-        nationStorage.save(k);
+        VillageStorage.save(v);
         openTreeSelect(player);
     }
 
     /** Start research on a node if possible. */
     public static void startResearch(Player player, ResearchNode node) {
-        nation kingdom = getnation(player);
-        if (kingdom == null) {
-            player.sendMessage("§c소속된 국가가 없습니다.");
+        Village village = getVillage(player);
+        if (village == null) {
+            player.sendMessage("§c소속된 마을이 없습니다.");
             return;
         }
-        if (kingdom.getResearchedNodes().contains(node.getId())) {
+        if (village.getResearchedNodes().contains(node.getId())) {
             player.sendMessage("§e이미 연구 완료된 노드입니다.");
             return;
         }
         for (String pre : node.getPrereq()) {
-            if (!kingdom.getResearchedNodes().contains(pre)) {
+            if (!village.getResearchedNodes().contains(pre)) {
                 player.sendMessage("§c선행 연구가 완료되지 않았습니다.");
                 return;
             }
         }
-        if (node.getTier() == 4 && !kingdom.getSelectedT4Nodes().contains(node.getId())) {
-            if (kingdom.getSelectedT4Nodes().size() >= 2) {
+        if (node.getTier() == 4 && !village.getSelectedT4Nodes().contains(node.getId())) {
+            if (village.getSelectedT4Nodes().size() >= 2) {
                 player.sendMessage("§cT4 노드는 최대 두 개만 선택 가능합니다.");
                 return;
             }
-            kingdom.getSelectedT4Nodes().add(node.getId());
+            village.getSelectedT4Nodes().add(node.getId());
         }
 
         double cost = node.getGoldCost();
-        if (kingdom.getTreasury() < cost) {
-            player.sendMessage("§c국고가 부족합니다.");
+        if (village.getVault() < cost) {
+            player.sendMessage("§c마을 금고가 부족합니다.");
             return;
         }
 
-        kingdom.removeGold(cost);
-        nationStorage.save(kingdom);
+        village.removeGold(cost);
+        VillageStorage.save(village);
 
         player.sendMessage("§a연구를 시작합니다: " + node.getId());
         player.sendMessage("§e연구 비용 " + cost + "G 차감");
 
         long duration = parseDuration(node.getTime());
-        ResearchTask task = new ResearchTask(kingdom, node, duration);
-        tasks.put(kingdom.getName() + ":" + node.getId(), task);
+        ResearchTask task = new ResearchTask(village, node, duration);
+        tasks.put(village.getName() + ":" + node.getId(), task);
         task.start();
         openNodeMenu(player, node.getTree());
     }
 
     /** Determine node state for the given kingdom. */
-    private static ResearchState getState(nation k, ResearchNode node) {
-        if (k.getResearchedNodes().contains(node.getId())) return ResearchState.COMPLETED;
-        if (tasks.containsKey(k.getName() + ":" + node.getId())) return ResearchState.IN_PROGRESS;
+    private static ResearchState getState(Village v, ResearchNode node) {
+        if (v.getResearchedNodes().contains(node.getId())) return ResearchState.COMPLETED;
+        if (tasks.containsKey(v.getName() + ":" + node.getId())) return ResearchState.IN_PROGRESS;
         for (String pre : node.getPrereq()) {
-            if (!k.getResearchedNodes().contains(pre)) return ResearchState.LOCKED;
+            if (!v.getResearchedNodes().contains(pre)) return ResearchState.LOCKED;
         }
-        if (node.getTier() == 4 && !k.getSelectedT4Nodes().contains(node.getId()) && k.getSelectedT4Nodes().size() >= 2) {
+        if (node.getTier() == 4 && !v.getSelectedT4Nodes().contains(node.getId()) && v.getSelectedT4Nodes().size() >= 2) {
             return ResearchState.LOCKED;
         }
         return ResearchState.AVAILABLE;
@@ -305,34 +303,30 @@ public class ResearchManager {
         return d.toSeconds() * 20L;
     }
 
-    /** Resolve player's kingdom. */
-    private static nation getnation(Player player) {
-        Village v = VillageManager.getByPlayer(player.getUniqueId());
-        if (v == null) return null;
-        String kName = v.getnation();
-        if (kName == null) return null;
-        return nationManager.getByName(kName);
+    /** Resolve player's village. */
+    private static Village getVillage(Player player) {
+        return VillageManager.getByPlayer(player.getUniqueId());
     }
 
     // ------------------------------------------------------- Holders
 
     static class TreeHolder implements InventoryHolder {
-        private final nation kingdom;
+        private final Village village;
         private Inventory inv;
-        TreeHolder(nation kingdom) { this.kingdom = kingdom; }
+        TreeHolder(Village village) { this.village = village; }
         void setInventory(Inventory inv) { this.inv = inv; }
         @Override public Inventory getInventory() { return inv; }
-        public nation getnation() { return kingdom; }
+        public Village getVillage() { return village; }
     }
 
     static class NodeHolder implements InventoryHolder {
-        private final nation kingdom;
+        private final Village village;
         private final String tree;
         private Inventory inv;
-        NodeHolder(nation kingdom, String tree) { this.kingdom = kingdom; this.tree = tree; }
+        NodeHolder(Village village, String tree) { this.village = village; this.tree = tree; }
         void setInventory(Inventory inv) { this.inv = inv; }
         @Override public Inventory getInventory() { return inv; }
-        public nation getnation() { return kingdom; }
+        public Village getVillage() { return village; }
         public String getTree() { return tree; }
     }
 
@@ -340,21 +334,21 @@ public class ResearchManager {
 
     /** Represents an active research task. */
     private static class ResearchTask extends BukkitRunnable {
-        private final nation kingdom;
+        private final Village village;
         private final ResearchNode node;
         private final long maxTicks;
         private long tick;
         private BossBar bar;
 
-        ResearchTask(nation kingdom, ResearchNode node, long maxTicks) {
-            this.kingdom = kingdom;
+        ResearchTask(Village village, ResearchNode node, long maxTicks) {
+            this.village = village;
             this.node = node;
             this.maxTicks = maxTicks == 0 ? 20L : maxTicks;
         }
 
         void start() {
             bar = Bukkit.createBossBar("연구 진행: " + node.getId(), BarColor.BLUE, BarStyle.SEGMENTED_10);
-            addPlayers(bar, kingdom);
+            addPlayers(bar, village);
             runTaskTimer(ContinentPlugin.getInstance(), 0L, 20L);
         }
 
@@ -372,25 +366,21 @@ public class ResearchManager {
 
         private void complete() {
             if (bar != null) bar.removeAll();
-            kingdom.getResearchedNodes().add(node.getId());
+            village.getResearchedNodes().add(node.getId());
             if (node.getId().equals("INF_1_RESEARCH_SLOT_1") || node.getId().equals("INF_2_RESEARCH_SLOT_2")) {
-                kingdom.setResearchSlots(kingdom.getResearchSlots() + 1);
+                village.setResearchSlots(village.getResearchSlots() + 1);
             }
-            nationStorage.save(kingdom);
-            tasks.remove(kingdom.getName() + ":" + node.getId());
+            VillageStorage.save(village);
+            tasks.remove(village.getName() + ":" + node.getId());
         }
     }
 
-    /** Add all online players of a kingdom to a boss bar. */
-    private static void addPlayers(BossBar bar, nation kingdom) {
-        for (String vName : kingdom.getVillages()) {
-            Village v = VillageManager.getByName(vName);
-            if (v == null) continue;
-            for (UUID uuid : v.getMembers()) {
-                Player p = Bukkit.getPlayer(uuid);
-                if (p != null && p.isOnline()) {
-                    bar.addPlayer(p);
-                }
+    /** Add all online players of a village to a boss bar. */
+    private static void addPlayers(BossBar bar, Village village) {
+        for (UUID uuid : village.getMembers()) {
+            Player p = Bukkit.getPlayer(uuid);
+            if (p != null && p.isOnline()) {
+                bar.addPlayer(p);
             }
         }
     }

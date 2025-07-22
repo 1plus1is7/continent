@@ -18,18 +18,13 @@ public class Village {
     private double vault;
     private long protectionUntil;
 
-    private String kingdom;
 
     private int maintenanceCount = 0;
     private int unpaidWeeks = 0;
     private long lastMaintenance = 0;
-    private boolean nation = false;
 
     // Whether members of this village can ignite fire or TNT in protected areas
     private boolean memberIgniteAllowed = false;
-
-    // nation invite tracking
-    private final Set<String> kingdomInvites = new HashSet<>();
 
 
     private String coreChunkKey;
@@ -41,13 +36,19 @@ public class Village {
     // Village symbol item
     private org.bukkit.inventory.ItemStack symbol;
 
+    // 연구 및 특산품 데이터
+    private final Set<String> researchedNodes = new HashSet<>();
+    private final Set<String> specialties = new HashSet<>();
+    private final Set<String> selectedResearchTrees = new HashSet<>();
+    private final Set<String> selectedT4Nodes = new HashSet<>();
+    private int researchSlots = 1;
+
 
     public Village(String name, UUID king) {
         this.name = name;
         this.king = king;
         this.members.add(king);
         this.vault = 0;
-        this.kingdom = null;
         this.protectionUntil = System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000L; // 7일
         this.symbol = new org.bukkit.inventory.ItemStack(org.bukkit.Material.WOODEN_SWORD);
     }
@@ -108,9 +109,6 @@ public class Village {
 
     public Set<String> getClaimedChunks() { return claimedChunks; }
 
-    public String getnation() { return kingdom; }
-
-    public void setnation(String kingdom) { this.kingdom = kingdom; }
 
     public Location getSpawnLocation() { return spawnLocation; }
 
@@ -140,15 +138,6 @@ public class Village {
 
     public void setLastMaintenance(long time) { this.lastMaintenance = time; }
 
-    public boolean isNation() { return nation; }
-
-    public void setNation(boolean nation) { this.nation = nation; }
-
-    public Set<String> getnationInvites() { return kingdomInvites; }
-
-    public void addnationInvite(String kingdom) { this.kingdomInvites.add(kingdom.toLowerCase()); }
-
-    public void removenationInvite(String kingdom) { this.kingdomInvites.remove(kingdom.toLowerCase()); }
 
     public org.bukkit.inventory.ItemStack[] getChestContents() {
         return chestContents;
@@ -168,6 +157,31 @@ public class Village {
 
     public void setSymbol(org.bukkit.inventory.ItemStack symbol) {
         this.symbol = symbol;
+    }
+
+    // ---- 연구/특산품 관련 ----
+    public Set<String> getResearchedNodes() {
+        return researchedNodes;
+    }
+
+    public Set<String> getSpecialties() {
+        return specialties;
+    }
+
+    public Set<String> getSelectedResearchTrees() {
+        return selectedResearchTrees;
+    }
+
+    public Set<String> getSelectedT4Nodes() {
+        return selectedT4Nodes;
+    }
+
+    public int getResearchSlots() {
+        return researchSlots;
+    }
+
+    public void setResearchSlots(int slots) {
+        this.researchSlots = slots;
     }
 
 
@@ -211,7 +225,7 @@ public class Village {
     }
 
     public boolean isVillage() {
-        return !nation;
+        return true;
     }
 
     public boolean isAdjacent(Chunk chunk) {
