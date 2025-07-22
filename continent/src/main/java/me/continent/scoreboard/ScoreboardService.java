@@ -46,11 +46,6 @@ public class ScoreboardService {
         Village village = VillageManager.getByPlayer(uuid);
         String villageName = (village != null) ? village.getName() : "없음";
         lines.add("마을: " + villageName);
-        String kingdomName = "없음";
-        if (village != null && village.getnation() != null) {
-            kingdomName = village.getnation();
-        }
-        lines.add("국가: " + kingdomName);
 
         double gold = PlayerDataManager.get(uuid).getGold();
         lines.add("골드: " + String.format("%.2f", gold) + "G");

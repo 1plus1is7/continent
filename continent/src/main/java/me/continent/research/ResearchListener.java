@@ -61,8 +61,7 @@ public class ResearchListener implements Listener {
         }
 
         Village playerVillage = VillageManager.getByPlayer(event.getPlayer().getUniqueId());
-        if (playerVillage == null || village.getnation() == null
-                || !village.getnation().equalsIgnoreCase(playerVillage.getnation())) {
+        if (playerVillage == null || !playerVillage.equals(village)) {
             return;
         }
 

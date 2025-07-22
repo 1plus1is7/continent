@@ -1,8 +1,6 @@
 package me.continent.war;
 
 import me.continent.ContinentPlugin;
-import me.continent.nation.nation;
-import me.continent.nation.nationManager;
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
 import org.bukkit.Bukkit;
@@ -45,14 +43,12 @@ public class CoreAttackListener implements Listener {
     }
 
     private void startAlert(Village village) {
-        String kingdomName = village.getnation();
-        if (kingdomName == null) return;
-        String key = kingdomName.toLowerCase();
+        String key = village.getName().toLowerCase();
         lastAttack.put(key, System.currentTimeMillis());
         if (alertTasks.containsKey(key)) return;
 
         Runnable alert = () -> {
-            War war = WarManager.getWar(kingdomName);
+            War war = WarManager.getWar(village.getName());
             if (war == null) {
                 cancel(key);
                 return;
@@ -66,7 +62,7 @@ public class CoreAttackListener implements Listener {
                 cancel(key);
                 return;
             }
-            sendAlert(kingdomName, village.getName());
+            sendAlert(village.getName());
         };
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(ContinentPlugin.getInstance(), alert, 0L, 100L);
@@ -79,35 +75,31 @@ public class CoreAttackListener implements Listener {
         lastAttack.remove(key);
     }
 
-    private void sendAlert(String kingdomName, String villageName) {
-        nation kingdom = nationManager.getByName(kingdomName);
-        if (kingdom == null) return;
-        for (String vName : kingdom.getVillages()) {
-            Village v = VillageManager.getByName(vName);
-            if (v == null) continue;
-            for (UUID uuid : v.getMembers()) {
-                Player member = Bukkit.getPlayer(uuid);
-                if (member == null || !member.isOnline()) continue;
-                member.showTitle(Title.title(
-                        Component.text("§c경고"),
-                        Component.text(villageName + " 코어가 공격받고 있습니다!"),
-                        Title.Times.times(Duration.ofMillis(250), Duration.ofMillis(1000), Duration.ofMillis(250))
-                ));
-                member.playSound(member.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1f);
-            }
+    private void sendAlert(String villageName) {
+        Village village = VillageManager.getByName(villageName);
+        if (village == null) return;
+        for (UUID uuid : village.getMembers()) {
+            Player member = Bukkit.getPlayer(uuid);
+            if (member == null || !member.isOnline()) continue;
+            member.showTitle(Title.title(
+                    Component.text("§c경고"),
+                    Component.text(villageName + " 코어가 공격받고 있습니다!"),
+                    Title.Times.times(Duration.ofMillis(250), Duration.ofMillis(1000), Duration.ofMillis(250))
+            ));
+            member.playSound(member.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1f);
         }
     }
 
     private void handle(Block block, Player attacker) {
         Village village = getVillageByCore(block);
-        if (village == null || village.getnation() == null) return;
+        if (village == null) return;
         Village attackerVillage = VillageManager.getByPlayer(attacker.getUniqueId());
-        if (attackerVillage == null || attackerVillage.getnation() == null) return;
-        if (!WarManager.isAtWar(attackerVillage.getnation(), village.getnation())) return;
-        if (attackerVillage.getnation().equalsIgnoreCase(village.getnation())) return;
-        lastAttack.put(village.getnation().toLowerCase(), System.currentTimeMillis());
+        if (attackerVillage == null) return;
+        if (!WarManager.isAtWar(attackerVillage.getName(), village.getName())) return;
+        if (attackerVillage.getName().equalsIgnoreCase(village.getName())) return;
+        lastAttack.put(village.getName().toLowerCase(), System.currentTimeMillis());
         startAlert(village);
-        WarManager.damageCore(village, nationManager.getByName(attackerVillage.getnation()));
+        WarManager.damageCore(village, attackerVillage);
     }
 
     @EventHandler

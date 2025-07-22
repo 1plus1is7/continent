@@ -46,10 +46,12 @@ public class VillageCommand implements TabExecutor {
             player.sendMessage("§e/village setcore §7- 코어 위치 이동");
             player.sendMessage("§e/village spawn §7- 마을 스폰으로 이동");
             player.sendMessage("§e/village chest §7- 마을 창고 열기");
+            player.sendMessage("§e/village menu §7- 마을 메뉴 열기");
             player.sendMessage("§e/village setsymbol §7- 상징 아이템 설정");
             player.sendMessage("§e/village ignite <on|off> §7- 아군 점화 허용 토글");
             player.sendMessage("§e/village upkeep §7- 현재 유지비 확인");
             player.sendMessage("§e/village treasury <subcommand> §7- 금고 관리");
+            player.sendMessage("§e/village specialty §7- 특산품 관리");
             player.sendMessage("§e/village confirm §7- 대기 중인 작업 확인");
             player.sendMessage("§e/village chat §7- 마을 채팅 토글");
             return true;
@@ -171,10 +173,6 @@ public class VillageCommand implements TabExecutor {
                 return true;
             }
 
-            if (village.getnation() != null) {
-                player.sendMessage("§c국가에 속한 마을의 금고는 국가 국고에 포함되어 개별 관리할 수 없습니다.");
-                return true;
-            }
 
             if (args.length < 2) {
                 player.sendMessage("§e/village treasury balance§7, §e/village treasury deposit <금액>§7, §e/village treasury withdraw <금액>");
@@ -245,6 +243,20 @@ public class VillageCommand implements TabExecutor {
             }
 
             player.sendMessage("§c잘못된 하위 명령어입니다.");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("specialty")) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null) {
+                player.sendMessage("§c소속된 마을이 없습니다.");
+                return true;
+            }
+            if (!village.isAuthorized(player.getUniqueId())) {
+                player.sendMessage("§c마을 촌장만 특산품을 관리할 수 있습니다.");
+                return true;
+            }
+            me.continent.village.service.VillageSpecialtyService.openMenu(player, village);
             return true;
         }
 
@@ -526,6 +538,16 @@ public class VillageCommand implements TabExecutor {
             return true;
         }
 
+        if (args[0].equalsIgnoreCase("menu")) {
+            Village village = VillageManager.getByPlayer(player.getUniqueId());
+            if (village == null) {
+                player.sendMessage("§c소속된 마을가 없습니다.");
+                return true;
+            }
+            VillageMenuService.openMenu(player, village);
+            return true;
+        }
+
         if (args[0].equalsIgnoreCase("setsymbol")) {
             Village village = VillageManager.getByPlayer(player.getUniqueId());
             if (village == null || !village.isAuthorized(player.getUniqueId())) {
@@ -630,7 +652,7 @@ public class VillageCommand implements TabExecutor {
         List<String> subs = Arrays.asList(
                 "create", "disband", "claim", "invite", "invites", "accept", "deny",
                 "members", "leave", "kick", "rename", "list", "setspawn", "setcore",
-                "spawn", "chest", "setsymbol", "ignite", "upkeep", "treasury", "confirm", "chat"
+                "spawn", "chest", "menu", "setsymbol", "ignite", "upkeep", "treasury", "specialty", "confirm", "chat"
         );
 
         if (args.length == 1) {

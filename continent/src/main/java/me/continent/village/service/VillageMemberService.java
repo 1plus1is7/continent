@@ -1,8 +1,6 @@
-package me.continent.nation.service;
+package me.continent.village.service;
 
-import me.continent.nation.nation;
 import me.continent.village.Village;
-import me.continent.village.VillageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -10,33 +8,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.*;
+import java.util.UUID;
 
-public class nationMemberService {
-    public static void openMenu(Player player, nation kingdom) {
-        MemberHolder holder = new MemberHolder(kingdom);
-        Inventory inv = Bukkit.createInventory(holder, 27, "nation Members");
+public class VillageMemberService {
+    public static void openMenu(Player player, Village village) {
+        MemberHolder holder = new MemberHolder(village);
+        Inventory inv = Bukkit.createInventory(holder, 27, "Village Members");
         holder.setInventory(inv);
 
-        OfflinePlayer king = Bukkit.getOfflinePlayer(kingdom.getLeader());
+        OfflinePlayer king = Bukkit.getOfflinePlayer(village.getKing());
         ItemStack kingHead = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta km = (SkullMeta) kingHead.getItemMeta();
         km.setOwningPlayer(king);
-        km.setDisplayName("§e국왕: " + (king.getName() != null ? king.getName() : king.getUniqueId()));
+        km.setDisplayName("§e촌장: " + (king.getName() != null ? king.getName() : king.getUniqueId()));
         kingHead.setItemMeta(km);
         inv.setItem(4, kingHead);
 
-        Set<UUID> memberSet = new LinkedHashSet<>();
-        for (String vName : kingdom.getVillages()) {
-            Village v = VillageManager.getByName(vName);
-            if (v != null) memberSet.addAll(v.getMembers());
-        }
-        memberSet.remove(king.getUniqueId());
         int idx = 9;
-        for (UUID uuid : memberSet) {
+        for (UUID uuid : village.getMembers()) {
+            if (uuid.equals(village.getKing())) continue;
             if (idx >= inv.getSize()) break;
             OfflinePlayer op = Bukkit.getOfflinePlayer(uuid);
             ItemStack head = new ItemStack(Material.PLAYER_HEAD);
@@ -51,11 +43,11 @@ public class nationMemberService {
     }
 
     static class MemberHolder implements InventoryHolder {
-        private final nation kingdom;
+        private final Village village;
         private Inventory inv;
-        MemberHolder(nation k) { this.kingdom = k; }
+        MemberHolder(Village village) { this.village = village; }
         void setInventory(Inventory inv) { this.inv = inv; }
         @Override public Inventory getInventory() { return inv; }
-        public nation getnation() { return kingdom; }
+        public Village getVillage() { return village; }
     }
 }

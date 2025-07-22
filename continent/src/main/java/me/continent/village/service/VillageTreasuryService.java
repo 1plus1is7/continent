@@ -1,10 +1,10 @@
-package me.continent.nation.service;
+package me.continent.village.service;
 
 import me.continent.ContinentPlugin;
-import me.continent.nation.nation;
-import me.continent.nation.nationStorage;
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
+import me.continent.storage.VillageStorage;
+import me.continent.village.Village;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.conversations.ConversationContext;
@@ -17,14 +17,14 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class nationTreasuryService {
-    public static void openMenu(Player player, nation kingdom) {
-        TreasuryHolder holder = new TreasuryHolder(kingdom);
-        Inventory inv = Bukkit.createInventory(holder, 9, "nation Treasury");
+public class VillageTreasuryService {
+    public static void openMenu(Player player, Village village) {
+        TreasuryHolder holder = new TreasuryHolder(village);
+        Inventory inv = Bukkit.createInventory(holder, 9, "Village Treasury");
         holder.setInventory(inv);
         inv.setItem(2, createItem(Material.EMERALD_BLOCK, "입금"));
         inv.setItem(4, createItem(Material.REDSTONE_BLOCK, "출금"));
-        inv.setItem(6, createItem(Material.PAPER, "세율: " + kingdom.getTaxRate() + "%"));
+        inv.setItem(6, createItem(Material.GOLD_INGOT, "잔액: " + village.getVault() + "G"));
         player.openInventory(inv);
     }
 
@@ -37,16 +37,15 @@ public class nationTreasuryService {
     }
 
     static class TreasuryHolder implements InventoryHolder {
-        private final nation kingdom;
+        private final Village village;
         private Inventory inv;
-        TreasuryHolder(nation k) { this.kingdom = k; }
+        TreasuryHolder(Village v) { this.village = v; }
         void setInventory(Inventory inv) { this.inv = inv; }
         @Override public Inventory getInventory() { return inv; }
-        public nation getnation() { return kingdom; }
+        public Village getVillage() { return village; }
     }
 
-    // ---- prompts ----
-    public static void promptDeposit(Player player, nation kingdom) {
+    public static void promptDeposit(Player player, Village village) {
         new ConversationFactory(ContinentPlugin.getInstance())
                 .withFirstPrompt(new NumericPrompt() {
                     @Override
@@ -60,13 +59,13 @@ public class nationTreasuryService {
                         PlayerData data = PlayerDataManager.get(player.getUniqueId());
                         if (amount <= 0 || data.getGold() < amount) {
                             player.sendMessage("§c입금할 수 없습니다.");
-                        } else if (!kingdom.getLeader().equals(player.getUniqueId())) {
-                            player.sendMessage("§c국왕만 입금할 수 있습니다.");
+                        } else if (!village.getKing().equals(player.getUniqueId())) {
+                            player.sendMessage("§c촌장만 입금할 수 있습니다.");
                         } else {
                             data.removeGold(amount);
-                            kingdom.addGold(amount);
+                            village.addGold(amount);
                             PlayerDataManager.save(player.getUniqueId());
-                            nationStorage.save(kingdom);
+                            VillageStorage.save(village);
                             player.sendMessage("§a입금 완료: " + amount + "G");
                         }
                         return END_OF_CONVERSATION;
@@ -76,7 +75,7 @@ public class nationTreasuryService {
                 .buildConversation(player).begin();
     }
 
-    public static void promptWithdraw(Player player, nation kingdom) {
+    public static void promptWithdraw(Player player, Village village) {
         new ConversationFactory(ContinentPlugin.getInstance())
                 .withFirstPrompt(new NumericPrompt() {
                     @Override
@@ -87,42 +86,17 @@ public class nationTreasuryService {
                     @Override
                     protected Prompt acceptValidatedInput(ConversationContext context, Number number) {
                         int amount = number.intValue();
-                        if (amount <= 0 || kingdom.getTreasury() < amount) {
+                        if (amount <= 0 || village.getVault() < amount) {
                             player.sendMessage("§c출금할 수 없습니다.");
-                        } else if (!kingdom.getLeader().equals(player.getUniqueId())) {
-                            player.sendMessage("§c국왕만 출금할 수 있습니다.");
+                        } else if (!village.getKing().equals(player.getUniqueId())) {
+                            player.sendMessage("§c촌장만 출금할 수 있습니다.");
                         } else {
-                            kingdom.removeGold(amount);
+                            village.removeGold(amount);
                             PlayerData data = PlayerDataManager.get(player.getUniqueId());
                             data.addGold(amount);
                             PlayerDataManager.save(player.getUniqueId());
-                            nationStorage.save(kingdom);
+                            VillageStorage.save(village);
                             player.sendMessage("§a출금 완료: " + amount + "G");
-                        }
-                        return END_OF_CONVERSATION;
-                    }
-                })
-                .withLocalEcho(false)
-                .buildConversation(player).begin();
-    }
-
-    public static void promptTax(Player player, nation kingdom) {
-        new ConversationFactory(ContinentPlugin.getInstance())
-                .withFirstPrompt(new NumericPrompt() {
-                    @Override
-                    public String getPromptText(ConversationContext context) {
-                        return "세율을 입력하세요 (0-100)";
-                    }
-
-                    @Override
-                    protected Prompt acceptValidatedInput(ConversationContext context, Number number) {
-                        double rate = number.doubleValue();
-                        if (rate < 0 || rate > 100) {
-                            player.sendMessage("§c0에서 100 사이의 값을 입력하세요.");
-                        } else {
-                            kingdom.setTaxRate(rate);
-                            nationStorage.save(kingdom);
-                            player.sendMessage("§a세율이 설정되었습니다: " + rate + "%");
                         }
                         return END_OF_CONVERSATION;
                     }

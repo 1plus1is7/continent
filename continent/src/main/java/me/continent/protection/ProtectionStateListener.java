@@ -2,8 +2,6 @@ package me.continent.protection;
 
 import me.continent.village.Village;
 import me.continent.village.VillageManager;
-import me.continent.nation.nationManager;
-import me.continent.nation.nation;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -29,11 +27,6 @@ public class ProtectionStateListener implements Listener {
         Village village = VillageManager.getByChunk(block.getChunk());
         if (village == null) return false;
         if (!village.isUnderProtection()) return false;
-        if (village.getnation() != null) {
-            if (me.continent.war.WarManager.getWar(village.getnation()) != null) return false;
-            nation k = nationManager.getByName(village.getnation());
-            if (k != null && !k.isTerritoryProtectionEnabled()) return false;
-        }
         return true;
     }
 
@@ -42,11 +35,6 @@ public class ProtectionStateListener implements Listener {
         Village village = VillageManager.getByChunk(chunk);
         if (village == null) return false;
         if (!village.isUnderProtection()) return false;
-        if (village.getnation() != null) {
-            if (me.continent.war.WarManager.getWar(village.getnation()) != null) return false;
-            nation k = nationManager.getByName(village.getnation());
-            if (k != null && !k.isTerritoryProtectionEnabled()) return false;
-        }
         return true;
     }
 
