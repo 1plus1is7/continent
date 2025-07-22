@@ -46,15 +46,15 @@ public class ContinentPlugin extends JavaPlugin {
         MaintenanceService.init(getConfig());
         MaintenanceService.schedule();
 
-        // 명령어 등록
-        getCommand("gold").setExecutor(new GoldCommand());
-        getCommand("village").setExecutor(new VillageCommand());
-        getCommand("nation").setExecutor(new nationCommand());
-        getCommand("war").setExecutor(new WarCommand());
-        getCommand("guide").setExecutor(new GuideCommand());
-        getCommand("specialty").setExecutor(new SpecialtyCommand());
-        getCommand("market").setExecutor(new MarketCommand());
-        getCommand("admin").setExecutor(new AdminCommand());
+        // 명령어 등록 (plugin.yml 누락 시 NPE 방지)
+        registerCommand("gold", new GoldCommand());
+        registerCommand("village", new VillageCommand());
+        registerCommand("nation", new nationCommand());
+        registerCommand("war", new WarCommand());
+        registerCommand("guide", new GuideCommand());
+        registerCommand("specialty", new SpecialtyCommand());
+        registerCommand("market", new MarketCommand());
+        registerCommand("admin", new AdminCommand());
 
         // 중앙은행 데이터 로딩
         CentralBankDataManager.load();
@@ -63,7 +63,7 @@ public class ContinentPlugin extends JavaPlugin {
         PlayerDataManager.loadAll();
 
         ResearchManager.loadNodes(this);
-        me.continent.specialty.SpecialtyManager.load(this);
+        SpecialtyManager.load(this);
 
         CropGrowthManager.init(this);
 
@@ -112,5 +112,14 @@ public class ContinentPlugin extends JavaPlugin {
 
     public static ContinentPlugin getInstance() {
         return instance;
+    }
+
+    private void registerCommand(String name, org.bukkit.command.CommandExecutor exe) {
+        var cmd = getCommand(name);
+        if (cmd != null) {
+            cmd.setExecutor(exe);
+        } else {
+            getLogger().severe("Command '" + name + "' not defined in plugin.yml");
+        }
     }
 }
