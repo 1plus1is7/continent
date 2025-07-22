@@ -16,15 +16,3 @@ symbols:
   chunk: "▩"
 lobby-world: "lobby"
 land-world: "world"
-season:
-  enabled: true
-  durations:
-    spring: 500
-    summer: 700
-    autumn: 400
-    winter: 400
-  particles:
-    spring: 20
-    summer: 15
-    autumn: 25
-    winter: 15

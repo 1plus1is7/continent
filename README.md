@@ -41,5 +41,35 @@ Continent 플러그인은 마인크래프트 서버에서 마을 체계와 경�
 - **가이드북 명령어**
   `/guide <topic>`으로 국가, 마을, 전쟁 관련 안내서를 받을 수 있습니다. 각 토픽은 주요 명령어와 활용 팁을 여러 페이지에 걸쳐 설명하며 `/guide list`로 사용 가능한 주제를 확인할 수 있습니다.
 
+## 설정 파일
+플러그인의 대부분의 세부 동작은 `continent/src/main/resources` 폴더의 YML 파일을 통해 조정할 수 있습니다. 서버 운영자는 다음 파일들을 수정하여 환경을 원하는 대로 맞출 수 있습니다.
+
+- **config.yml** – 유지비와 스코어보드, 월드 이름, 일반 옵션을 포함합니다.
+  ```yml
+  maintenance:
+    cost: 20            # 기본 유지비
+    unpaid-limit: 2     # 미납 허용 주 수
+    per-chunk-cost: 5   # 추가 청크당 비용
+  scoreboard:
+    title: "§aContinent Server"     # 스코어보드 제목
+    minimap-size: 7                 # 미니맵 한 변의 크기
+    show-coordinates: false         # 좌표 표시 여부
+    refresh-interval: 0.5           # 갱신 주기(초)
+  server-address: "example.com"     # 하단 서버 주소 표시
+  colors:
+    claimed: "§a"        # 점령지 색상
+    unclaimed: "§f"      # 미점령지 색상
+  symbols:
+    center: "▣"         # 플레이어 위치 표시
+    chunk: "▩"          # 일반 청크 표시
+  lobby-world: "lobby"   # 로비 월드 이름
+  land-world: "world"    # 메인 월드 이름
+  ```
+  필요에 따라 값들을 조정하고 `/reload` 나 서버 재시작 후 적용합니다.
+
+- **plugin.yml** – 플러그인 정보와 명령어 구성을 정의합니다. 명령어 이름이나 사용법을 수정하고 싶을 때 편집합니다.
+- **research_nodes.yml** – 국가 연구 노드의 효과, 비용, 선행 조건을 자유롭게 추가하거나 수정할 수 있습니다.
+- **specialties.yml** – 마을 특산품의 이름, 설명, 모델 번호 등을 관리합니다. 항목을 추가하면 게임 내에서 새로운 특산품을 만들 수 있습니다.
+
 ## 명령어 사용법
 `/village` 명령어는 `/k` 로도 사용할 수 있습니다.
