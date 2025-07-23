@@ -1,4 +1,4 @@
-package me.continent.village;
+package me.continent.nation;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -6,7 +6,7 @@ import org.bukkit.World;
 
 import java.util.*;
 
-public class Village {
+public class Nation {
 
     private String name;
     private final UUID king;
@@ -23,17 +23,17 @@ public class Village {
     private int unpaidWeeks = 0;
     private long lastMaintenance = 0;
 
-    // Whether members of this village can ignite fire or TNT in protected areas
+    // Whether members of this nation can ignite fire or TNT in protected areas
     private boolean memberIgniteAllowed = false;
 
 
     private String coreChunkKey;
     private String spawnChunkKey;
 
-    // 마을 창고 (27칸 단일 체스트)
+    // 국가 창고 (27칸 단일 체스트)
     private org.bukkit.inventory.ItemStack[] chestContents = new org.bukkit.inventory.ItemStack[27];
 
-    // Village symbol item
+    // Nation symbol item
     private org.bukkit.inventory.ItemStack symbol;
 
     // 연구 및 특산품 데이터
@@ -44,7 +44,7 @@ public class Village {
     private int researchSlots = 1;
 
 
-    public Village(String name, UUID king) {
+    public Nation(String name, UUID king) {
         this.name = name;
         this.king = king;
         this.members.add(king);
@@ -224,7 +224,7 @@ public class Village {
         return claimedChunks.contains(getChunkKey(chunk));
     }
 
-    public boolean isVillage() {
+    public boolean isNation() {
         return true;
     }
 

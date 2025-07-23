@@ -1,7 +1,7 @@
 package me.continent.protection;
 
-import me.continent.village.Village;
-import me.continent.village.VillageManager;
+import me.continent.nation.Nation;
+import me.continent.nation.NationManager;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -23,29 +23,29 @@ import java.util.Objects;
 
 public class ProtectionStateListener implements Listener {
 
-    private boolean inProtectedVillage(Block block) {
-        Village village = VillageManager.getByChunk(block.getChunk());
-        if (village == null) return false;
-        if (!village.isUnderProtection()) return false;
+    private boolean inProtectedNation(Block block) {
+        Nation nation = NationManager.getByChunk(block.getChunk());
+        if (nation == null) return false;
+        if (!nation.isUnderProtection()) return false;
         return true;
     }
 
-    private boolean inProtectedVillage(Entity entity) {
+    private boolean inProtectedNation(Entity entity) {
         Chunk chunk = entity.getLocation().getChunk();
-        Village village = VillageManager.getByChunk(chunk);
-        if (village == null) return false;
-        if (!village.isUnderProtection()) return false;
+        Nation nation = NationManager.getByChunk(chunk);
+        if (nation == null) return false;
+        if (!nation.isUnderProtection()) return false;
         return true;
     }
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
-        if (!inProtectedVillage(event.getEntity())) return;
+        if (!inProtectedNation(event.getEntity())) return;
 
         Entity damager = event.getDamager();
         if (damager instanceof Player player) {
-            Village village = VillageManager.getByChunk(event.getEntity().getLocation().getChunk());
-            if (village != null && village.getMembers().contains(player.getUniqueId())) {
+            Nation nation = NationManager.getByChunk(event.getEntity().getLocation().getChunk());
+            if (nation != null && nation.getMembers().contains(player.getUniqueId())) {
                 return; // allow members to attack
             }
         }
@@ -58,9 +58,9 @@ public class ProtectionStateListener implements Listener {
         Block block = event.getClickedBlock();
         if (block == null) return;
 
-        Village village = VillageManager.getByChunk(block.getChunk());
-        if (inProtectedVillage(block) &&
-                !village.getMembers().contains(event.getPlayer().getUniqueId())) {
+        Nation nation = NationManager.getByChunk(block.getChunk());
+        if (inProtectedNation(block) &&
+                !nation.getMembers().contains(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
     }
@@ -68,11 +68,11 @@ public class ProtectionStateListener implements Listener {
     @EventHandler
     public void onIgnite(BlockIgniteEvent event) {
         Block block = event.getBlock();
-        Village village = VillageManager.getByChunk(block.getChunk());
-        if (!inProtectedVillage(block)) return;
+        Nation nation = NationManager.getByChunk(block.getChunk());
+        if (!inProtectedNation(block)) return;
 
         Player player = event.getPlayer();
-        if (player != null && village.getMembers().contains(player.getUniqueId()) && village.isMemberIgniteAllowed()) {
+        if (player != null && nation.getMembers().contains(player.getUniqueId()) && nation.isMemberIgniteAllowed()) {
             return; // allow allies if enabled
         }
         event.setCancelled(true);
@@ -82,9 +82,9 @@ public class ProtectionStateListener implements Listener {
     public void onBlockFromTo(BlockFromToEvent event) {
         Block from = event.getBlock();
         Block to = event.getToBlock();
-        Village dest = VillageManager.getByChunk(to.getChunk());
+        Nation dest = NationManager.getByChunk(to.getChunk());
         if (dest != null) {
-            Village src = VillageManager.getByChunk(from.getChunk());
+            Nation src = NationManager.getByChunk(from.getChunk());
             if (!Objects.equals(dest, src)) {
                 if (from.getType() == Material.WATER || from.getType() == Material.LAVA) {
                     event.setCancelled(true);
@@ -96,12 +96,12 @@ public class ProtectionStateListener implements Listener {
     @EventHandler
     public void onStructureGrow(StructureGrowEvent event) {
         Chunk root = event.getLocation().getChunk();
-        Village rootVillage = VillageManager.getByChunk(root);
+        Nation rootNation = NationManager.getByChunk(root);
         Iterator<BlockState> it = event.getBlocks().iterator();
         while (it.hasNext()) {
             BlockState state = it.next();
-            Village dest = VillageManager.getByChunk(state.getLocation().getChunk());
-            if (!Objects.equals(rootVillage, dest)) {
+            Nation dest = NationManager.getByChunk(state.getLocation().getChunk());
+            if (!Objects.equals(rootNation, dest)) {
                 it.remove();
             }
         }
@@ -109,10 +109,10 @@ public class ProtectionStateListener implements Listener {
 
     @EventHandler
     public void onPistonExtend(BlockPistonExtendEvent event) {
-        Village src = VillageManager.getByChunk(event.getBlock().getChunk());
+        Nation src = NationManager.getByChunk(event.getBlock().getChunk());
         for (Block block : event.getBlocks()) {
             Chunk destChunk = block.getRelative(event.getDirection()).getChunk();
-            Village dest = VillageManager.getByChunk(destChunk);
+            Nation dest = NationManager.getByChunk(destChunk);
             if (!Objects.equals(src, dest)) {
                 event.setCancelled(true);
                 return;
@@ -123,10 +123,10 @@ public class ProtectionStateListener implements Listener {
     @EventHandler
     public void onPistonRetract(BlockPistonRetractEvent event) {
         if (!event.isSticky()) return;
-        Village src = VillageManager.getByChunk(event.getBlock().getChunk());
+        Nation src = NationManager.getByChunk(event.getBlock().getChunk());
         for (Block block : event.getBlocks()) {
             Chunk destChunk = block.getRelative(event.getDirection().getOppositeFace()).getChunk();
-            Village dest = VillageManager.getByChunk(destChunk);
+            Nation dest = NationManager.getByChunk(destChunk);
             if (!Objects.equals(src, dest)) {
                 event.setCancelled(true);
                 return;

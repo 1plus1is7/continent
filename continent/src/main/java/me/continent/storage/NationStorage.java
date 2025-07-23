@@ -1,8 +1,8 @@
 package me.continent.storage;
 
 import me.continent.ContinentPlugin;
-import me.continent.village.Village;
-import me.continent.village.VillageManager;
+import me.continent.nation.Nation;
+import me.continent.nation.NationManager;
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
 import org.bukkit.Bukkit;
@@ -21,40 +21,40 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class VillageStorage {
-    private static final File folder = new File(ContinentPlugin.getInstance().getDataFolder(), "villages");
+public class NationStorage {
+    private static final File folder = new File(ContinentPlugin.getInstance().getDataFolder(), "nations");
 
     static {
         if (!folder.exists()) folder.mkdirs();
     }
 
-    public static void delete(Village village) {
-        File file = new File(folder, village.getName() + ".yml");
+    public static void delete(Nation nation) {
+        File file = new File(folder, nation.getName() + ".yml");
         if (file.exists()) file.delete();
     }
 
-    public static void save(Village village) {
-        File file = new File(folder, village.getName().toLowerCase() + ".yml");
+    public static void save(Nation nation) {
+        File file = new File(folder, nation.getName().toLowerCase() + ".yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-        config.set("name", village.getName());
-        config.set("king", village.getKing().toString());
+        config.set("name", nation.getName());
+        config.set("king", nation.getKing().toString());
         List<String> members = new ArrayList<>();
-        for (UUID uuid : village.getMembers()) members.add(uuid.toString());
+        for (UUID uuid : nation.getMembers()) members.add(uuid.toString());
         config.set("members", members);
-        config.set("core-chunk", village.getCoreChunk());
-        config.set("spawn-chunk", village.getSpawnChunk());
-        config.set("chunks", new ArrayList<>(village.getClaimedChunks()));
-        config.set("spawn", serializeLocation(village.getSpawnLocation()));
-        config.set("core", serializeLocation(village.getCoreLocation()));
-        config.set("protectionEnd", village.getProtectionEnd());
-        config.set("vault", village.getVault());
-        config.set("chest", serializeItems(village.getChestContents()));
-        config.set("symbol", ItemSerialization.serializeItem(village.getSymbol()));
-        config.set("memberIgnite", village.isMemberIgniteAllowed());
-        config.set("maintenanceCount", village.getMaintenanceCount());
-        config.set("unpaidWeeks", village.getUnpaidWeeks());
-        config.set("lastMaintenance", village.getLastMaintenance());
+        config.set("core-chunk", nation.getCoreChunk());
+        config.set("spawn-chunk", nation.getSpawnChunk());
+        config.set("chunks", new ArrayList<>(nation.getClaimedChunks()));
+        config.set("spawn", serializeLocation(nation.getSpawnLocation()));
+        config.set("core", serializeLocation(nation.getCoreLocation()));
+        config.set("protectionEnd", nation.getProtectionEnd());
+        config.set("vault", nation.getVault());
+        config.set("chest", serializeItems(nation.getChestContents()));
+        config.set("symbol", ItemSerialization.serializeItem(nation.getSymbol()));
+        config.set("memberIgnite", nation.isMemberIgniteAllowed());
+        config.set("maintenanceCount", nation.getMaintenanceCount());
+        config.set("unpaidWeeks", nation.getUnpaidWeeks());
+        config.set("lastMaintenance", nation.getLastMaintenance());
 
         try {
             config.save(file);
@@ -87,25 +87,25 @@ public class VillageStorage {
             long lastMaintenance = config.getLong("lastMaintenance", 0);
             
 
-            Village village = new Village(name, king);
-            village.getMembers().addAll(members);
-            village.getClaimedChunks().addAll(chunks);
-            village.setSpawnLocation(spawn);
-            village.setCoreLocation(core);
-            village.setProtectionEnd(protectionEnd);
-            village.setVault(vault);
-            village.setChestContents(chest);
+            Nation nation = new Nation(name, king);
+            nation.getMembers().addAll(members);
+            nation.getClaimedChunks().addAll(chunks);
+            nation.setSpawnLocation(spawn);
+            nation.setCoreLocation(core);
+            nation.setProtectionEnd(protectionEnd);
+            nation.setVault(vault);
+            nation.setChestContents(chest);
             if (symbol != null) {
-                village.setSymbol(symbol);
+                nation.setSymbol(symbol);
             }
-            village.setMemberIgniteAllowed(memberIgnite);
-            village.setMaintenanceCount(maintenanceCount);
-            village.setUnpaidWeeks(unpaidWeeks);
-            village.setLastMaintenance(lastMaintenance);
-            village.setCoreChunkKey(config.getString("core-chunk"));
-            village.setSpawnChunkKey(config.getString("spawn-chunk"));
+            nation.setMemberIgniteAllowed(memberIgnite);
+            nation.setMaintenanceCount(maintenanceCount);
+            nation.setUnpaidWeeks(unpaidWeeks);
+            nation.setLastMaintenance(lastMaintenance);
+            nation.setCoreChunkKey(config.getString("core-chunk"));
+            nation.setSpawnChunkKey(config.getString("spawn-chunk"));
 
-            VillageManager.register(village);
+            NationManager.register(nation);
         }
     }
 
@@ -116,8 +116,8 @@ public class VillageStorage {
         }
     }
 
-    public static void saveVillageData(Village village) {
-        save(village);
+    public static void saveNationData(Nation nation) {
+        save(nation);
     }
 
     public static void rename(String oldName, String newName) {

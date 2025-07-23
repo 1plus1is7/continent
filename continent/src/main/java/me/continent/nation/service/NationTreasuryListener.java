@@ -1,26 +1,26 @@
-package me.continent.village.service;
+package me.continent.nation.service;
 
-import me.continent.village.Village;
+import me.continent.nation.Nation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
-public class VillageTreasuryListener implements Listener {
+public class NationTreasuryListener implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         Inventory inv = event.getInventory();
-        if (inv.getHolder() instanceof VillageTreasuryService.TreasuryHolder holder) {
+        if (inv.getHolder() instanceof NationTreasuryService.TreasuryHolder holder) {
             event.setCancelled(true);
             Player player = (Player) event.getWhoClicked();
-            Village village = holder.getVillage();
+            Nation nation = holder.getNation();
             int slot = event.getRawSlot();
             if (slot == 2) {
-                VillageTreasuryService.promptDeposit(player, village);
+                NationTreasuryService.promptDeposit(player, nation);
                 player.closeInventory();
             } else if (slot == 4) {
-                VillageTreasuryService.promptWithdraw(player, village);
+                NationTreasuryService.promptWithdraw(player, nation);
                 player.closeInventory();
             }
         }

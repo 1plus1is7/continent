@@ -15,24 +15,24 @@ public class GuideCommand implements TabExecutor {
         GUIDES.put("kingdom", Arrays.asList(
                 "Continent 왕국 가이드\n\n국가 시스템의 기본을 소개합니다.",
                 "§l국가 관리\n- /kingdom create <이름>\n- /kingdom disband\n- /kingdom setking <플레이어>",
-                "§l마을 관리\n- /kingdom addvillage <마을>\n- /kingdom removevillage <마을>\n- /kingdom setcapital <마을>\n- /kingdom accept|deny <국가명>\n- /kingdom leave",
+                "§l국가 관리\n- /kingdom addnation <국가>\n- /kingdom removenation <국가>\n- /kingdom setcapital <국가>\n- /kingdom accept|deny <국가명>\n- /kingdom leave",
                 "§l재정과 연구\n- /kingdom treasury deposit|withdraw|balance\n- 수도 코어에서 연구 진행\n- /kingdom specialty",
-                "§l정보와 이동\n- /kingdom info|list|members\n- /kingdom setflag\n- /kingdom spawn [마을]",
+                "§l정보와 이동\n- /kingdom info|list|members\n- /kingdom setflag\n- /kingdom spawn [국가]",
                 "전쟁 명령은 /war declare, status, surrender 를 참고하세요."
         ));
 
-        GUIDES.put("village", Arrays.asList(
-                "Continent 마을 가이드\n\n마을 시스템의 기본을 소개합니다.",
-                "§l마을 생성과 해산\n- /village create <이름>\n- /village disband\n- /village rename <새이름>\n- /village color <색상>",
-                "§l영토와 거점\n- /village claim|unclaim\n- /village setspawn\n- /village setcore\n- /village spawn",
-                "§l금고와 창고\n- /village treasury balance|deposit|withdraw\n- /village chest\n- /village upkeep",
-                "§l구성원 관리\n- /village invite|kick <플레이어>\n- /village accept|deny <이름>\n- /village members|list\n- /village leave",
-                "§l기타 기능\n- /village setsymbol\n- /village ignite <on|off>\n- /village chat\n- /village confirm"
+        GUIDES.put("nation", Arrays.asList(
+                "Continent 국가 가이드\n\n국가 시스템의 기본을 소개합니다.",
+                "§l국가 생성과 해산\n- /nation create <이름>\n- /nation disband\n- /nation rename <새이름>\n- /nation color <색상>",
+                "§l영토와 거점\n- /nation claim|unclaim\n- /nation setspawn\n- /nation setcore\n- /nation spawn",
+                "§l금고와 창고\n- /nation treasury balance|deposit|withdraw\n- /nation chest\n- /nation upkeep",
+                "§l구성원 관리\n- /nation invite|kick <플레이어>\n- /nation accept|deny <이름>\n- /nation members|list\n- /nation leave",
+                "§l기타 기능\n- /nation setsymbol\n- /nation ignite <on|off>\n- /nation chat\n- /nation confirm"
         ));
 
         GUIDES.put("war", Arrays.asList(
-                "Continent 전쟁 가이드\n\n마을 간 전쟁 시스템을 소개합니다.",
-                "§l전쟁 선포\n- 촌장만 /war declare <마을명> (비용: config.yml의 war.declare-cost)\n- 관리자 /admin war start",
+                "Continent 전쟁 가이드\n\n국가 간 전쟁 시스템을 소개합니다.",
+                "§l전쟁 선포\n- 촌장만 /war declare <국가명> (비용: config.yml의 war.declare-cost)\n- 관리자 /admin war start",
                 "§l전쟁 진행\n- /war status 로 전황 확인\n- 코어 파괴 또는 /war surrender 로 종료",
                 "§l전쟁 중 특징\n- 적 영토 파괴와 코어 공격 허용\n- 코어 파괴 시 패배",
                 "추가 정보는 /admin war list|info 명령으로 확인 가능합니다."
@@ -48,7 +48,7 @@ public class GuideCommand implements TabExecutor {
         if (args.length == 0 || args[0].equalsIgnoreCase("list")) {
             player.sendMessage("§6[가이드 목록]");
             player.sendMessage("§e/guide kingdom §7- 국가 시스템");
-            player.sendMessage("§e/guide village §7- 마을 시스템");
+            player.sendMessage("§e/guide nation §7- 국가 시스템");
             player.sendMessage("§e/guide war §7- 전쟁 시스템");
             return true;
         }

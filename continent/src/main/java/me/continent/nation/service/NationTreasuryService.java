@@ -1,10 +1,10 @@
-package me.continent.village.service;
+package me.continent.nation.service;
 
 import me.continent.ContinentPlugin;
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
-import me.continent.storage.VillageStorage;
-import me.continent.village.Village;
+import me.continent.storage.NationStorage;
+import me.continent.nation.Nation;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.conversations.ConversationContext;
@@ -17,14 +17,14 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class VillageTreasuryService {
-    public static void openMenu(Player player, Village village) {
-        TreasuryHolder holder = new TreasuryHolder(village);
-        Inventory inv = Bukkit.createInventory(holder, 9, "Village Treasury");
+public class NationTreasuryService {
+    public static void openMenu(Player player, Nation nation) {
+        TreasuryHolder holder = new TreasuryHolder(nation);
+        Inventory inv = Bukkit.createInventory(holder, 9, "Nation Treasury");
         holder.setInventory(inv);
         inv.setItem(2, createItem(Material.EMERALD_BLOCK, "입금"));
         inv.setItem(4, createItem(Material.REDSTONE_BLOCK, "출금"));
-        inv.setItem(6, createItem(Material.GOLD_INGOT, "잔액: " + village.getVault() + "G"));
+        inv.setItem(6, createItem(Material.GOLD_INGOT, "잔액: " + nation.getVault() + "G"));
         player.openInventory(inv);
     }
 
@@ -37,15 +37,15 @@ public class VillageTreasuryService {
     }
 
     static class TreasuryHolder implements InventoryHolder {
-        private final Village village;
+        private final Nation nation;
         private Inventory inv;
-        TreasuryHolder(Village v) { this.village = v; }
+        TreasuryHolder(Nation v) { this.nation = v; }
         void setInventory(Inventory inv) { this.inv = inv; }
         @Override public Inventory getInventory() { return inv; }
-        public Village getVillage() { return village; }
+        public Nation getNation() { return nation; }
     }
 
-    public static void promptDeposit(Player player, Village village) {
+    public static void promptDeposit(Player player, Nation nation) {
         new ConversationFactory(ContinentPlugin.getInstance())
                 .withFirstPrompt(new NumericPrompt() {
                     @Override
@@ -59,13 +59,13 @@ public class VillageTreasuryService {
                         PlayerData data = PlayerDataManager.get(player.getUniqueId());
                         if (amount <= 0 || data.getGold() < amount) {
                             player.sendMessage("§c입금할 수 없습니다.");
-                        } else if (!village.getKing().equals(player.getUniqueId())) {
+                        } else if (!nation.getKing().equals(player.getUniqueId())) {
                             player.sendMessage("§c촌장만 입금할 수 있습니다.");
                         } else {
                             data.removeGold(amount);
-                            village.addGold(amount);
+                            nation.addGold(amount);
                             PlayerDataManager.save(player.getUniqueId());
-                            VillageStorage.save(village);
+                            NationStorage.save(nation);
                             player.sendMessage("§a입금 완료: " + amount + "G");
                         }
                         return END_OF_CONVERSATION;
@@ -75,7 +75,7 @@ public class VillageTreasuryService {
                 .buildConversation(player).begin();
     }
 
-    public static void promptWithdraw(Player player, Village village) {
+    public static void promptWithdraw(Player player, Nation nation) {
         new ConversationFactory(ContinentPlugin.getInstance())
                 .withFirstPrompt(new NumericPrompt() {
                     @Override
@@ -86,16 +86,16 @@ public class VillageTreasuryService {
                     @Override
                     protected Prompt acceptValidatedInput(ConversationContext context, Number number) {
                         int amount = number.intValue();
-                        if (amount <= 0 || village.getVault() < amount) {
+                        if (amount <= 0 || nation.getVault() < amount) {
                             player.sendMessage("§c출금할 수 없습니다.");
-                        } else if (!village.getKing().equals(player.getUniqueId())) {
+                        } else if (!nation.getKing().equals(player.getUniqueId())) {
                             player.sendMessage("§c촌장만 출금할 수 있습니다.");
                         } else {
-                            village.removeGold(amount);
+                            nation.removeGold(amount);
                             PlayerData data = PlayerDataManager.get(player.getUniqueId());
                             data.addGold(amount);
                             PlayerDataManager.save(player.getUniqueId());
-                            VillageStorage.save(village);
+                            NationStorage.save(nation);
                             player.sendMessage("§a출금 완료: " + amount + "G");
                         }
                         return END_OF_CONVERSATION;

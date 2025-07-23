@@ -10,18 +10,18 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class VillageChatLogger {
+public class NationChatLogger {
 
     // 로그 파일이 저장될 폴더를 미리 생성해 둔다
-    private static final File folder = new File("plugins/Continent/village-logs");
+    private static final File folder = new File("plugins/Continent/nation-logs");
 
     static {
         if (!folder.exists()) folder.mkdirs();
     }
 
-    // 마을 채팅 로그 기록
-    public static void logMessage(String villageName, String playerName, String message) {
-        Path logFile = new File(folder, villageName + ".log").toPath();
+    // 국가 채팅 로그 기록
+    public static void logMessage(String nationName, String playerName, String message) {
+        Path logFile = new File(folder, nationName + ".log").toPath();
         try (BufferedWriter writer = Files.newBufferedWriter(logFile,
                 StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {

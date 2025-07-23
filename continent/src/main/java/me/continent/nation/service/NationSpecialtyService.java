@@ -1,8 +1,8 @@
-package me.continent.village.service;
+package me.continent.nation.service;
 
 import me.continent.specialty.SpecialtyGood;
 import me.continent.specialty.SpecialtyManager;
-import me.continent.village.Village;
+import me.continent.nation.Nation;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -10,17 +10,17 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class VillageSpecialtyService {
-    public static void openMenu(Player player, Village village) {
+public class NationSpecialtyService {
+    public static void openMenu(Player player, Nation nation) {
         int size = ((SpecialtyManager.getAll().size() - 1) / 9 + 1) * 9;
-        SpecialtyHolder holder = new SpecialtyHolder(village);
-        Inventory inv = Bukkit.createInventory(holder, size, "Village Specialties");
+        SpecialtyHolder holder = new SpecialtyHolder(nation);
+        Inventory inv = Bukkit.createInventory(holder, size, "Nation Specialties");
         holder.setInventory(inv);
         int slot = 0;
         for (SpecialtyGood good : SpecialtyManager.getAll()) {
             ItemStack item = good.toItemStack(1);
             ItemMeta meta = item.getItemMeta();
-            if (village.getSpecialties().contains(good.getId())) {
+            if (nation.getSpecialties().contains(good.getId())) {
                 meta.setDisplayName("§a" + good.getName());
             } else {
                 meta.setDisplayName("§c" + good.getName());
@@ -32,15 +32,15 @@ public class VillageSpecialtyService {
     }
 
     static class SpecialtyHolder implements InventoryHolder {
-        private final Village village;
+        private final Nation nation;
         private Inventory inventory;
 
-        SpecialtyHolder(Village village) {
-            this.village = village;
+        SpecialtyHolder(Nation nation) {
+            this.nation = nation;
         }
 
         void setInventory(Inventory inv) { this.inventory = inv; }
         @Override public Inventory getInventory() { return inventory; }
-        public Village getVillage() { return village; }
+        public Nation getNation() { return nation; }
     }
 }

@@ -2,8 +2,8 @@ package me.continent.research;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import me.continent.village.Village;
-import me.continent.village.VillageManager;
+import me.continent.nation.Nation;
+import me.continent.nation.NationManager;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.inventory.ClickType;
@@ -54,14 +54,14 @@ public class ResearchListener implements Listener {
         Block block = event.getClickedBlock();
         if (block == null || block.getType() != Material.BEACON) return;
 
-        Village village = VillageManager.getByChunk(block.getChunk());
-        if (village == null || village.getCoreLocation() == null
-                || !village.getCoreLocation().getBlock().equals(block)) {
+        Nation nation = NationManager.getByChunk(block.getChunk());
+        if (nation == null || nation.getCoreLocation() == null
+                || !nation.getCoreLocation().getBlock().equals(block)) {
             return;
         }
 
-        Village playerVillage = VillageManager.getByPlayer(event.getPlayer().getUniqueId());
-        if (playerVillage == null || !playerVillage.equals(village)) {
+        Nation playerNation = NationManager.getByPlayer(event.getPlayer().getUniqueId());
+        if (playerNation == null || !playerNation.equals(nation)) {
             return;
         }
 

@@ -1,6 +1,6 @@
-package me.continent.village.service;
+package me.continent.nation.service;
 
-import me.continent.village.Village;
+import me.continent.nation.Nation;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -12,13 +12,13 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.UUID;
 
-public class VillageMemberService {
-    public static void openMenu(Player player, Village village) {
-        MemberHolder holder = new MemberHolder(village);
-        Inventory inv = Bukkit.createInventory(holder, 27, "Village Members");
+public class NationMemberService {
+    public static void openMenu(Player player, Nation nation) {
+        MemberHolder holder = new MemberHolder(nation);
+        Inventory inv = Bukkit.createInventory(holder, 27, "Nation Members");
         holder.setInventory(inv);
 
-        OfflinePlayer king = Bukkit.getOfflinePlayer(village.getKing());
+        OfflinePlayer king = Bukkit.getOfflinePlayer(nation.getKing());
         ItemStack kingHead = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta km = (SkullMeta) kingHead.getItemMeta();
         km.setOwningPlayer(king);
@@ -27,8 +27,8 @@ public class VillageMemberService {
         inv.setItem(4, kingHead);
 
         int idx = 9;
-        for (UUID uuid : village.getMembers()) {
-            if (uuid.equals(village.getKing())) continue;
+        for (UUID uuid : nation.getMembers()) {
+            if (uuid.equals(nation.getKing())) continue;
             if (idx >= inv.getSize()) break;
             OfflinePlayer op = Bukkit.getOfflinePlayer(uuid);
             ItemStack head = new ItemStack(Material.PLAYER_HEAD);
@@ -43,11 +43,11 @@ public class VillageMemberService {
     }
 
     static class MemberHolder implements InventoryHolder {
-        private final Village village;
+        private final Nation nation;
         private Inventory inv;
-        MemberHolder(Village village) { this.village = village; }
+        MemberHolder(Nation nation) { this.nation = nation; }
         void setInventory(Inventory inv) { this.inv = inv; }
         @Override public Inventory getInventory() { return inv; }
-        public Village getVillage() { return village; }
+        public Nation getNation() { return nation; }
     }
 }
