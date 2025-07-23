@@ -1,4 +1,4 @@
 /**
- * Chat related listeners such as global chat formatting and village chat.
+ * Chat related listeners such as global chat formatting and nation chat.
  */
 package me.continent.chat;

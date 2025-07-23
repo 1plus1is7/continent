@@ -22,7 +22,7 @@ public class ConfirmationManager {
 
     public static void request(Player player, Runnable action) {
         pending.put(player.getUniqueId(), new Confirmation(action, System.currentTimeMillis() + TIMEOUT));
-        player.sendMessage("§c정말로 실행하시겠습니까? §e/village confirm§c을 입력하세요.");
+        player.sendMessage("§c정말로 실행하시겠습니까? §e/nation confirm§c을 입력하세요.");
     }
 
     public static boolean confirm(Player player) {

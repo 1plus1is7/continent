@@ -1,9 +1,9 @@
 package me.continent;
 
-import me.continent.chat.VillageChatListener;
+import me.continent.chat.NationChatListener;
 import me.continent.chat.GlobalChatListener;
 import me.continent.command.GoldCommand;
-import me.continent.command.VillageCommand;
+import me.continent.command.NationCommand;
 import me.continent.war.WarCommand;
 import me.continent.command.GuideCommand;
 import me.continent.command.SpecialtyCommand;
@@ -16,16 +16,16 @@ import me.continent.protection.CoreProtectionListener;
 import me.continent.war.CoreAttackListener;
 import me.continent.war.WarDeathListener;
 import me.continent.protection.ProtectionStateListener;
-import me.continent.village.service.ChestListener;
-import me.continent.village.service.MaintenanceService;
-import me.continent.village.service.VillageMenuListener;
-import me.continent.village.service.VillageTreasuryListener;
+import me.continent.nation.service.ChestListener;
+import me.continent.nation.service.MaintenanceService;
+import me.continent.nation.service.NationMenuListener;
+import me.continent.nation.service.NationTreasuryListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.continent.player.PlayerDataManager;
 import me.continent.command.MarketCommand;
 import me.continent.market.MarketManager;
 import me.continent.market.MarketListener;
-import me.continent.storage.VillageStorage;
+import me.continent.storage.NationStorage;
 import me.continent.scoreboard.ScoreboardService;
 import me.continent.crop.CropGrowthManager;
 import me.continent.crop.CropListener;
@@ -33,7 +33,7 @@ import me.continent.research.ResearchListener;
 import me.continent.research.ResearchManager;
 import me.continent.specialty.SpecialtyManager;
 import me.continent.specialty.SpecialtyListener;
-import me.continent.village.service.VillageSpecialtyListener;
+import me.continent.nation.service.NationSpecialtyListener;
 
 public class ContinentPlugin extends JavaPlugin {
     private static ContinentPlugin instance;
@@ -48,7 +48,7 @@ public class ContinentPlugin extends JavaPlugin {
 
         // 명령어 등록 (plugin.yml 누락 시 NPE 방지)
         registerCommand("gold", new GoldCommand());
-        registerCommand("village", new VillageCommand());
+        registerCommand("nation", new NationCommand());
         registerCommand("war", new WarCommand());
         registerCommand("guide", new GuideCommand());
         registerCommand("specialty", new SpecialtyCommand());
@@ -57,7 +57,7 @@ public class ContinentPlugin extends JavaPlugin {
 
         // 중앙은행 데이터 로딩
         CentralBankDataManager.load();
-        VillageStorage.loadAll(); // 저장된 모든 마을 불러오기
+        NationStorage.loadAll(); // 저장된 모든 국가 불러오기
         PlayerDataManager.loadAll();
 
         ResearchManager.loadNodes(this);
@@ -69,7 +69,7 @@ public class ContinentPlugin extends JavaPlugin {
 
         MarketManager.load(this);
         getServer().getPluginManager().registerEvents(new TerritoryListener(), this);
-        getServer().getPluginManager().registerEvents(new VillageChatListener(), this);
+        getServer().getPluginManager().registerEvents(new NationChatListener(), this);
         getServer().getPluginManager().registerEvents(new GlobalChatListener(), this);
         getServer().getPluginManager().registerEvents(new MaintenanceJoinListener(), this);
         getServer().getPluginManager().registerEvents(new TerritoryProtectionListener(), this);
@@ -81,9 +81,9 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CropListener(), this);
         getServer().getPluginManager().registerEvents(new ResearchListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.specialty.SpecialtyListener(), this);
-        getServer().getPluginManager().registerEvents(new VillageSpecialtyListener(), this);
-        getServer().getPluginManager().registerEvents(new VillageMenuListener(), this);
-        getServer().getPluginManager().registerEvents(new VillageTreasuryListener(), this);
+        getServer().getPluginManager().registerEvents(new NationSpecialtyListener(), this);
+        getServer().getPluginManager().registerEvents(new NationMenuListener(), this);
+        getServer().getPluginManager().registerEvents(new NationTreasuryListener(), this);
 
 
         getServer().getPluginManager().registerEvents(new MarketListener(), this);

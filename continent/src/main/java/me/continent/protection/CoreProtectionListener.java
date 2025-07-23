@@ -1,7 +1,7 @@
 package me.continent.protection;
 
-import me.continent.village.Village;
-import me.continent.village.VillageManager;
+import me.continent.nation.Nation;
+import me.continent.nation.NationManager;
 import me.continent.war.WarManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -15,8 +15,8 @@ public class CoreProtectionListener implements Listener {
 
     private boolean isCoreBlock(Block block) {
         Location loc = block.getLocation();
-        for (Village village : VillageManager.getAll()) {
-            Location core = village.getCoreLocation();
+        for (Nation nation : NationManager.getAll()) {
+            Location core = nation.getCoreLocation();
             if (core == null) continue;
             if (core.getWorld().equals(loc.getWorld())
                     && core.getBlockX() == loc.getBlockX()
@@ -31,15 +31,15 @@ public class CoreProtectionListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         if (isCoreBlock(event.getBlock())) {
-            Village owner = VillageManager.getByChunk(event.getBlock().getChunk());
+            Nation owner = NationManager.getByChunk(event.getBlock().getChunk());
             if (owner == null) {
                 event.setCancelled(true);
                 return;
             }
-            Village attackerVillage = VillageManager.getByPlayer(event.getPlayer().getUniqueId());
-            boolean allowed = attackerVillage != null
-                    && WarManager.isAtWar(owner.getName(), attackerVillage.getName())
-                    && !owner.getName().equalsIgnoreCase(attackerVillage.getName());
+            Nation attackerNation = NationManager.getByPlayer(event.getPlayer().getUniqueId());
+            boolean allowed = attackerNation != null
+                    && WarManager.isAtWar(owner.getName(), attackerNation.getName())
+                    && !owner.getName().equalsIgnoreCase(attackerNation.getName());
             if (!allowed) {
                 event.setCancelled(true);
                 event.getPlayer().sendMessage("§c코어는 명령어로만 제거할 수 있습니다.");
@@ -53,7 +53,7 @@ public class CoreProtectionListener implements Listener {
     public void onBlockExplode(BlockExplodeEvent event) {
         event.blockList().removeIf(block -> {
             if (!isCoreBlock(block)) return false;
-            Village v = VillageManager.getByChunk(block.getChunk());
+            Nation v = NationManager.getByChunk(block.getChunk());
             if (v == null) return false;
             return true;
         });
@@ -63,7 +63,7 @@ public class CoreProtectionListener implements Listener {
     public void onEntityExplode(EntityExplodeEvent event) {
         event.blockList().removeIf(block -> {
             if (!isCoreBlock(block)) return false;
-            Village v = VillageManager.getByChunk(block.getChunk());
+            Nation v = NationManager.getByChunk(block.getChunk());
             if (v == null) return false;
             return true;
         });

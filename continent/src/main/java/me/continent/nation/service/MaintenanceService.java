@@ -1,9 +1,9 @@
-package me.continent.village.service;
+package me.continent.nation.service;
 
 import me.continent.ContinentPlugin;
-import me.continent.village.Village;
-import me.continent.village.VillageManager;
-import me.continent.storage.VillageStorage;
+import me.continent.nation.Nation;
+import me.continent.nation.NationManager;
+import me.continent.storage.NationStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -28,8 +28,8 @@ public class MaintenanceService {
         return cost;
     }
 
-    public static double getWeeklyCost(Village village) {
-        int extra = Math.max(0, village.getClaimedChunks().size() - 16);
+    public static double getWeeklyCost(Nation nation) {
+        int extra = Math.max(0, nation.getClaimedChunks().size() - 16);
         return cost + extra * perChunkCost;
     }
 
@@ -71,31 +71,31 @@ public class MaintenanceService {
     }
 
     private static void run() {
-        for (Village village : VillageManager.getAll()) {
-            charge(village);
+        for (Nation nation : NationManager.getAll()) {
+            charge(nation);
         }
     }
 
-    private static void charge(Village village) {
-        double chargeAmount = getWeeklyCost(village);
-        if (village.getVault() >= chargeAmount) {
-            village.removeGold(chargeAmount);
-            village.setUnpaidWeeks(0);
+    private static void charge(Nation nation) {
+        double chargeAmount = getWeeklyCost(nation);
+        if (nation.getVault() >= chargeAmount) {
+            nation.removeGold(chargeAmount);
+            nation.setUnpaidWeeks(0);
         } else {
-            village.setUnpaidWeeks(village.getUnpaidWeeks() + 1);
-            if (village.getUnpaidWeeks() >= unpaidLimit) {
-                MembershipService.disband(village);
-                Bukkit.broadcastMessage("§c마을 " + village.getName() + "이(가) 유지비 미납으로 해산되었습니다.");
+            nation.setUnpaidWeeks(nation.getUnpaidWeeks() + 1);
+            if (nation.getUnpaidWeeks() >= unpaidLimit) {
+                MembershipService.disband(nation);
+                Bukkit.broadcastMessage("§c국가 " + nation.getName() + "이(가) 유지비 미납으로 해산되었습니다.");
                 return;
             }
         }
-        village.setMaintenanceCount(village.getMaintenanceCount() + 1);
-        village.setLastMaintenance(System.currentTimeMillis());
-        VillageStorage.save(village);
+        nation.setMaintenanceCount(nation.getMaintenanceCount() + 1);
+        nation.setLastMaintenance(System.currentTimeMillis());
+        NationStorage.save(nation);
 
-        Player king = Bukkit.getPlayer(village.getKing());
+        Player king = Bukkit.getPlayer(nation.getKing());
         if (king != null) {
-            king.sendMessage("§a마을 유지비 " + chargeAmount + "G가 차감되었습니다.");
+            king.sendMessage("§a국가 유지비 " + chargeAmount + "G가 차감되었습니다.");
         }
     }
 

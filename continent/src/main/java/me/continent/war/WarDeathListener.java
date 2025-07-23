@@ -1,8 +1,8 @@
 package me.continent.war;
 
 import me.continent.ContinentPlugin;
-import me.continent.village.Village;
-import me.continent.village.VillageManager;
+import me.continent.nation.Nation;
+import me.continent.nation.NationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -29,11 +29,11 @@ public class WarDeathListener implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        Village village = VillageManager.getByPlayer(player.getUniqueId());
-        if (village == null) return;
-        War war = WarManager.getWar(village.getName());
+        Nation nation = NationManager.getByPlayer(player.getUniqueId());
+        if (nation == null) return;
+        War war = WarManager.getWar(nation.getName());
         if (war == null) return;
-        if (!war.isVillageDestroyed(village.getName())) return;
+        if (!war.isNationDestroyed(nation.getName())) return;
 
         war.banPlayer(player.getUniqueId());
         player.sendMessage("전쟁 중 코어가 파괴되어 로비로 이동합니다.");

@@ -1,38 +1,38 @@
-// VillageUtils.java
+// NationUtils.java
 
-package me.continent.village;
+package me.continent.nation;
 
 import org.bukkit.Chunk;
-import me.continent.storage.VillageStorage;
+import me.continent.storage.NationStorage;
 
 import java.util.*;
 
-public class VillageUtils {
+public class NationUtils {
 
-    public static boolean unclaimChunk(Village village, Chunk chunk) {
-        String key = Village.getChunkKey(chunk);
+    public static boolean unclaimChunk(Nation nation, Chunk chunk) {
+        String key = Nation.getChunkKey(chunk);
 
-        if (key.equals(village.getCoreChunk()) || key.equals(village.getSpawnChunk())) {
+        if (key.equals(nation.getCoreChunk()) || key.equals(nation.getSpawnChunk())) {
             return false; // 보호
         }
 
 
         // 스폰/코어 청크 해제 방지
-        String spawnKey = village.getSpawnChunk();
-        String coreKey = village.getCoreChunk();
+        String spawnKey = nation.getSpawnChunk();
+        String coreKey = nation.getCoreChunk();
         if (key.equals(spawnKey) || key.equals(coreKey)) {
             return false;
         }
 
-        Set<String> claims = new HashSet<>(village.getClaimedChunks());
+        Set<String> claims = new HashSet<>(nation.getClaimedChunks());
         claims.remove(key);
 
         if (!isConnected(claims, spawnKey)) {
             return false;
         }
 
-        village.getClaimedChunks().remove(key);
-        VillageStorage.save(village);
+        nation.getClaimedChunks().remove(key);
+        NationStorage.save(nation);
         return true;
     }
 

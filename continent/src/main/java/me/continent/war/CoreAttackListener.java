@@ -1,8 +1,8 @@
 package me.continent.war;
 
 import me.continent.ContinentPlugin;
-import me.continent.village.Village;
-import me.continent.village.VillageManager;
+import me.continent.nation.Nation;
+import me.continent.nation.NationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -26,34 +26,34 @@ public class CoreAttackListener implements Listener {
     private final Map<String, Long> lastAttack = new HashMap<>();
 
     private boolean isCoreBlock(Block block) {
-        Village village = VillageManager.getByChunk(block.getChunk());
-        if (village == null) return false;
-        if (village.getCoreLocation() == null) return false;
-        return village.getCoreLocation().getBlock().equals(block);
+        Nation nation = NationManager.getByChunk(block.getChunk());
+        if (nation == null) return false;
+        if (nation.getCoreLocation() == null) return false;
+        return nation.getCoreLocation().getBlock().equals(block);
     }
 
-    private Village getVillageByCore(Block block) {
-        Village village = VillageManager.getByChunk(block.getChunk());
-        if (village == null) return null;
-        if (village.getCoreLocation() == null) return null;
-        if (village.getCoreLocation().getBlock().equals(block)) {
-            return village;
+    private Nation getNationByCore(Block block) {
+        Nation nation = NationManager.getByChunk(block.getChunk());
+        if (nation == null) return null;
+        if (nation.getCoreLocation() == null) return null;
+        if (nation.getCoreLocation().getBlock().equals(block)) {
+            return nation;
         }
         return null;
     }
 
-    private void startAlert(Village village) {
-        String key = village.getName().toLowerCase();
+    private void startAlert(Nation nation) {
+        String key = nation.getName().toLowerCase();
         lastAttack.put(key, System.currentTimeMillis());
         if (alertTasks.containsKey(key)) return;
 
         Runnable alert = () -> {
-            War war = WarManager.getWar(village.getName());
+            War war = WarManager.getWar(nation.getName());
             if (war == null) {
                 cancel(key);
                 return;
             }
-            if (village.getCoreLocation() == null || village.getCoreLocation().getBlock().getType() != Material.BEACON) {
+            if (nation.getCoreLocation() == null || nation.getCoreLocation().getBlock().getType() != Material.BEACON) {
                 cancel(key);
                 return;
             }
@@ -62,7 +62,7 @@ public class CoreAttackListener implements Listener {
                 cancel(key);
                 return;
             }
-            sendAlert(village.getName());
+            sendAlert(nation.getName());
         };
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(ContinentPlugin.getInstance(), alert, 0L, 100L);
@@ -75,15 +75,15 @@ public class CoreAttackListener implements Listener {
         lastAttack.remove(key);
     }
 
-    private void sendAlert(String villageName) {
-        Village village = VillageManager.getByName(villageName);
-        if (village == null) return;
-        for (UUID uuid : village.getMembers()) {
+    private void sendAlert(String nationName) {
+        Nation nation = NationManager.getByName(nationName);
+        if (nation == null) return;
+        for (UUID uuid : nation.getMembers()) {
             Player member = Bukkit.getPlayer(uuid);
             if (member == null || !member.isOnline()) continue;
             member.showTitle(Title.title(
                     Component.text("§c경고"),
-                    Component.text(villageName + " 코어가 공격받고 있습니다!"),
+                    Component.text(nationName + " 코어가 공격받고 있습니다!"),
                     Title.Times.times(Duration.ofMillis(250), Duration.ofMillis(1000), Duration.ofMillis(250))
             ));
             member.playSound(member.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1f);
@@ -91,15 +91,15 @@ public class CoreAttackListener implements Listener {
     }
 
     private void handle(Block block, Player attacker) {
-        Village village = getVillageByCore(block);
-        if (village == null) return;
-        Village attackerVillage = VillageManager.getByPlayer(attacker.getUniqueId());
-        if (attackerVillage == null) return;
-        if (!WarManager.isAtWar(attackerVillage.getName(), village.getName())) return;
-        if (attackerVillage.getName().equalsIgnoreCase(village.getName())) return;
-        lastAttack.put(village.getName().toLowerCase(), System.currentTimeMillis());
-        startAlert(village);
-        WarManager.damageCore(village, attackerVillage);
+        Nation nation = getNationByCore(block);
+        if (nation == null) return;
+        Nation attackerNation = NationManager.getByPlayer(attacker.getUniqueId());
+        if (attackerNation == null) return;
+        if (!WarManager.isAtWar(attackerNation.getName(), nation.getName())) return;
+        if (attackerNation.getName().equalsIgnoreCase(nation.getName())) return;
+        lastAttack.put(nation.getName().toLowerCase(), System.currentTimeMillis());
+        startAlert(nation);
+        WarManager.damageCore(nation, attackerNation);
     }
 
     @EventHandler

@@ -7,7 +7,7 @@ public class War {
     private final String defender;
     private final long startTime;
     private final Map<String, Integer> coreHp = new HashMap<>();
-    private final Map<String, String> destroyedVillages = new HashMap<>();
+    private final Map<String, String> destroyedNations = new HashMap<>();
     private final Map<UUID, Long> bannedPlayers = new HashMap<>();
 
     public War(String attacker, String defender) {
@@ -28,12 +28,12 @@ public class War {
         return startTime;
     }
 
-    public int getCoreHp(String village) {
-        return coreHp.getOrDefault(village.toLowerCase(), 0);
+    public int getCoreHp(String nation) {
+        return coreHp.getOrDefault(nation.toLowerCase(), 0);
     }
 
-    public void setCoreHp(String village, int hp) {
-        coreHp.put(village.toLowerCase(), hp);
+    public void setCoreHp(String nation, int hp) {
+        coreHp.put(nation.toLowerCase(), hp);
     }
 
     public Map<String, Integer> getAllCoreHp() {
@@ -41,20 +41,20 @@ public class War {
     }
 
     // ---- Core destruction tracking ----
-    public void addDestroyedVillage(String village, String attackerName) {
-        destroyedVillages.put(village.toLowerCase(), attackerName);
+    public void addDestroyedNation(String nation, String attackerName) {
+        destroyedNations.put(nation.toLowerCase(), attackerName);
     }
 
-    public boolean isVillageDestroyed(String village) {
-        return destroyedVillages.containsKey(village.toLowerCase());
+    public boolean isNationDestroyed(String nation) {
+        return destroyedNations.containsKey(nation.toLowerCase());
     }
 
-    public String getCapturer(String village) {
-        return destroyedVillages.get(village.toLowerCase());
+    public String getCapturer(String nation) {
+        return destroyedNations.get(nation.toLowerCase());
     }
 
-    public Map<String, String> getDestroyedVillages() {
-        return destroyedVillages;
+    public Map<String, String> getDestroyedNations() {
+        return destroyedNations;
     }
 
     // ---- Player ban tracking ----

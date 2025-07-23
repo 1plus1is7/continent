@@ -2,10 +2,10 @@ package me.continent.command;
 
 import me.continent.war.War;
 import me.continent.war.WarManager;
-import me.continent.village.VillageManager;
-import me.continent.village.Village;
+import me.continent.nation.NationManager;
+import me.continent.nation.Nation;
 import me.continent.economy.CentralBank;
-import me.continent.village.service.MaintenanceService;
+import me.continent.nation.service.MaintenanceService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -51,10 +51,10 @@ public class AdminCommand implements TabExecutor {
                 return true;
             }
             if (args.length >= 4 && args[1].equalsIgnoreCase("start")) {
-                Village atk = VillageManager.getByName(args[2]);
-                Village def = VillageManager.getByName(args[3]);
+                Nation atk = NationManager.getByName(args[2]);
+                Nation def = NationManager.getByName(args[3]);
                 if (atk == null || def == null) {
-                    sender.sendMessage("§c마을을 찾을 수 없습니다.");
+                    sender.sendMessage("§c국가을 찾을 수 없습니다.");
                     return true;
                 }
                 if (WarManager.isAtWar(atk.getName(), def.getName())) {
@@ -68,7 +68,7 @@ public class AdminCommand implements TabExecutor {
             if (args.length >= 3 && args[1].equalsIgnoreCase("end")) {
                 War war = WarManager.getWar(args[2]);
                 if (war == null) {
-                    sender.sendMessage("§c해당 마을의 전쟁이 존재하지 않습니다.");
+                    sender.sendMessage("§c해당 국가의 전쟁이 존재하지 않습니다.");
                     return true;
                 }
                 WarManager.endWar(war);
@@ -84,7 +84,7 @@ public class AdminCommand implements TabExecutor {
                 sender.sendMessage("§6[전쟁 정보]");
                 sender.sendMessage("§f공격국: §e" + war.getAttacker());
                 sender.sendMessage("§f방어국: §e" + war.getDefender());
-                sender.sendMessage("§f파괴된 마을: §e" + war.getDestroyedVillages().size());
+                sender.sendMessage("§f파괴된 국가: §e" + war.getDestroyedNations().size());
                 return true;
             }
             sender.sendMessage("§c사용법: /admin war <list|start|end|info>");
@@ -195,22 +195,22 @@ public class AdminCommand implements TabExecutor {
         }
 
         if (args.length == 3 && args[0].equalsIgnoreCase("war") && args[1].equalsIgnoreCase("start")) {
-            return VillageManager.getAll().stream()
-                    .map(Village::getName)
+            return NationManager.getAll().stream()
+                    .map(Nation::getName)
                     .filter(n -> n.toLowerCase().startsWith(args[2].toLowerCase()))
                     .toList();
         }
 
         if (args.length == 4 && args[0].equalsIgnoreCase("war") && args[1].equalsIgnoreCase("start")) {
-            return VillageManager.getAll().stream()
-                    .map(Village::getName)
+            return NationManager.getAll().stream()
+                    .map(Nation::getName)
                     .filter(n -> n.toLowerCase().startsWith(args[3].toLowerCase()))
                     .toList();
         }
 
         if (args.length == 3 && args[0].equalsIgnoreCase("war") && (args[1].equalsIgnoreCase("end") || args[1].equalsIgnoreCase("info"))) {
-            return VillageManager.getAll().stream()
-                    .map(Village::getName)
+            return NationManager.getAll().stream()
+                    .map(Nation::getName)
                     .filter(n -> n.toLowerCase().startsWith(args[2].toLowerCase()))
                     .toList();
         }

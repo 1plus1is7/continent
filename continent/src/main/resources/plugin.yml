@@ -6,10 +6,10 @@ commands:
   market:
     description: Player market
     usage: /market
-  village:
-    description: Village system command
-    aliases: [v]
-    usage: /village <subcommand>
+  nation:
+    description: Nation system command
+    aliases: [n]
+    usage: /nation <subcommand>
   gold:
     description: Gold system command
     usage: /gold <subcommand>
@@ -17,7 +17,7 @@ commands:
     description: War system command
     usage: /war <subcommand>
   guide:
-    description: Provides guide books about kingdom, village and war
+    description: Provides guide books about kingdom, nation and war
     usage: /guide <topic>
   specialty:
     description: Specialty goods command
