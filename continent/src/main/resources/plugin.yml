@@ -25,3 +25,6 @@ commands:
   admin:
     description: Manage wars, economy and maintenance
     usage: /admin <subcommand>
+  union:
+    description: Manage unions of nations
+    usage: /union <subcommand>
