@@ -4,6 +4,7 @@ import me.continent.chat.NationChatListener;
 import me.continent.chat.GlobalChatListener;
 import me.continent.command.GoldCommand;
 import me.continent.command.NationCommand;
+import me.continent.command.UnionCommand;
 import me.continent.war.WarCommand;
 import me.continent.command.GuideCommand;
 import me.continent.command.SpecialtyCommand;
@@ -26,6 +27,7 @@ import me.continent.command.MarketCommand;
 import me.continent.market.MarketManager;
 import me.continent.market.MarketListener;
 import me.continent.storage.NationStorage;
+import me.continent.storage.UnionStorage;
 import me.continent.scoreboard.ScoreboardService;
 import me.continent.crop.CropGrowthManager;
 import me.continent.crop.CropListener;
@@ -49,6 +51,7 @@ public class ContinentPlugin extends JavaPlugin {
         // 명령어 등록 (plugin.yml 누락 시 NPE 방지)
         registerCommand("gold", new GoldCommand());
         registerCommand("nation", new NationCommand());
+        registerCommand("union", new UnionCommand());
         registerCommand("war", new WarCommand());
         registerCommand("guide", new GuideCommand());
         registerCommand("specialty", new SpecialtyCommand());
@@ -58,6 +61,7 @@ public class ContinentPlugin extends JavaPlugin {
         // 중앙은행 데이터 로딩
         CentralBankDataManager.load();
         NationStorage.loadAll(); // 저장된 모든 국가 불러오기
+        UnionStorage.loadAll();
         PlayerDataManager.loadAll();
 
         ResearchManager.loadNodes(this);
@@ -97,6 +101,7 @@ public class ContinentPlugin extends JavaPlugin {
         CentralBankDataManager.save();
         MarketManager.save();
         PlayerDataManager.saveAll();
+        UnionStorage.saveAll();
 
         CropGrowthManager.shutdown();
 
