@@ -116,6 +116,10 @@ public class GoldExchangeGUI {
                 player.sendMessage("§c인벤토리가 부족합니다.");
                 return;
             }
+            if (!CentralBank.withdrawGold(qty)) {
+                player.sendMessage("§c중앙은행 금고에 금이 부족합니다.");
+                return;
+            }
             data.removeGold(total);
             ItemStack ingot = new ItemStack(Material.GOLD_INGOT, qty);
             player.getInventory().addItem(ingot);
@@ -127,9 +131,9 @@ public class GoldExchangeGUI {
                 return;
             }
             player.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, qty));
+            CentralBank.addGold(qty);
             data.addGold(total);
             player.sendMessage("§e금괴 " + qty + "개를 환전해 " + total + "G을 받았습니다.");
-            CentralBank.recordExchange();
         }
         PlayerDataManager.save(player.getUniqueId());
     }
@@ -137,7 +141,9 @@ public class GoldExchangeGUI {
     public static int getMaxQty(Player player, Mode mode) {
         if (mode == Mode.CONVERT) {
             double rate = CentralBank.getExchangeRate();
-            int max = (int) Math.floor(PlayerDataManager.get(player.getUniqueId()).getGold() / rate);
+            int byGold = (int) Math.floor(PlayerDataManager.get(player.getUniqueId()).getGold() / rate);
+            int byReserve = CentralBank.getGold();
+            int max = Math.min(byGold, byReserve);
             return Math.max(1, max);
         } else {
             int count = 0;

@@ -30,6 +30,7 @@ public class GoldCommand implements TabExecutor {
             player.sendMessage("§6[골드 명령어 도움말]");
             player.sendMessage("§e/gold convert <수량> §7- 골드를 사용해 금괴를 획득합니다.");
             player.sendMessage("§e/gold exchange [수량] §7- 금을 골드로 환전합니다.");
+            player.sendMessage("§e/gold rate §7- 현재 환율 확인");
             player.sendMessage("§e/gold balance §7- 현재 보유 골드를 확인합니다.");
             player.sendMessage("§e/gold pay <플레이어> <금액> §7- 플레이어에게 골드를 송금합니다.");
             player.sendMessage("§e/gold gui §7- 골드 메뉴 열기");
@@ -41,6 +42,46 @@ public class GoldCommand implements TabExecutor {
         if (args[0].equalsIgnoreCase("balance")) {
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
             player.sendMessage("§6[골드] §f현재 보유 골드: §e" + data.getGold() + "G");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("rate")) {
+            player.sendMessage("§6[환율] §f현재 환율: §e" + CentralBank.getExchangeRate() + "G");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("admin")) {
+            if (!player.hasPermission("continent.admin")) {
+                player.sendMessage("§c관리자 권한이 필요합니다.");
+                return true;
+            }
+            if (args.length < 2) {
+                player.sendMessage("§e/gold admin addgold <수량>");
+                player.sendMessage("§e/gold admin setrate <값>");
+                return true;
+            }
+            if (args[1].equalsIgnoreCase("addgold") && args.length >= 3) {
+                try {
+                    int amt = Integer.parseInt(args[2]);
+                    CentralBank.addGold(amt);
+                    player.sendMessage("§6[중앙은행] §f금고에 금 " + amt + "개를 추가했습니다. 현재 보유: " + CentralBank.getGold());
+                } catch (NumberFormatException e) {
+                    player.sendMessage("§c수량은 숫자여야 합니다.");
+                }
+                return true;
+            }
+            if (args[1].equalsIgnoreCase("setrate") && args.length >= 3) {
+                try {
+                    double val = Double.parseDouble(args[2]);
+                    CentralBank.setExchangeRate(val);
+                    CentralBank.setAutoRate(false);
+                    player.sendMessage("§6[중앙은행] §f환율을 " + CentralBank.getExchangeRate() + "G 로 설정했습니다.");
+                } catch (NumberFormatException e) {
+                    player.sendMessage("§c숫자를 입력해야 합니다.");
+                }
+                return true;
+            }
+            player.sendMessage("§c사용법: /gold admin <addgold|setrate>");
             return true;
         }
 
@@ -108,9 +149,16 @@ public class GoldCommand implements TabExecutor {
                 return true;
             }
 
+            if (!CentralBank.withdrawGold(quantity)) {
+                player.sendMessage("§c중앙은행 금고에 금이 부족합니다.");
+                return true;
+            }
+
             ItemStack goldIngot = new ItemStack(Material.GOLD_INGOT, quantity);
             HashMap<Integer, ItemStack> leftovers = player.getInventory().addItem(goldIngot);
             if (!leftovers.isEmpty()) {
+                // 금고에서 이미 차감했으므로 복구
+                CentralBank.addGold(quantity);
                 player.sendMessage("§c인벤토리에 금괴를 넣을 공간이 부족합니다.");
                 return true;
             }
@@ -145,6 +193,7 @@ public class GoldCommand implements TabExecutor {
 
             // 금 차감
             player.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, quantity));
+            CentralBank.addGold(quantity);
 
             double rate = CentralBank.getExchangeRate();
             int totalG = (int) Math.round(rate * quantity);
@@ -156,7 +205,6 @@ public class GoldCommand implements TabExecutor {
             player.sendMessage("§6[환율] §f1개당 " + rate + "G 기준");
             player.sendMessage("§6[잔액] §f현재 보유 골드: §e" + data.getGold() + "G");
 
-            CentralBank.recordExchange();
             return true;
         }
 
@@ -167,7 +215,7 @@ public class GoldCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> subs = Arrays.asList("convert", "exchange", "balance", "pay");
+        List<String> subs = Arrays.asList("convert", "exchange", "balance", "pay", "rate", "admin");
 
         if (args.length == 1) {
             return subs.stream()
@@ -179,6 +227,12 @@ public class GoldCommand implements TabExecutor {
             return Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)
                     .filter(n -> n.toLowerCase().startsWith(args[1].toLowerCase()))
+                    .toList();
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("admin")) {
+            return Arrays.asList("addgold", "setrate").stream()
+                    .filter(s -> s.startsWith(args[1].toLowerCase()))
                     .toList();
         }
 
