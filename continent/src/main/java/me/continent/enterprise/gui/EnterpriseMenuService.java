@@ -156,6 +156,7 @@ public class EnterpriseMenuService {
         inv.setItem(13, button(Material.CHEST_MINECART, "배송 상태 확인", null));
         inv.setItem(16, button(Material.FILLED_MAP, "기업 목록", null));
         inv.setItem(19, button(Material.WHITE_BANNER, "상징 설정", null));
+        inv.setItem(22, button(Material.CRAFTING_TABLE, "생산 관리", null));
         inv.setItem(49, button(Material.BARRIER, "닫기", null));
         player.openInventory(inv);
     }

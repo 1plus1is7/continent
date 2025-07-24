@@ -85,6 +85,8 @@ public class ContinentPlugin extends JavaPlugin {
         SpecialtyManager.load(this);
         JobManager.load(this);
         EnterpriseTypeConfig.load(this);
+        me.continent.enterprise.production.ProductionManager.load(this);
+        me.continent.enterprise.production.ProductionManager.schedule();
 
         CropGrowthManager.init(this);
 
@@ -118,6 +120,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new me.continent.enterprise.gui.DeliveryMenuListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.nation.gui.NationListListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.enterprise.gui.EnterpriseListListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.enterprise.gui.ProductionMenuListener(), this);
         getServer().getPluginManager().registerEvents(new JobMenuListener(), this);
 
 
