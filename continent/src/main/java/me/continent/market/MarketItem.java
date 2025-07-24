@@ -12,6 +12,8 @@ public class MarketItem {
     private int pricePerUnit;
     private int stock;
     private LocalDateTime listedAt;
+    /** Enterprise ID if this item is listed by an enterprise, otherwise null. */
+    private String enterpriseId;
 
     public MarketItem(UUID id, UUID seller, ItemStack item, int pricePerUnit, int stock, LocalDateTime listedAt) {
         this.id = id;
@@ -20,6 +22,12 @@ public class MarketItem {
         this.pricePerUnit = pricePerUnit;
         this.stock = stock;
         this.listedAt = listedAt;
+        this.enterpriseId = null;
+    }
+
+    public MarketItem(UUID id, UUID seller, String enterpriseId, ItemStack item, int pricePerUnit, int stock, LocalDateTime listedAt) {
+        this(id, seller, item, pricePerUnit, stock, listedAt);
+        this.enterpriseId = enterpriseId;
     }
 
     public UUID getId() {
@@ -52,5 +60,13 @@ public class MarketItem {
 
     public LocalDateTime getListedAt() {
         return listedAt;
+    }
+
+    public String getEnterpriseId() {
+        return enterpriseId;
+    }
+
+    public void setEnterpriseId(String enterpriseId) {
+        this.enterpriseId = enterpriseId;
     }
 }

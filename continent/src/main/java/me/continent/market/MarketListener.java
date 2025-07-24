@@ -27,7 +27,7 @@ public class MarketListener implements Listener {
                 ItemStack item = event.getCurrentItem();
                 if (item == null) return;
                 int index = holder.getPage() - 1;
-                var list = MarketManager.getSorted(holder.getSort());
+                var list = MarketManager.getFilteredSorted(holder.getSort(), holder.getFilter());
                 if (holder.isMine()) {
                     UUID u = player.getUniqueId();
                     list = list.stream().filter(i -> i.getSeller().equals(u)).toList();
@@ -38,13 +38,21 @@ public class MarketListener implements Listener {
                 MarketPurchaseGUI.open(player, mi);
             } else {
                 switch (slot) {
-                    case 45 -> MarketGUI.open(player, holder.getPage() - 1, holder.getSort(), holder.isMine());
-                    case 46 -> MarketGUI.open(player, holder.getPage() + 1, holder.getSort(), holder.isMine());
-                    case 47 -> MarketGUI.open(player, 1, holder.getSort(), !holder.isMine());
+                    case 45 -> MarketGUI.open(player, holder.getPage() - 1, holder.getSort(), holder.getFilter(), holder.isMine());
+                    case 46 -> MarketGUI.open(player, holder.getPage() + 1, holder.getSort(), holder.getFilter(), holder.isMine());
+                    case 47 -> MarketGUI.open(player, 1, holder.getSort(), holder.getFilter(), !holder.isMine());
                     case 48 -> MarketRegisterGUI.open(player);
                     case 49 -> {
                         MarketManager.SortMode next = holder.getSort() == MarketManager.SortMode.NEWEST ? MarketManager.SortMode.PRICE : MarketManager.SortMode.NEWEST;
-                        MarketGUI.open(player, 1, next, holder.isMine());
+                        MarketGUI.open(player, 1, next, holder.getFilter(), holder.isMine());
+                    }
+                    case 52 -> {
+                        MarketManager.FilterMode next = switch(holder.getFilter()) {
+                            case ALL -> MarketManager.FilterMode.NORMAL;
+                            case NORMAL -> MarketManager.FilterMode.CORPORATE;
+                            case CORPORATE -> MarketManager.FilterMode.ALL;
+                        };
+                        MarketGUI.open(player, 1, holder.getSort(), next, holder.isMine());
                     }
                     case 53 -> player.closeInventory();
                 }
@@ -61,14 +69,19 @@ public class MarketListener implements Listener {
                 case 23 -> { holder.setPrice(holder.getPrice() + 1); MarketRegisterGUI.renderButtons(inv, holder.getPrice()); }
                 case 24 -> { holder.setPrice(holder.getPrice() + 10); MarketRegisterGUI.renderButtons(inv, holder.getPrice()); }
                 case 38 -> { player.closeInventory(); }
-                case 42 -> MarketGUI.open(player,1,MarketManager.SortMode.NEWEST,false);
+                case 42 -> MarketGUI.open(player,1,MarketManager.SortMode.NEWEST, MarketManager.FilterMode.ALL,false);
                 case 40 -> {
                     ItemStack item = inv.getItem(22);
                     if (item == null || item.getType() == Material.AIR) {
                         player.sendMessage("§c아이템을 넣어주세요.");
                         return;
                     }
-                    MarketItem mi = new MarketItem(UUID.randomUUID(), player.getUniqueId(), item.clone(), holder.getPrice(), item.getAmount(), LocalDateTime.now());
+                    MarketItem mi;
+                    if (holder.getEnterpriseId() == null) {
+                        mi = new MarketItem(UUID.randomUUID(), player.getUniqueId(), item.clone(), holder.getPrice(), item.getAmount(), LocalDateTime.now());
+                    } else {
+                        mi = new MarketItem(UUID.randomUUID(), player.getUniqueId(), holder.getEnterpriseId(), item.clone(), holder.getPrice(), item.getAmount(), LocalDateTime.now());
+                    }
                     MarketManager.addItem(mi);
                     inv.setItem(22, null);
                     player.getInventory().removeItem(item);
@@ -88,7 +101,7 @@ public class MarketListener implements Listener {
                 case 23 -> { holder.setQuantity(holder.getQuantity() + 1); MarketPurchaseGUI.renderButtons(inv, holder.getQuantity(), mi.getPricePerUnit(), mi.getStock()); }
                 case 24 -> { holder.setQuantity(holder.getQuantity() + 10); MarketPurchaseGUI.renderButtons(inv, holder.getQuantity(), mi.getPricePerUnit(), mi.getStock()); }
                 case 38 -> player.closeInventory();
-                case 42 -> MarketGUI.open(player,1,MarketManager.SortMode.NEWEST,false);
+                case 42 -> MarketGUI.open(player,1,MarketManager.SortMode.NEWEST, MarketManager.FilterMode.ALL,false);
                 case 40 -> {
                     int qty = holder.getQuantity();
                     if (qty < 1) qty = 1; if (qty > mi.getStock()) qty = mi.getStock();

@@ -18,6 +18,7 @@ public class MarketManager {
     private static YamlConfiguration config;
 
     public enum SortMode { NEWEST, PRICE }
+    public enum FilterMode { ALL, NORMAL, CORPORATE }
 
     public static void load(ContinentPlugin plugin) {
         file = new File(plugin.getDataFolder(), "market.yml");
@@ -42,7 +43,11 @@ public class MarketManager {
                 int stock = stockObj instanceof Number ? ((Number) stockObj).intValue() : Integer.parseInt(String.valueOf(stockObj));
                 String time = String.valueOf(m.get("time"));
                 LocalDateTime listed = LocalDateTime.parse(time);
-                items.add(new MarketItem(id, seller, item, price, stock, listed));
+                String ent = m.containsKey("enterprise") ? String.valueOf(m.get("enterprise")) : null;
+                MarketItem mi;
+                if (ent == null || ent.equals("null")) mi = new MarketItem(id, seller, item, price, stock, listed);
+                else mi = new MarketItem(id, seller, ent, item, price, stock, listed);
+                items.add(mi);
             } catch (Exception e) {
                 Bukkit.getLogger().warning("Failed to load market item: " + e.getMessage());
             }
@@ -60,6 +65,8 @@ public class MarketManager {
             m.put("price", item.getPricePerUnit());
             m.put("stock", item.getStock());
             m.put("time", item.getListedAt().toString());
+            if (item.getEnterpriseId() != null)
+                m.put("enterprise", item.getEnterpriseId());
             list.add(m);
         }
         config.set("items", list);
@@ -91,8 +98,13 @@ public class MarketManager {
         return null;
     }
 
-    public static List<MarketItem> getSorted(SortMode mode) {
+    public static List<MarketItem> getFilteredSorted(SortMode mode, FilterMode filter) {
         List<MarketItem> list = getItems();
+        if (filter == FilterMode.NORMAL) {
+            list = list.stream().filter(i -> i.getEnterpriseId() == null).toList();
+        } else if (filter == FilterMode.CORPORATE) {
+            list = list.stream().filter(i -> i.getEnterpriseId() != null).toList();
+        }
         if (mode == SortMode.PRICE) {
             list.sort(Comparator.comparingInt(MarketItem::getPricePerUnit));
         } else {

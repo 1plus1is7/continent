@@ -14,7 +14,7 @@ public class MarketCommand implements CommandExecutor {
             sender.sendMessage("플레이어만 사용할 수 있습니다.");
             return true;
         }
-        MarketGUI.open(player, 1, MarketManager.SortMode.NEWEST, false);
+        MarketGUI.open(player, 1, MarketManager.SortMode.NEWEST, MarketManager.FilterMode.ALL, false);
         return true;
     }
 }

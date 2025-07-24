@@ -15,7 +15,11 @@ import java.util.UUID;
 
 public class MarketRegisterGUI {
     public static void open(Player player) {
-        Holder holder = new Holder(player.getUniqueId());
+        open(player, null);
+    }
+
+    public static void open(Player player, String enterpriseId) {
+        Holder holder = new Holder(player.getUniqueId(), enterpriseId);
         Inventory inv = Bukkit.createInventory(holder, 45, "상품 등록");
         holder.setInventory(inv);
         fill(inv);
@@ -79,12 +83,14 @@ public class MarketRegisterGUI {
 
     static class Holder implements InventoryHolder {
         private final UUID owner;
+        private final String enterpriseId;
         private int price = 1;
         private Inventory inv;
-        Holder(UUID owner) { this.owner = owner; }
+        Holder(UUID owner, String enterpriseId) { this.owner = owner; this.enterpriseId = enterpriseId; }
         void setInventory(Inventory inv) { this.inv = inv; }
         @Override public Inventory getInventory() { return inv; }
         public UUID getOwner() { return owner; }
+        public String getEnterpriseId() { return enterpriseId; }
         public int getPrice() { return price; }
         public void setPrice(int price) { this.price = Math.max(1, price); }
     }
