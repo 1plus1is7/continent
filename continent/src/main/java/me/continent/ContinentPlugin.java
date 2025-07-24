@@ -35,6 +35,7 @@ import me.continent.command.MarketCommand;
 import me.continent.market.MarketManager;
 import me.continent.market.MarketListener;
 import me.continent.enterprise.EnterpriseStorage;
+import me.continent.enterprise.contract.ContractManager;
 import me.continent.storage.NationStorage;
 import me.continent.storage.UnionStorage;
 import me.continent.scoreboard.ScoreboardService;
@@ -68,6 +69,7 @@ public class ContinentPlugin extends JavaPlugin {
         registerCommand("admin", new AdminCommand());
         registerCommand("menu", new MenuCommand());
         registerCommand("enterprise", new EnterpriseCommand());
+        registerCommand("contract", new me.continent.command.ContractCommand());
         registerCommand("job", new JobCommand());
 
         // 중앙은행 데이터 로딩
@@ -87,6 +89,8 @@ public class ContinentPlugin extends JavaPlugin {
 
         MarketManager.load(this);
         EnterpriseStorage.loadAll();
+        ContractManager.loadAll();
+        ContractManager.scheduleGeneration();
         getServer().getPluginManager().registerEvents(new TerritoryListener(), this);
         getServer().getPluginManager().registerEvents(new NationChatListener(), this);
         getServer().getPluginManager().registerEvents(new GlobalChatListener(), this);
@@ -122,6 +126,7 @@ public class ContinentPlugin extends JavaPlugin {
         CentralBankDataManager.save();
         MarketManager.save();
         EnterpriseStorage.saveAll();
+        ContractManager.saveAll();
         PlayerDataManager.saveAll();
         UnionStorage.saveAll();
 
