@@ -9,6 +9,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,9 @@ public class MarketGUI {
         ItemStack item = new ItemStack(mat);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.YELLOW + name);
-        meta.setCustomModelData(1);
+        CustomModelDataComponent btnCmd = meta.getCustomModelDataComponent();
+        btnCmd.setStrings(java.util.List.of("1"));
+        meta.setCustomModelDataComponent(btnCmd);
         item.setItemMeta(meta);
         return item;
     }
@@ -71,7 +74,9 @@ public class MarketGUI {
         ItemStack pane = new ItemStack(Material.BARRIER);
         ItemMeta meta = pane.getItemMeta();
         meta.setDisplayName(" ");
-        meta.setCustomModelData(1);
+        CustomModelDataComponent paneCmd = meta.getCustomModelDataComponent();
+        paneCmd.setStrings(java.util.List.of("1"));
+        meta.setCustomModelDataComponent(paneCmd);
         pane.setItemMeta(meta);
         for (int i = 0; i < inv.getSize(); i++) {
             inv.setItem(i, pane);

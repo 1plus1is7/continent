@@ -3,6 +3,7 @@ package me.continent.specialty;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 
 import java.util.List;
 
@@ -47,7 +48,9 @@ public class SpecialtyGood {
         if (meta != null) {
             meta.setDisplayName(name);
             meta.setLore(lore);
-            meta.setCustomModelData(modelData);
+            CustomModelDataComponent cmd = meta.getCustomModelDataComponent();
+            cmd.setStrings(java.util.List.of(String.valueOf(modelData)));
+            meta.setCustomModelDataComponent(cmd);
             item.setItemMeta(meta);
         }
         return item;
