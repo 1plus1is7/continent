@@ -30,10 +30,11 @@ public class GoldMenuListener implements Listener {
             Player player = (Player) event.getWhoClicked();
             int slot = event.getRawSlot();
             switch (slot) {
-                case 20 -> { holder.setQty(holder.getQty() - 10); GoldExchangeGUI.renderButtons(inv, holder.getMode(), holder.getQty()); }
-                case 21 -> { holder.setQty(holder.getQty() - 1); GoldExchangeGUI.renderButtons(inv, holder.getMode(), holder.getQty()); }
-                case 23 -> { holder.setQty(holder.getQty() + 1); GoldExchangeGUI.renderButtons(inv, holder.getMode(), holder.getQty()); }
-                case 24 -> { holder.setQty(holder.getQty() + 10); GoldExchangeGUI.renderButtons(inv, holder.getMode(), holder.getQty()); }
+                case 20 -> { holder.setQty(holder.getQty() - 10); GoldExchangeGUI.renderButtons(inv, player, holder.getMode(), holder.getQty()); }
+                case 21 -> { holder.setQty(holder.getQty() - 1); GoldExchangeGUI.renderButtons(inv, player, holder.getMode(), holder.getQty()); }
+                case 23 -> { holder.setQty(holder.getQty() + 1); GoldExchangeGUI.renderButtons(inv, player, holder.getMode(), holder.getQty()); }
+                case 24 -> { holder.setQty(holder.getQty() + 10); GoldExchangeGUI.renderButtons(inv, player, holder.getMode(), holder.getQty()); }
+                case 41 -> { holder.setQty(GoldExchangeGUI.getMaxQty(player, holder.getMode())); GoldExchangeGUI.renderButtons(inv, player, holder.getMode(), holder.getQty()); }
                 case 38 -> player.closeInventory();
                 case 40 -> { GoldExchangeGUI.perform(player, holder); player.closeInventory(); }
             }
