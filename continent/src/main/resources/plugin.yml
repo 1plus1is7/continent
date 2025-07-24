@@ -28,3 +28,6 @@ commands:
   union:
     description: Manage unions of nations
     usage: /union <subcommand>
+  menu:
+    description: Open server menu
+    usage: /menu

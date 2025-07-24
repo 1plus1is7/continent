@@ -9,6 +9,7 @@ import me.continent.war.WarCommand;
 import me.continent.command.GuideCommand;
 import me.continent.command.SpecialtyCommand;
 import me.continent.command.AdminCommand;
+import me.continent.command.MenuCommand;
 import me.continent.economy.CentralBankDataManager;
 import me.continent.listener.TerritoryListener;
 import me.continent.listener.MaintenanceJoinListener;
@@ -21,6 +22,7 @@ import me.continent.nation.service.ChestListener;
 import me.continent.nation.service.MaintenanceService;
 import me.continent.nation.service.NationMenuListener;
 import me.continent.nation.service.NationTreasuryListener;
+import me.continent.menu.ServerMenuListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.continent.player.PlayerDataManager;
 import me.continent.command.MarketCommand;
@@ -57,6 +59,7 @@ public class ContinentPlugin extends JavaPlugin {
         registerCommand("specialty", new SpecialtyCommand());
         registerCommand("market", new MarketCommand());
         registerCommand("admin", new AdminCommand());
+        registerCommand("menu", new MenuCommand());
 
         // 중앙은행 데이터 로딩
         CentralBankDataManager.load();
@@ -88,6 +91,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new NationSpecialtyListener(), this);
         getServer().getPluginManager().registerEvents(new NationMenuListener(), this);
         getServer().getPluginManager().registerEvents(new NationTreasuryListener(), this);
+        getServer().getPluginManager().registerEvents(new ServerMenuListener(), this);
 
 
         getServer().getPluginManager().registerEvents(new MarketListener(), this);
