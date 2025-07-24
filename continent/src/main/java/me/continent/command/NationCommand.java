@@ -52,6 +52,9 @@ public class NationCommand implements TabExecutor {
             player.sendMessage("§e/nation upkeep §7- 현재 유지비 확인");
             player.sendMessage("§e/nation treasury <subcommand> §7- 금고 관리");
             player.sendMessage("§e/nation specialty §7- 특산품 관리");
+            player.sendMessage("§e/nation upgrade §7- 국가 등급 승격 시도");
+            player.sendMessage("§e/nation tier §7- 현재 국가 등급 확인");
+            player.sendMessage("§e/nation tierinfo §7- 등급별 기능 안내");
             player.sendMessage("§e/nation confirm §7- 대기 중인 작업 확인");
             player.sendMessage("§e/nation chat §7- 국가 채팅 토글");
             return true;
@@ -591,6 +594,37 @@ public class NationCommand implements TabExecutor {
             return true;
         }
 
+        if (args[0].equalsIgnoreCase("upgrade")) {
+            Nation nation = NationManager.getByPlayer(player.getUniqueId());
+            if (nation == null || !nation.isAuthorized(player.getUniqueId())) {
+                player.sendMessage("§c촌장만 국가를 승격할 수 있습니다.");
+                return true;
+            }
+            String fail = me.continent.nation.service.NationTierService.checkRequirements(nation);
+            if (fail != null) {
+                player.sendMessage("§c" + fail);
+                return true;
+            }
+            me.continent.nation.service.NationTierService.upgrade(nation);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("tier")) {
+            Nation nation = NationManager.getByPlayer(player.getUniqueId());
+            if (nation == null) {
+                player.sendMessage("§c소속된 국가가 없습니다.");
+                return true;
+            }
+            String name = me.continent.nation.service.NationTierService.getTierName(nation.getTier());
+            player.sendMessage("§e현재 국가 등급: §b" + name);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("tierinfo")) {
+            me.continent.nation.service.NationTierService.openInfo(player);
+            return true;
+        }
+
         if (args[0].equalsIgnoreCase("ignite")) {
             Nation nation = NationManager.getByPlayer(player.getUniqueId());
             if (nation == null || !nation.isAuthorized(player.getUniqueId())) {
@@ -673,7 +707,7 @@ public class NationCommand implements TabExecutor {
         List<String> subs = Arrays.asList(
                 "create", "disband", "claim", "invite", "invites", "accept", "deny",
                 "members", "leave", "kick", "rename", "list", "setspawn", "setcore",
-                "spawn", "chest", "menu", "setsymbol", "ignite", "upkeep", "treasury", "specialty", "confirm", "chat"
+                "spawn", "chest", "menu", "setsymbol", "ignite", "upkeep", "treasury", "specialty", "upgrade", "tier", "tierinfo", "confirm", "chat"
         );
 
         if (args.length == 1) {
