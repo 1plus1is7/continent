@@ -35,3 +35,6 @@ commands:
     description: Open server menu
     aliases: [m]
     usage: /menu
+  enterprise:
+    description: Manage player enterprises
+    usage: /enterprise <subcommand>
