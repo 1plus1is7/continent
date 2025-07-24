@@ -2,6 +2,7 @@ package me.continent.enterprise.gui;
 
 import me.continent.enterprise.EnterpriseType;
 import me.continent.enterprise.gui.DeliveryStatusGUI;
+import me.continent.enterprise.gui.EnterpriseListGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,6 +43,17 @@ public class EnterpriseMenuListener implements Listener {
                 player.closeInventory();
             } else if (slot == 13) {
                 DeliveryStatusGUI.open(player, holder.getEnterprise());
+            } else if (slot == 16) {
+                EnterpriseListGUI.open(player);
+            } else if (slot == 19) {
+                var item = player.getInventory().getItemInMainHand();
+                if (item != null && item.getType().name().endsWith("BANNER")) {
+                    holder.getEnterprise().setSymbol(item.clone());
+                    me.continent.enterprise.EnterpriseStorage.save(holder.getEnterprise());
+                    player.sendMessage("§a기업 상징이 업데이트되었습니다.");
+                } else {
+                    player.sendMessage("§c손에 배너를 들고 있어야 합니다.");
+                }
             } else {
                 player.sendMessage("§e준비 중인 기능입니다.");
             }

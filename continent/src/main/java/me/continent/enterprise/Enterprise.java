@@ -9,6 +9,8 @@ public class Enterprise {
     private final EnterpriseType type;
     private final UUID owner;
     private final long registeredAt;
+    // Enterprise symbol item (banner)
+    private org.bukkit.inventory.ItemStack symbol;
 
     public Enterprise(String id, String name, EnterpriseType type, UUID owner, long registeredAt) {
         this.id = id;
@@ -16,6 +18,8 @@ public class Enterprise {
         this.type = type;
         this.owner = owner;
         this.registeredAt = registeredAt;
+        // default symbol is a white banner
+        this.symbol = new org.bukkit.inventory.ItemStack(org.bukkit.Material.WHITE_BANNER);
     }
 
     public String getId() {
@@ -40,5 +44,15 @@ public class Enterprise {
 
     public long getRegisteredAt() {
         return registeredAt;
+    }
+
+    public org.bukkit.inventory.ItemStack getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(org.bukkit.inventory.ItemStack symbol) {
+        if (symbol != null && symbol.getType().name().endsWith("BANNER")) {
+            this.symbol = symbol;
+        }
     }
 }

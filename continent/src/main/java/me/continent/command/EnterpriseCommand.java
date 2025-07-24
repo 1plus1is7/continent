@@ -30,6 +30,28 @@ public class EnterpriseCommand implements CommandExecutor {
             return true;
         }
 
+        if (args[0].equalsIgnoreCase("list")) {
+            me.continent.enterprise.gui.EnterpriseListGUI.open(player);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("setsymbol")) {
+            if (!EnterpriseManager.hasEnterprise(player.getUniqueId())) {
+                player.sendMessage("§c보유한 기업이 없습니다.");
+                return true;
+            }
+            Enterprise ent = EnterpriseManager.getByOwner(player.getUniqueId()).iterator().next();
+            var item = player.getInventory().getItemInMainHand();
+            if (item == null || !item.getType().name().endsWith("BANNER")) {
+                player.sendMessage("§c손에 배너를 들고 있어야 합니다.");
+                return true;
+            }
+            ent.setSymbol(item.clone());
+            EnterpriseStorage.save(ent);
+            player.sendMessage("§a기업 상징이 업데이트되었습니다.");
+            return true;
+        }
+
         if (args[0].equalsIgnoreCase("register")) {
             if (args.length < 3) {
                 me.continent.enterprise.gui.EnterpriseMenuService.openRegister(player);

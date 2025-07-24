@@ -29,6 +29,8 @@ import me.continent.job.JobManager;
 import me.continent.job.JobMenuListener;
 import me.continent.command.JobCommand;
 import me.continent.enterprise.EnterpriseTypeConfig;
+import me.continent.nation.gui.NationListListener;
+import me.continent.enterprise.gui.EnterpriseListListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.continent.player.PlayerDataManager;
 import me.continent.command.MarketCommand;
@@ -112,6 +114,8 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new me.continent.economy.gui.GoldMenuListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.enterprise.gui.EnterpriseMenuListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.enterprise.gui.DeliveryMenuListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.nation.gui.NationListListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.enterprise.gui.EnterpriseListListener(), this);
         getServer().getPluginManager().registerEvents(new JobMenuListener(), this);
 
 

@@ -420,14 +420,10 @@ public class NationCommand implements TabExecutor {
 
 
         if (args[0].equalsIgnoreCase("list")) {
-            Set<Nation> all = Set.copyOf(NationManager.getAll());
-            if (all.isEmpty()) {
+            if (NationManager.getAll().isEmpty()) {
                 player.sendMessage("§7등록된 국가가 없습니다.");
-                return true;
-            }
-            player.sendMessage("§6[서버 국가 목록]");
-            for (Nation k : all) {
-                player.sendMessage("§f- " + k.getName());
+            } else {
+                me.continent.nation.gui.NationListGUI.open(player);
             }
             return true;
         }
