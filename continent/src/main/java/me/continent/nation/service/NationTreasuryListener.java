@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import me.continent.menu.ServerMenuService;
 
 public class NationTreasuryListener implements Listener {
     @EventHandler
@@ -22,6 +23,8 @@ public class NationTreasuryListener implements Listener {
             } else if (slot == 4) {
                 NationTreasuryService.promptWithdraw(player, nation);
                 player.closeInventory();
+            } else if (slot == 8) {
+                ServerMenuService.openMenu(player);
             }
         }
     }

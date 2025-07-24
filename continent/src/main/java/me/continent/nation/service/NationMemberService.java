@@ -9,6 +9,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.UUID;
 
@@ -39,7 +40,17 @@ public class NationMemberService {
             inv.setItem(idx++, head);
         }
 
+        inv.setItem(26, createArrow());
+
         player.openInventory(inv);
+    }
+
+    private static ItemStack createArrow() {
+        ItemStack item = new ItemStack(Material.ARROW);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName("메인 메뉴");
+        item.setItemMeta(meta);
+        return item;
     }
 
     static class MemberHolder implements InventoryHolder {

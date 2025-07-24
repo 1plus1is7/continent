@@ -44,6 +44,7 @@ public class GoldExchangeGUI {
         inv.setItem(22, price);
         inv.setItem(38, createButton(Material.BARRIER, "취소"));
         inv.setItem(40, createButton(Material.EMERALD_BLOCK, "확인"));
+        inv.setItem(42, createButton(Material.ARROW, "메인 메뉴"));
     }
 
     private static ItemStack maxButton(Player player, Mode mode) {
