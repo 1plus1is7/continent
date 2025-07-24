@@ -22,6 +22,7 @@ import me.continent.nation.service.ChestListener;
 import me.continent.nation.service.MaintenanceService;
 import me.continent.nation.service.NationMenuListener;
 import me.continent.nation.service.NationTreasuryListener;
+import me.continent.nation.service.NationMemberListener;
 import me.continent.menu.ServerMenuListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.continent.player.PlayerDataManager;
@@ -91,6 +92,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new NationSpecialtyListener(), this);
         getServer().getPluginManager().registerEvents(new NationMenuListener(), this);
         getServer().getPluginManager().registerEvents(new NationTreasuryListener(), this);
+        getServer().getPluginManager().registerEvents(new NationMemberListener(), this);
         getServer().getPluginManager().registerEvents(new ServerMenuListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.economy.gui.GoldMenuListener(), this);
 

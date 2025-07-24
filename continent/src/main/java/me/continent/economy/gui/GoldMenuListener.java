@@ -2,6 +2,7 @@ package me.continent.economy.gui;
 
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
+import me.continent.menu.ServerMenuService;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,6 +25,7 @@ public class GoldMenuListener implements Listener {
                 case 12 -> GoldExchangeGUI.open(player, GoldExchangeGUI.Mode.CONVERT, 1);
                 case 14 -> GoldExchangeGUI.open(player, GoldExchangeGUI.Mode.EXCHANGE, 1);
                 case 16 -> GoldPayService.openSelect(player);
+                case 22 -> ServerMenuService.openMenu(player);
             }
         } else if (inv.getHolder() instanceof GoldExchangeGUI.Holder holder) {
             event.setCancelled(true);
@@ -37,10 +39,16 @@ public class GoldMenuListener implements Listener {
                 case 41 -> { holder.setQty(GoldExchangeGUI.getMaxQty(player, holder.getMode())); GoldExchangeGUI.renderButtons(inv, player, holder.getMode(), holder.getQty()); }
                 case 38 -> player.closeInventory();
                 case 40 -> { GoldExchangeGUI.perform(player, holder); player.closeInventory(); }
+                case 42 -> ServerMenuService.openMenu(player);
             }
         } else if (inv.getHolder() instanceof GoldPayService.SelectHolder) {
             event.setCancelled(true);
             Player player = (Player) event.getWhoClicked();
+            int slot = event.getRawSlot();
+            if (slot == 53) {
+                ServerMenuService.openMenu(player);
+                return;
+            }
             var item = event.getCurrentItem();
             if (item == null || !item.hasItemMeta()) return;
             var meta = item.getItemMeta();
@@ -59,6 +67,7 @@ public class GoldMenuListener implements Listener {
                 case 24 -> { holder.setAmount(holder.getAmount() + 10); GoldPayService.render(inv, holder.getAmount()); }
                 case 38 -> player.closeInventory();
                 case 40 -> { GoldPayService.performPay(player, holder); player.closeInventory(); }
+                case 42 -> ServerMenuService.openMenu(player);
             }
         }
     }

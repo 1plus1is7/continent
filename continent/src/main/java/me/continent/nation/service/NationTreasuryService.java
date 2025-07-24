@@ -25,6 +25,7 @@ public class NationTreasuryService {
         inv.setItem(2, createItem(Material.EMERALD_BLOCK, "입금"));
         inv.setItem(4, createItem(Material.REDSTONE_BLOCK, "출금"));
         inv.setItem(6, createItem(Material.GOLD_INGOT, "잔액: " + nation.getVault() + "G"));
+        inv.setItem(8, createItem(Material.ARROW, "메인 메뉴"));
         player.openInventory(inv);
     }
 

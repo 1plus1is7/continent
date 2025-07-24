@@ -18,6 +18,7 @@ public class GoldMenuService {
         inv.setItem(12, createItem(Material.GOLD_BLOCK, "금괴 구매"));
         inv.setItem(14, createItem(Material.RAW_GOLD, "금 괴 환전"));
         inv.setItem(16, createItem(Material.PLAYER_HEAD, "송금"));
+        inv.setItem(22, createItem(Material.ARROW, "메인 메뉴"));
 
         player.openInventory(inv);
     }

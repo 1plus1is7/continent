@@ -29,6 +29,7 @@ public class GoldPayService {
             head.setItemMeta(meta);
             inv.setItem(idx++, head);
         }
+        inv.setItem(53, createButton(Material.ARROW, "메인 메뉴"));
         player.openInventory(inv);
     }
 
@@ -54,6 +55,7 @@ public class GoldPayService {
         inv.setItem(31, amt);
         inv.setItem(38, createButton(Material.BARRIER, "취소"));
         inv.setItem(40, createButton(Material.EMERALD_BLOCK, "송금"));
+        inv.setItem(42, createButton(Material.ARROW, "메인 메뉴"));
     }
 
     private static ItemStack createButton(Material mat, String name) {
