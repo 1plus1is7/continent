@@ -10,6 +10,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.components.CustomModelDataComponent;
+import me.continent.player.PlayerData;
+import me.continent.player.PlayerDataManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,8 @@ public class MarketGUI {
         Inventory inv = Bukkit.createInventory(holder, 54, "\uE000§f\uE002");
         holder.setInventory(inv);
         fill(inv);
+
+        PlayerData data = PlayerDataManager.get(player.getUniqueId());
 
         int start = (page - 1) * 45;
         for (int i = 0; i < 45; i++) {
@@ -55,6 +59,21 @@ public class MarketGUI {
         inv.setItem(47, createButton(Material.BARRIER, mine ? "전체 보기" : "내 판매 보기"));
         inv.setItem(48, createButton(Material.BARRIER, "상품 등록"));
         inv.setItem(49, createButton(Material.BARRIER, sort == MarketManager.SortMode.NEWEST ? "가격순" : "최신순"));
+        ItemStack info = new ItemStack(Material.PAPER);
+        ItemMeta im = info.getItemMeta();
+        im.setDisplayName(ChatColor.AQUA + "페이지 " + page + "/" + maxPage);
+        List<String> ilore = new ArrayList<>();
+        ilore.add(ChatColor.GRAY + "정렬: " + (sort == MarketManager.SortMode.NEWEST ? "최신순" : "가격순"));
+        ilore.add(ChatColor.GRAY + "필터: " + (mine ? "내 상품" : "전체"));
+        im.setLore(ilore);
+        info.setItemMeta(im);
+        inv.setItem(50, info);
+
+        ItemStack bal = new ItemStack(Material.GOLD_INGOT);
+        ItemMeta bm = bal.getItemMeta();
+        bm.setDisplayName(ChatColor.GOLD + "보유 골드: " + data.getGold() + "G");
+        bal.setItemMeta(bm);
+        inv.setItem(51, bal);
         inv.setItem(53, createButton(Material.BARRIER, "닫기"));
         player.openInventory(inv);
     }

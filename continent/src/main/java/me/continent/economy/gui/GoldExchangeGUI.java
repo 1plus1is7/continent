@@ -22,16 +22,17 @@ public class GoldExchangeGUI {
         Inventory inv = Bukkit.createInventory(holder, 45, mode == Mode.CONVERT ? "Gold -> Ingot" : "Ingot -> Gold");
         holder.setInventory(inv);
         fill(inv);
-        renderButtons(inv, mode, qty);
+        renderButtons(inv, player, mode, qty);
         player.openInventory(inv);
     }
 
-    static void renderButtons(Inventory inv, Mode mode, int qty) {
+    static void renderButtons(Inventory inv, Player player, Mode mode, int qty) {
         inv.setItem(4, new ItemStack(Material.BUNDLE));
         inv.setItem(20, qtyButton(Material.REDSTONE, "-10", qty - 10));
         inv.setItem(21, qtyButton(Material.REDSTONE, "-1", qty - 1));
         inv.setItem(23, qtyButton(Material.LIME_DYE, "+1", qty + 1));
         inv.setItem(24, qtyButton(Material.LIME_DYE, "+10", qty + 10));
+        inv.setItem(41, maxButton(player, mode));
         if (qty < 1) qty = 1;
         double rate = CentralBank.getExchangeRate();
         int total = (int) Math.round(rate * qty);
@@ -43,6 +44,18 @@ public class GoldExchangeGUI {
         inv.setItem(22, price);
         inv.setItem(38, createButton(Material.BARRIER, "취소"));
         inv.setItem(40, createButton(Material.EMERALD_BLOCK, "확인"));
+    }
+
+    private static ItemStack maxButton(Player player, Mode mode) {
+        int max = getMaxQty(player, mode);
+        ItemStack item = new ItemStack(Material.CHEST);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName("최대");
+        List<String> lore = new ArrayList<>();
+        lore.add("§7가능: " + max);
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
     }
 
     private static ItemStack createButton(Material mat, String name) {
@@ -118,5 +131,19 @@ public class GoldExchangeGUI {
             CentralBank.recordExchange();
         }
         PlayerDataManager.save(player.getUniqueId());
+    }
+
+    public static int getMaxQty(Player player, Mode mode) {
+        if (mode == Mode.CONVERT) {
+            double rate = CentralBank.getExchangeRate();
+            int max = (int) Math.floor(PlayerDataManager.get(player.getUniqueId()).getGold() / rate);
+            return Math.max(1, max);
+        } else {
+            int count = 0;
+            for (ItemStack is : player.getInventory().getContents()) {
+                if (is != null && is.getType() == Material.GOLD_INGOT) count += is.getAmount();
+            }
+            return Math.max(1, count);
+        }
     }
 }
