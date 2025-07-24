@@ -153,6 +153,7 @@ public class EnterpriseMenuService {
         holder.setInventory(inv);
         fill(inv);
         inv.setItem(10, button(Material.NAME_TAG, "기업 정보", null));
+        inv.setItem(13, button(Material.CHEST_MINECART, "배송 상태 확인", null));
         inv.setItem(49, button(Material.BARRIER, "닫기", null));
         player.openInventory(inv);
     }

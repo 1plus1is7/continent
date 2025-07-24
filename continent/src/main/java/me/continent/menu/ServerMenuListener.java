@@ -38,7 +38,7 @@ public class ServerMenuListener implements Listener {
                     player.sendMessage("§f골드: §e" + String.format("%.2f", gold) + "G");
                     player.sendMessage("§f국가: §e" + nationName);
                 }
-                case 37 -> MarketGUI.open(player, 1, MarketManager.SortMode.NEWEST, false);
+                case 37 -> MarketGUI.open(player, 1, MarketManager.SortMode.NEWEST, MarketManager.FilterMode.ALL, false);
                 case 16 -> me.continent.economy.gui.GoldMenuService.openMenu(player);
                 case 40 -> player.sendMessage("§e준비 중인 기능입니다.");
                 case 43 -> me.continent.job.JobMenuService.openSelect(player);

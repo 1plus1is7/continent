@@ -1,6 +1,7 @@
 package me.continent.enterprise.gui;
 
 import me.continent.enterprise.EnterpriseType;
+import me.continent.enterprise.gui.DeliveryStatusGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,8 +37,11 @@ public class EnterpriseMenuListener implements Listener {
         } else if (inv.getHolder() instanceof EnterpriseMenuService.MainHolder holder) {
             event.setCancelled(true);
             Player player = (Player) event.getWhoClicked();
-            if (event.getRawSlot() == 49) {
+            int slot = event.getRawSlot();
+            if (slot == 49) {
                 player.closeInventory();
+            } else if (slot == 13) {
+                DeliveryStatusGUI.open(player, holder.getEnterprise());
             } else {
                 player.sendMessage("§e준비 중인 기능입니다.");
             }

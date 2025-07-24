@@ -19,15 +19,15 @@ import java.util.UUID;
 
 public class MarketGUI {
 
-    public static void open(Player player, int page, MarketManager.SortMode sort, boolean mine) {
-        List<MarketItem> list = MarketManager.getSorted(sort);
+    public static void open(Player player, int page, MarketManager.SortMode sort, MarketManager.FilterMode filter, boolean mine) {
+        List<MarketItem> list = MarketManager.getFilteredSorted(sort, filter);
         if (mine) {
             UUID u = player.getUniqueId();
             list = list.stream().filter(i -> i.getSeller().equals(u)).toList();
         }
         int maxPage = Math.max(1, (list.size() - 1) / 45 + 1);
         page = Math.max(1, Math.min(page, maxPage));
-        Holder holder = new Holder(page, sort, mine);
+        Holder holder = new Holder(page, sort, filter, mine);
         Inventory inv = Bukkit.createInventory(holder, 54, "\uE000§f\uE002");
         holder.setInventory(inv);
         fill(inv);
@@ -48,6 +48,10 @@ public class MarketGUI {
             OfflinePlayer op = Bukkit.getOfflinePlayer(mi.getSeller());
             String sellerName = op.getName() != null ? op.getName() : mi.getSeller().toString();
             lore.add("§7판매자: " + sellerName);
+            if (mi.getEnterpriseId() != null) {
+                var ent = me.continent.enterprise.EnterpriseManager.get(mi.getEnterpriseId());
+                if (ent != null) lore.add("§7기업: " + ent.getName());
+            }
             lore.add("§e클릭하여 구매");
             meta.setLore(lore);
             item.setItemMeta(meta);
@@ -64,7 +68,8 @@ public class MarketGUI {
         im.setDisplayName(ChatColor.AQUA + "페이지 " + page + "/" + maxPage);
         List<String> ilore = new ArrayList<>();
         ilore.add(ChatColor.GRAY + "정렬: " + (sort == MarketManager.SortMode.NEWEST ? "최신순" : "가격순"));
-        ilore.add(ChatColor.GRAY + "필터: " + (mine ? "내 상품" : "전체"));
+        String filterName = switch (filter) { case ALL -> "전체"; case NORMAL -> "일반"; case CORPORATE -> "기업"; };
+        ilore.add(ChatColor.GRAY + "필터: " + filterName + (mine ? "+내상품" : ""));
         im.setLore(ilore);
         info.setItemMeta(im);
         inv.setItem(50, info);
@@ -74,6 +79,7 @@ public class MarketGUI {
         bm.setDisplayName(ChatColor.GOLD + "보유 골드: " + data.getGold() + "G");
         bal.setItemMeta(bm);
         inv.setItem(51, bal);
+        inv.setItem(52, createButton(Material.HOPPER, "필터 설정"));
         inv.setItem(53, createButton(Material.BARRIER, "닫기"));
         player.openInventory(inv);
     }
@@ -105,15 +111,17 @@ public class MarketGUI {
     static class Holder implements InventoryHolder {
         private final int page;
         private final MarketManager.SortMode sort;
+        private final MarketManager.FilterMode filter;
         private final boolean mine;
         private Inventory inv;
-        Holder(int page, MarketManager.SortMode sort, boolean mine) {
-            this.page = page; this.sort = sort; this.mine = mine;
+        Holder(int page, MarketManager.SortMode sort, MarketManager.FilterMode filter, boolean mine) {
+            this.page = page; this.sort = sort; this.filter = filter; this.mine = mine;
         }
         void setInventory(Inventory inv) { this.inv = inv; }
         @Override public Inventory getInventory() { return inv; }
         public int getPage() { return page; }
         public MarketManager.SortMode getSort() { return sort; }
+        public MarketManager.FilterMode getFilter() { return filter; }
         public boolean isMine() { return mine; }
     }
 }
