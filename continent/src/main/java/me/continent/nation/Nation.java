@@ -16,6 +16,8 @@ public class Nation {
     private Location spawnLocation;
     private Location coreLocation;
     private double vault;
+    /** Nation tier: 1=basic, 2=intermediate, 3=advanced */
+    private int tier = 1;
     private long protectionUntil;
 
 
@@ -119,6 +121,10 @@ public class Nation {
     public void setCoreLocation(Location location) { this.coreLocation = location; }
 
     public double getVault() { return vault; }
+
+    public int getTier() { return tier; }
+
+    public void setTier(int tier) { this.tier = tier; }
 
     public void setVault(double vault) { this.vault = vault; }
 

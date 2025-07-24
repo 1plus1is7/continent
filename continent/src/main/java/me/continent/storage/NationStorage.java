@@ -49,6 +49,7 @@ public class NationStorage {
         config.set("core", serializeLocation(nation.getCoreLocation()));
         config.set("protectionEnd", nation.getProtectionEnd());
         config.set("vault", nation.getVault());
+        config.set("tier", nation.getTier());
         config.set("chest", serializeItems(nation.getChestContents()));
         config.set("symbol", ItemSerialization.serializeItem(nation.getSymbol()));
         config.set("memberIgnite", nation.isMemberIgniteAllowed());
@@ -79,6 +80,7 @@ public class NationStorage {
             Location core = deserializeLocation(config.getString("core"));
             long protectionEnd = config.getLong("protectionEnd");
             double vault = config.contains("vault") ? config.getDouble("vault") : config.getDouble("treasury");
+            int tier = config.getInt("tier", 1);
             ItemStack[] chest = deserializeItems(config.getString("chest"));
             org.bukkit.inventory.ItemStack symbol = ItemSerialization.deserializeItem(config.getString("symbol"));
             boolean memberIgnite = config.getBoolean("memberIgnite", false);
@@ -94,6 +96,7 @@ public class NationStorage {
             nation.setCoreLocation(core);
             nation.setProtectionEnd(protectionEnd);
             nation.setVault(vault);
+            nation.setTier(tier);
             nation.setChestContents(chest);
             if (symbol != null) {
                 nation.setSymbol(symbol);

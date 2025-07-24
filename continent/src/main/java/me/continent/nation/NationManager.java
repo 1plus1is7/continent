@@ -148,6 +148,18 @@ public class NationManager {
         return nationsByPlayer.get(playerUUID);
     }
 
+    /**
+     * Returns the tier of the nation the given player belongs to.
+     * If the player does not belong to any nation, {@code 1} is returned.
+     *
+     * @param playerUUID player uuid
+     * @return nation tier or 1 if none
+     */
+    public static int getTier(UUID playerUUID) {
+        Nation nation = nationsByPlayer.get(playerUUID);
+        return nation == null ? 1 : nation.getTier();
+    }
+
     // 국가 이름으로 국가 객체 가져오기
     public static Nation getNationByName(String name) {
         if (name == null) return null;
