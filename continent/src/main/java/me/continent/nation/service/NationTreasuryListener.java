@@ -18,14 +18,24 @@ public class NationTreasuryListener implements Listener {
             Nation nation = holder.getNation();
             int slot = event.getRawSlot();
             if (slot == 11) {
-                NationTreasuryService.promptDeposit(player, nation);
-                player.closeInventory();
+                NationTreasuryService.openAmount(player, nation, NationTreasuryService.Mode.DEPOSIT, 1);
             } else if (slot == 15) {
-                NationTreasuryService.promptWithdraw(player, nation);
-                player.closeInventory();
+                NationTreasuryService.openAmount(player, nation, NationTreasuryService.Mode.WITHDRAW, 1);
             } else if (slot == 22) {
                 ServerMenuService.openMenu(player);
             }
+        } else if (inv.getHolder() instanceof NationTreasuryService.AmountHolder holder) {
+            event.setCancelled(true);
+            Player player = (Player) event.getWhoClicked();
+            int slot = event.getRawSlot();
+            if (slot == 20) { holder.setAmount(holder.getAmount() - 10); NationTreasuryService.renderAmount(inv, holder, player); }
+            else if (slot == 21) { holder.setAmount(holder.getAmount() - 1); NationTreasuryService.renderAmount(inv, holder, player); }
+            else if (slot == 23) { holder.setAmount(holder.getAmount() + 1); NationTreasuryService.renderAmount(inv, holder, player); }
+            else if (slot == 24) { holder.setAmount(holder.getAmount() + 10); NationTreasuryService.renderAmount(inv, holder, player); }
+            else if (slot == 41) { holder.setAmount(NationTreasuryService.getMaxAmount(player, holder)); NationTreasuryService.renderAmount(inv, holder, player); }
+            else if (slot == 38) { player.closeInventory(); }
+            else if (slot == 40) { NationTreasuryService.perform(player, holder); player.closeInventory(); }
+            else if (slot == 42) { NationTreasuryService.openMenu(player, holder.getNation()); }
         }
     }
 }
