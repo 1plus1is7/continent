@@ -125,7 +125,12 @@ public class NationCommand implements TabExecutor {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("kick") && args.length >= 2) {
+        if (args[0].equalsIgnoreCase("kick")) {
+            if (args.length < 2) {
+                player.sendMessage("§c사용법: /nation kick <플레이어>");
+                return true;
+            }
+            
             Nation nation = NationManager.getByPlayer(player.getUniqueId());
             if (nation == null || !nation.isAuthorized(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 구성원을 추방할 수 있습니다.");
@@ -151,7 +156,12 @@ public class NationCommand implements TabExecutor {
         }
 
 
-        if (args[0].equalsIgnoreCase("rename") && args.length >= 2) {
+        if (args[0].equalsIgnoreCase("rename")) {
+            if (args.length < 2) {
+                player.sendMessage("§c사용법: /nation rename <새이름>");
+                return true;
+            }
+
             Nation nation = NationManager.getByPlayer(player.getUniqueId());
             if (nation == null || !nation.getKing().equals(player.getUniqueId())) {
                 player.sendMessage("§c국왕만 국가 이름을 변경할 수 있습니다.");
@@ -374,7 +384,12 @@ public class NationCommand implements TabExecutor {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("invite") && args.length >= 2) {
+        if (args[0].equalsIgnoreCase("invite")) {
+            if (args.length < 2) {
+                player.sendMessage("§c사용법: /nation invite <플레이어>");
+                return true;
+            }
+            
             Nation nation = NationManager.getByPlayer(player.getUniqueId());
             if (nation == null || !nation.getKing().equals(player.getUniqueId())) {
                 player.sendMessage("§c초대는 국왕만 가능합니다.");
@@ -613,7 +628,11 @@ public class NationCommand implements TabExecutor {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("create") && args.length >= 2) {
+        if (args[0].equalsIgnoreCase("create")) {
+            if (args.length < 2) {
+                player.sendMessage("§c사용법: /nation create <이름>");
+                return true;
+            }
             String name = args[1];
 
             if (NationManager.isPlayerInNation(player.getUniqueId())) {
@@ -644,6 +663,8 @@ public class NationCommand implements TabExecutor {
             });
             return true;
         }
+
+        player.sendMessage("§c알 수 없는 하위 명령어입니다. /nation 을 입력해 도움말을 확인하세요.");
         return true;
     }
 

@@ -25,7 +25,12 @@ public class WarCommand implements TabExecutor {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("declare") && args.length >= 2) {
+        if (args[0].equalsIgnoreCase("declare")) {
+            if (args.length < 2) {
+                player.sendMessage("§c사용법: /war declare <국가명>");
+                return true;
+            }
+            
             Nation attacker = NationManager.getByPlayer(player.getUniqueId());
             if (attacker == null) {
                 player.sendMessage("§c소속된 국가이 없습니다.");
@@ -97,7 +102,9 @@ public class WarCommand implements TabExecutor {
             return true;
         }
 
+        player.sendMessage("§c알 수 없는 하위 명령어입니다. /war 를 입력해 도움말을 확인하세요.");
         return true;
+
     }
 
     @Override
