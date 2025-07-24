@@ -1,0 +1,16 @@
+MANUFACTURING:
+  iron_sword:
+    name: "철검"
+    output: IRON_SWORD
+    time: 30
+    amount: 1
+    resources:
+      IRON_INGOT: 2
+      STICK: 1
+  bread:
+    name: "빵"
+    output: BREAD
+    time: 10
+    amount: 3
+    resources:
+      WHEAT: 3
