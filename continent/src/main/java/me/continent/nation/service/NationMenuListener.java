@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import me.continent.menu.ServerMenuService;
+import me.continent.nation.service.NationUpkeepService;
 
 public class NationMenuListener implements Listener {
     @EventHandler
@@ -23,6 +24,8 @@ public class NationMenuListener implements Listener {
                 NationMemberService.openMenu(player, nation);
             } else if (slot == 21) {
                 NationTreasuryService.openMenu(player, nation);
+            } else if (slot == 29) {
+                NationUpkeepService.openMenu(player, nation);
             } else if (slot == 23) {
                 var spawn = nation.getSpawnLocation();
                 if (spawn != null) {
