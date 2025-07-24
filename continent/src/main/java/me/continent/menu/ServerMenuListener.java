@@ -21,7 +21,7 @@ public class ServerMenuListener implements Listener {
             Player player = (Player) event.getWhoClicked();
             int slot = event.getRawSlot();
             switch (slot) {
-                case 11 -> {
+                case 10 -> {
                     Nation nation = NationManager.getByPlayer(player.getUniqueId());
                     if (nation == null) {
                         player.sendMessage("§c소속된 국가가 없습니다.");
@@ -29,7 +29,7 @@ public class ServerMenuListener implements Listener {
                         NationMenuService.openMenu(player, nation);
                     }
                 }
-                case 14 -> {
+                case 13 -> {
                     var data = PlayerDataManager.get(player.getUniqueId());
                     double gold = data.getGold();
                     Nation nation = NationManager.getByPlayer(player.getUniqueId());
@@ -38,8 +38,8 @@ public class ServerMenuListener implements Listener {
                     player.sendMessage("§f골드: §e" + String.format("%.2f", gold) + "G");
                     player.sendMessage("§f국가: §e" + nationName);
                 }
-                case 17 -> MarketGUI.open(player, 1, MarketManager.SortMode.NEWEST, false);
-                case 38, 41, 44 -> player.sendMessage("§e준비 중인 기능입니다.");
+                case 37 -> MarketGUI.open(player, 1, MarketManager.SortMode.NEWEST, false);
+                case 16, 40, 43 -> player.sendMessage("§e준비 중인 기능입니다.");
             }
         }
     }

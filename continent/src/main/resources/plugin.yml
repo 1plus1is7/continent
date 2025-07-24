@@ -15,19 +15,23 @@ commands:
     usage: /gold <subcommand>
   war:
     description: War system command
+    aliases: [ww]
     usage: /war <subcommand>
   guide:
     description: Provides guide books about kingdom, nation and war
     usage: /guide <topic>
   specialty:
     description: Specialty goods command
+    aliases: [spc]
     usage: /specialty <subcommand>
   admin:
     description: Manage wars, economy and maintenance
     usage: /admin <subcommand>
   union:
     description: Manage unions of nations
+    aliases: [u]
     usage: /union <subcommand>
   menu:
     description: Open server menu
+    aliases: [m]
     usage: /menu
