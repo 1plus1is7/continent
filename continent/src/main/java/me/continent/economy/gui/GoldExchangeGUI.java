@@ -27,7 +27,7 @@ public class GoldExchangeGUI {
     }
 
     static void renderButtons(Inventory inv, Mode mode, int qty) {
-        inv.setItem(22, new ItemStack(Material.GOLD_INGOT));
+        inv.setItem(4, new ItemStack(Material.BUNDLE));
         inv.setItem(20, qtyButton(Material.REDSTONE, "-10", qty - 10));
         inv.setItem(21, qtyButton(Material.REDSTONE, "-1", qty - 1));
         inv.setItem(23, qtyButton(Material.LIME_DYE, "+1", qty + 1));
@@ -40,7 +40,7 @@ public class GoldExchangeGUI {
         ItemMeta pm = price.getItemMeta();
         pm.setDisplayName(name);
         price.setItemMeta(pm);
-        inv.setItem(31, price);
+        inv.setItem(22, price);
         inv.setItem(38, createButton(Material.BARRIER, "취소"));
         inv.setItem(40, createButton(Material.EMERALD_BLOCK, "확인"));
     }

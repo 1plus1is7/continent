@@ -13,7 +13,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 public class ServerMenuService {
     public static void openMenu(Player player) {
         MenuHolder holder = new MenuHolder();
-        Inventory inv = Bukkit.createInventory(holder, 54, "\uE001§f\uE000");
+        Inventory inv = Bukkit.createInventory(holder, 54, "\uE000§f\uE001");
         holder.setInventory(inv);
 
         ItemStack sword = new ItemStack(Material.NETHERITE_SWORD);

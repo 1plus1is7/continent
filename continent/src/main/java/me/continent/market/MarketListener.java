@@ -46,7 +46,7 @@ public class MarketListener implements Listener {
                         MarketManager.SortMode next = holder.getSort() == MarketManager.SortMode.NEWEST ? MarketManager.SortMode.PRICE : MarketManager.SortMode.NEWEST;
                         MarketGUI.open(player, 1, next, holder.isMine());
                     }
-                    case 50 -> player.closeInventory();
+                    case 53 -> player.closeInventory();
                 }
             }
         } else if (inv.getHolder() instanceof MarketRegisterGUI.Holder holder) {

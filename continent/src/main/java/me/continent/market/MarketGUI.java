@@ -25,7 +25,7 @@ public class MarketGUI {
         int maxPage = Math.max(1, (list.size() - 1) / 45 + 1);
         page = Math.max(1, Math.min(page, maxPage));
         Holder holder = new Holder(page, sort, mine);
-        Inventory inv = Bukkit.createInventory(holder, 54, "Market");
+        Inventory inv = Bukkit.createInventory(holder, 54, "\uE000§f\uE002");
         holder.setInventory(inv);
         fill(inv);
 
@@ -49,13 +49,12 @@ public class MarketGUI {
             inv.setItem(i, item);
         }
 
-        inv.setItem(45, createButton(Material.ARROW, "이전 페이지"));
-        inv.setItem(46, createButton(Material.ARROW, "다음 페이지"));
-        inv.setItem(47, createButton(Material.CHEST, mine ? "전체 보기" : "내 판매 보기"));
-        inv.setItem(48, createButton(Material.ANVIL, "상품 등록"));
-        inv.setItem(49, createButton(Material.HOPPER, sort == MarketManager.SortMode.NEWEST ? "가격순" : "최신순"));
-        inv.setItem(50, createButton(Material.BARRIER, "닫기"));
-
+        inv.setItem(45, createButton(Material.BARRIER, "이전 페이지"));
+        inv.setItem(46, createButton(Material.BARRIER, "다음 페이지"));
+        inv.setItem(47, createButton(Material.BARRIER, mine ? "전체 보기" : "내 판매 보기"));
+        inv.setItem(48, createButton(Material.BARRIER, "상품 등록"));
+        inv.setItem(49, createButton(Material.BARRIER, sort == MarketManager.SortMode.NEWEST ? "가격순" : "최신순"));
+        inv.setItem(53, createButton(Material.BARRIER, "닫기"));
         player.openInventory(inv);
     }
 
@@ -63,14 +62,16 @@ public class MarketGUI {
         ItemStack item = new ItemStack(mat);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.YELLOW + name);
+        meta.setCustomModelData(1);
         item.setItemMeta(meta);
         return item;
     }
 
     private static void fill(Inventory inv) {
-        ItemStack pane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        ItemStack pane = new ItemStack(Material.BARRIER);
         ItemMeta meta = pane.getItemMeta();
         meta.setDisplayName(" ");
+        meta.setCustomModelData(1);
         pane.setItemMeta(meta);
         for (int i = 0; i < inv.getSize(); i++) {
             inv.setItem(i, pane);
