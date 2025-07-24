@@ -33,6 +33,8 @@ public class UnionCommand implements TabExecutor {
             player.sendMessage("§e/union disband §7- 연합 해산");
             player.sendMessage("§e/union members §7- 소속 국가 목록");
             player.sendMessage("§e/union setleader <nation> §7- 리더 변경");
+            player.sendMessage("§e/union role assign <nation> <role> §7- 직책 부여");
+            player.sendMessage("§e/union role revoke <nation> <role> §7- 직책 회수");
             return true;
         }
 
@@ -55,11 +57,18 @@ public class UnionCommand implements TabExecutor {
                     player.sendMessage("§c이미 연합에 소속되어 있습니다.");
                     return true;
                 }
+                double cost = 1000.0;
+                if (nation.getVault() < cost) {
+                    player.sendMessage("§c국가 금고가 부족합니다. 연합 생성 비용: " + cost + "G");
+                    return true;
+                }
                 String name = args[1];
                 Union u = UnionManager.createUnion(name, nation.getName());
                 if (u == null) {
                     player.sendMessage("§c이미 사용 중인 이름이거나 생성할 수 없습니다.");
                 } else {
+                    nation.removeGold(cost);
+                    NationStorage.save(nation);
                     UnionStorage.saveAll();
                     player.sendMessage("§a연합이 생성되었습니다: " + name);
                 }
@@ -138,6 +147,10 @@ public class UnionCommand implements TabExecutor {
                     player.sendMessage("§c연합 리더만 해산할 수 있습니다.");
                     return true;
                 }
+                if (union.getNations().size() > 1) {
+                    player.sendMessage("§c소속 국가가 2개 이상일 때는 해산할 수 없습니다. 먼저 다른 국가를 탈퇴시키세요.");
+                    return true;
+                }
                 UnionManager.unregister(union);
                 UnionStorage.saveAll();
                 Bukkit.broadcastMessage("§c[연합] " + union.getName() + " 연합이 해산되었습니다.");
@@ -172,6 +185,44 @@ public class UnionCommand implements TabExecutor {
                 Bukkit.broadcastMessage("§e[연합] §f" + union.getName() + " 연합의 리더가 " + args[1] + " 국가로 변경되었습니다.");
                 return true;
             }
+            case "role" -> {
+                if (args.length < 4) {
+                    player.sendMessage("§c/union role assign|revoke <nation> <role>");
+                    return true;
+                }
+                if (union == null || !union.getLeader().equalsIgnoreCase(nation.getName())) {
+                    player.sendMessage("§c연합 리더만 직책을 관리할 수 있습니다.");
+                    return true;
+                }
+                String action = args[1].toLowerCase();
+                String targetNation = args[2];
+                String role = args[3];
+                if (!union.hasNation(targetNation)) {
+                    player.sendMessage("§c해당 국가는 연합에 속해 있지 않습니다.");
+                    return true;
+                }
+                Set<String> set = union.getRoles().computeIfAbsent(targetNation, k -> new HashSet<>());
+                switch (action) {
+                    case "assign" -> {
+                        if (set.add(role)) {
+                            UnionStorage.saveAll();
+                            player.sendMessage("§a" + targetNation + " 국가에 " + role + " 직책을 부여했습니다.");
+                        } else {
+                            player.sendMessage("§c이미 해당 직책이 부여되어 있습니다.");
+                        }
+                    }
+                    case "revoke" -> {
+                        if (set.remove(role)) {
+                            UnionStorage.saveAll();
+                            player.sendMessage("§a" + targetNation + " 국가의 " + role + " 직책을 회수했습니다.");
+                        } else {
+                            player.sendMessage("§c해당 직책이 부여되어 있지 않습니다.");
+                        }
+                    }
+                    default -> player.sendMessage("§c/union role assign|revoke <nation> <role>");
+                }
+                return true;
+            }
         }
 
         return true;
@@ -180,7 +231,7 @@ public class UnionCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "invite", "join", "deny", "leave", "disband", "members", "setleader");
+            return Arrays.asList("create", "invite", "join", "deny", "leave", "disband", "members", "setleader", "role");
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("invite")) {
             return NationManager.getAll().stream()
@@ -197,6 +248,18 @@ public class UnionCommand implements TabExecutor {
             if (union != null) {
                 return union.getNations().stream()
                         .filter(n -> n.toLowerCase().startsWith(args[1].toLowerCase()))
+                        .toList();
+            }
+        }
+        if (args.length >= 3 && args[0].equalsIgnoreCase("role")) {
+            Union union = null;
+            if (sender instanceof Player p) {
+                Nation n = NationManager.getByPlayer(p.getUniqueId());
+                if (n != null) union = UnionManager.getByNation(n.getName());
+            }
+            if (union != null && args.length == 3) {
+                return union.getNations().stream()
+                        .filter(n -> n.toLowerCase().startsWith(args[2].toLowerCase()))
                         .toList();
             }
         }
