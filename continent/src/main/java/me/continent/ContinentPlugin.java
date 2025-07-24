@@ -92,6 +92,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new NationMenuListener(), this);
         getServer().getPluginManager().registerEvents(new NationTreasuryListener(), this);
         getServer().getPluginManager().registerEvents(new ServerMenuListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.economy.gui.GoldMenuListener(), this);
 
 
         getServer().getPluginManager().registerEvents(new MarketListener(), this);

@@ -1,0 +1,64 @@
+package me.continent.economy.gui;
+
+import me.continent.player.PlayerData;
+import me.continent.player.PlayerDataManager;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
+
+public class GoldMenuListener implements Listener {
+    @EventHandler
+    public void onClick(InventoryClickEvent event) {
+        Inventory inv = event.getInventory();
+        if (inv.getHolder() instanceof GoldMenuService.MenuHolder) {
+            event.setCancelled(true);
+            Player player = (Player) event.getWhoClicked();
+            int slot = event.getRawSlot();
+            switch (slot) {
+                case 10 -> {
+                    PlayerData data = PlayerDataManager.get(player.getUniqueId());
+                    player.sendMessage("§6[골드] §f현재 보유 골드: §e" + data.getGold() + "G");
+                }
+                case 12 -> GoldExchangeGUI.open(player, GoldExchangeGUI.Mode.CONVERT, 1);
+                case 14 -> GoldExchangeGUI.open(player, GoldExchangeGUI.Mode.EXCHANGE, 1);
+                case 16 -> GoldPayService.openSelect(player);
+            }
+        } else if (inv.getHolder() instanceof GoldExchangeGUI.Holder holder) {
+            event.setCancelled(true);
+            Player player = (Player) event.getWhoClicked();
+            int slot = event.getRawSlot();
+            switch (slot) {
+                case 20 -> { holder.setQty(holder.getQty() - 10); GoldExchangeGUI.renderButtons(inv, holder.getMode(), holder.getQty()); }
+                case 21 -> { holder.setQty(holder.getQty() - 1); GoldExchangeGUI.renderButtons(inv, holder.getMode(), holder.getQty()); }
+                case 23 -> { holder.setQty(holder.getQty() + 1); GoldExchangeGUI.renderButtons(inv, holder.getMode(), holder.getQty()); }
+                case 24 -> { holder.setQty(holder.getQty() + 10); GoldExchangeGUI.renderButtons(inv, holder.getMode(), holder.getQty()); }
+                case 38 -> player.closeInventory();
+                case 40 -> { GoldExchangeGUI.perform(player, holder); player.closeInventory(); }
+            }
+        } else if (inv.getHolder() instanceof GoldPayService.SelectHolder) {
+            event.setCancelled(true);
+            Player player = (Player) event.getWhoClicked();
+            var item = event.getCurrentItem();
+            if (item == null || !item.hasItemMeta()) return;
+            var meta = item.getItemMeta();
+            if (!(meta instanceof org.bukkit.inventory.meta.SkullMeta skull)) return;
+            var target = skull.getOwningPlayer();
+            if (target == null) return;
+            GoldPayService.openAmount(player, target.getUniqueId(), 1);
+        } else if (inv.getHolder() instanceof GoldPayService.AmountHolder holder) {
+            event.setCancelled(true);
+            Player player = (Player) event.getWhoClicked();
+            int slot = event.getRawSlot();
+            switch (slot) {
+                case 20 -> { holder.setAmount(holder.getAmount() - 10); GoldPayService.render(inv, holder.getAmount()); }
+                case 21 -> { holder.setAmount(holder.getAmount() - 1); GoldPayService.render(inv, holder.getAmount()); }
+                case 23 -> { holder.setAmount(holder.getAmount() + 1); GoldPayService.render(inv, holder.getAmount()); }
+                case 24 -> { holder.setAmount(holder.getAmount() + 10); GoldPayService.render(inv, holder.getAmount()); }
+                case 38 -> player.closeInventory();
+                case 40 -> { GoldPayService.performPay(player, holder); player.closeInventory(); }
+            }
+        }
+    }
+}

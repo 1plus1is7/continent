@@ -1,6 +1,7 @@
 package me.continent.command;
 
 import me.continent.economy.CentralBank;
+import me.continent.economy.gui.GoldMenuService;
 import org.bukkit.Bukkit;
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
@@ -20,13 +21,18 @@ public class GoldCommand implements TabExecutor {
             return true;
         }
 
-        // ✅ 도움말 출력 (인자 없음)
-        if (args.length == 0) {
+        if (args.length == 0 || args[0].equalsIgnoreCase("gui")) {
+            GoldMenuService.openMenu(player);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("help")) {
             player.sendMessage("§6[골드 명령어 도움말]");
             player.sendMessage("§e/gold convert <수량> §7- 골드를 사용해 금괴를 획득합니다.");
             player.sendMessage("§e/gold exchange [수량] §7- 금을 골드로 환전합니다.");
             player.sendMessage("§e/gold balance §7- 현재 보유 골드를 확인합니다.");
             player.sendMessage("§e/gold pay <플레이어> <금액> §7- 플레이어에게 골드를 송금합니다.");
+            player.sendMessage("§e/gold gui §7- 골드 메뉴 열기");
             return true;
         }
 
