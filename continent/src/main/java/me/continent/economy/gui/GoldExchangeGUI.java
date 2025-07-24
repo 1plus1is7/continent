@@ -27,15 +27,25 @@ public class GoldExchangeGUI {
     }
 
     static void renderButtons(Inventory inv, Player player, Mode mode, int qty) {
-        inv.setItem(4, new ItemStack(Material.BUNDLE));
+        double rate = CentralBank.getExchangeRate();
+        if (qty < 1) qty = 1;
+        int total = (int) Math.round(rate * qty);
+
+        ItemStack bundle = new ItemStack(Material.BUNDLE);
+        ItemMeta bMeta = bundle.getItemMeta();
+        bMeta.setDisplayName("§e거래 설정");
+        List<String> bLore = new ArrayList<>();
+        bLore.add("§7수량: " + qty);
+        bLore.add((mode == Mode.CONVERT ? "§7비용: " : "§7수익: ") + total + "G");
+        bMeta.setLore(bLore);
+        bundle.setItemMeta(bMeta);
+        inv.setItem(4, bundle);
+
         inv.setItem(20, qtyButton(Material.REDSTONE, "-10", qty - 10));
         inv.setItem(21, qtyButton(Material.REDSTONE, "-1", qty - 1));
         inv.setItem(23, qtyButton(Material.LIME_DYE, "+1", qty + 1));
         inv.setItem(24, qtyButton(Material.LIME_DYE, "+10", qty + 10));
         inv.setItem(41, maxButton(player, mode));
-        if (qty < 1) qty = 1;
-        double rate = CentralBank.getExchangeRate();
-        int total = (int) Math.round(rate * qty);
         String name = mode == Mode.CONVERT ? "비용: " + total + "G" : "수익: " + total + "G";
         ItemStack price = new ItemStack(Material.GOLD_INGOT);
         ItemMeta pm = price.getItemMeta();

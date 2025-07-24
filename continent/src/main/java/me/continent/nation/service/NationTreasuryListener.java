@@ -17,13 +17,13 @@ public class NationTreasuryListener implements Listener {
             Player player = (Player) event.getWhoClicked();
             Nation nation = holder.getNation();
             int slot = event.getRawSlot();
-            if (slot == 2) {
+            if (slot == 11) {
                 NationTreasuryService.promptDeposit(player, nation);
                 player.closeInventory();
-            } else if (slot == 4) {
+            } else if (slot == 15) {
                 NationTreasuryService.promptWithdraw(player, nation);
                 player.closeInventory();
-            } else if (slot == 8) {
+            } else if (slot == 22) {
                 ServerMenuService.openMenu(player);
             }
         }

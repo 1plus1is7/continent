@@ -19,7 +19,7 @@ public class NationMenuService {
         Inventory inv = Bukkit.createInventory(holder, 36, "Nation Menu");
         holder.setInventory(inv);
 
-        ItemStack symbol = nation.getSymbol() == null ? new ItemStack(Material.PAPER) : nation.getSymbol().clone();
+        ItemStack symbol = nation.getSymbol() == null ? new ItemStack(Material.WHITE_BANNER) : nation.getSymbol().clone();
         ItemMeta meta = symbol.getItemMeta();
         meta.setDisplayName("§a국가 정보");
         List<String> lore = new ArrayList<>();

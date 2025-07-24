@@ -20,12 +20,25 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class NationTreasuryService {
     public static void openMenu(Player player, Nation nation) {
         TreasuryHolder holder = new TreasuryHolder(nation);
-        Inventory inv = Bukkit.createInventory(holder, 9, "Nation Treasury");
+        Inventory inv = Bukkit.createInventory(holder, 27, "Nation Treasury");
         holder.setInventory(inv);
-        inv.setItem(2, createItem(Material.EMERALD_BLOCK, "입금"));
-        inv.setItem(4, createItem(Material.REDSTONE_BLOCK, "출금"));
-        inv.setItem(6, createItem(Material.GOLD_INGOT, "잔액: " + nation.getVault() + "G"));
-        inv.setItem(8, createItem(Material.ARROW, "메인 메뉴"));
+
+        ItemStack deposit = createItem(Material.EMERALD_BLOCK, "입금하기");
+        ItemMeta dMeta = deposit.getItemMeta();
+        dMeta.setLore(java.util.List.of("§7국가 금고에 골드를 입금합니다."));
+        deposit.setItemMeta(dMeta);
+        inv.setItem(11, deposit);
+
+        ItemStack withdraw = createItem(Material.REDSTONE_BLOCK, "출금하기");
+        ItemMeta wMeta = withdraw.getItemMeta();
+        wMeta.setLore(java.util.List.of("§7국가 금고에서 골드를 출금합니다."));
+        withdraw.setItemMeta(wMeta);
+        inv.setItem(15, withdraw);
+
+        ItemStack bal = createItem(Material.GOLD_INGOT, "잔액: " + nation.getVault() + "G");
+        inv.setItem(13, bal);
+
+        inv.setItem(22, createItem(Material.ARROW, "메인 메뉴"));
         player.openInventory(inv);
     }
 
