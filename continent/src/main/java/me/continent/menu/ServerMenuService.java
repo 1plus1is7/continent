@@ -8,6 +8,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 
 
 public class ServerMenuService {
@@ -19,7 +20,9 @@ public class ServerMenuService {
         ItemStack sword = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta sMeta = sword.getItemMeta();
         sMeta.setDisplayName("§a국가 메뉴 열기");
-        sMeta.setCustomModelData(0);
+        CustomModelDataComponent swordCmd = sMeta.getCustomModelDataComponent();
+        swordCmd.setStrings(java.util.List.of("0"));
+        sMeta.setCustomModelDataComponent(swordCmd);
         sword.setItemMeta(sMeta);
         inv.setItem(10, sword);
 
@@ -27,35 +30,45 @@ public class ServerMenuService {
         SkullMeta hMeta = (SkullMeta) head.getItemMeta();
         hMeta.setOwningPlayer(player);
         hMeta.setDisplayName("§a플레이어 정보");
-        hMeta.setCustomModelData(0);
+        CustomModelDataComponent headCmd = hMeta.getCustomModelDataComponent();
+        headCmd.setStrings(java.util.List.of("0"));
+        hMeta.setCustomModelDataComponent(headCmd);
         head.setItemMeta(hMeta);
         inv.setItem(13, head);
 
         ItemStack rawGold = new ItemStack(Material.RAW_GOLD);
         ItemMeta gMeta = rawGold.getItemMeta();
         gMeta.setDisplayName("§a골드 메뉴 열기");
-        gMeta.setCustomModelData(0);
+        CustomModelDataComponent goldCmd = gMeta.getCustomModelDataComponent();
+        goldCmd.setStrings(java.util.List.of("0"));
+        gMeta.setCustomModelDataComponent(goldCmd);
         rawGold.setItemMeta(gMeta);
         inv.setItem(16, rawGold);
 
         ItemStack bundle = new ItemStack(Material.BUNDLE);
         ItemMeta bMeta = bundle.getItemMeta();
         bMeta.setDisplayName("§aMarket 메뉴 열기");
-        bMeta.setCustomModelData(0);
+        CustomModelDataComponent bundleCmd = bMeta.getCustomModelDataComponent();
+        bundleCmd.setStrings(java.util.List.of("0"));
+        bMeta.setCustomModelDataComponent(bundleCmd);
         bundle.setItemMeta(bMeta);
         inv.setItem(37, bundle);
 
         ItemStack compass = new ItemStack(Material.COMPASS);
         ItemMeta cMeta = compass.getItemMeta();
         cMeta.setDisplayName("§a워프 기능");
-        cMeta.setCustomModelData(0);
+        CustomModelDataComponent compassCmd = cMeta.getCustomModelDataComponent();
+        compassCmd.setStrings(java.util.List.of("0"));
+        cMeta.setCustomModelDataComponent(compassCmd);
         compass.setItemMeta(cMeta);
         inv.setItem(40, compass);
 
         ItemStack cart = new ItemStack(Material.MINECART);
         ItemMeta cartMeta = cart.getItemMeta();
         cartMeta.setDisplayName("§a직업 기능");
-        cartMeta.setCustomModelData(0);
+        CustomModelDataComponent cartCmd = cartMeta.getCustomModelDataComponent();
+        cartCmd.setStrings(java.util.List.of("0"));
+        cartMeta.setCustomModelDataComponent(cartCmd);
         cart.setItemMeta(cartMeta);
         inv.setItem(43, cart);
 
