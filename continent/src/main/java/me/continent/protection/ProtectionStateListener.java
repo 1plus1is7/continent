@@ -27,6 +27,8 @@ public class ProtectionStateListener implements Listener {
         Nation nation = NationManager.getByChunk(block.getChunk());
         if (nation == null) return false;
         if (!nation.isUnderProtection()) return false;
+        // 전쟁 중이라면 보호 효과를 무시한다
+        if (me.continent.war.WarManager.getWar(nation.getName()) != null) return false;
         return true;
     }
 
@@ -35,6 +37,7 @@ public class ProtectionStateListener implements Listener {
         Nation nation = NationManager.getByChunk(chunk);
         if (nation == null) return false;
         if (!nation.isUnderProtection()) return false;
+        if (me.continent.war.WarManager.getWar(nation.getName()) != null) return false;
         return true;
     }
 
@@ -47,6 +50,11 @@ public class ProtectionStateListener implements Listener {
             Nation nation = NationManager.getByChunk(event.getEntity().getLocation().getChunk());
             if (nation != null && nation.getMembers().contains(player.getUniqueId())) {
                 return; // allow members to attack
+            }
+            Nation playerNation = NationManager.getByPlayer(player.getUniqueId());
+            if (playerNation != null && nation != null &&
+                    me.continent.war.WarManager.isAtWar(playerNation.getName(), nation.getName())) {
+                return; // allow enemies during war
             }
         }
 
@@ -61,7 +69,11 @@ public class ProtectionStateListener implements Listener {
         Nation nation = NationManager.getByChunk(block.getChunk());
         if (inProtectedNation(block) &&
                 !nation.getMembers().contains(event.getPlayer().getUniqueId())) {
-            event.setCancelled(true);
+            Nation playerNation = NationManager.getByPlayer(event.getPlayer().getUniqueId());
+            if (playerNation == null ||
+                    !me.continent.war.WarManager.isAtWar(playerNation.getName(), nation.getName())) {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -72,8 +84,14 @@ public class ProtectionStateListener implements Listener {
         if (!inProtectedNation(block)) return;
 
         Player player = event.getPlayer();
-        if (player != null && nation.getMembers().contains(player.getUniqueId()) && nation.isMemberIgniteAllowed()) {
-            return; // allow allies if enabled
+        if (player != null) {
+            if (nation.getMembers().contains(player.getUniqueId()) && nation.isMemberIgniteAllowed()) {
+                return; // allow allies if enabled
+            }
+            Nation playerNation = NationManager.getByPlayer(player.getUniqueId());
+            if (playerNation != null && me.continent.war.WarManager.isAtWar(playerNation.getName(), nation.getName())) {
+                return; // allow enemies during war
+            }
         }
         event.setCancelled(true);
     }
@@ -86,6 +104,9 @@ public class ProtectionStateListener implements Listener {
         if (dest != null) {
             Nation src = NationManager.getByChunk(from.getChunk());
             if (!Objects.equals(dest, src)) {
+                if (src != null && me.continent.war.WarManager.isAtWar(src.getName(), dest.getName())) {
+                    return; // allow during war
+                }
                 if (from.getType() == Material.WATER || from.getType() == Material.LAVA) {
                     event.setCancelled(true);
                 }
@@ -114,6 +135,9 @@ public class ProtectionStateListener implements Listener {
             Chunk destChunk = block.getRelative(event.getDirection()).getChunk();
             Nation dest = NationManager.getByChunk(destChunk);
             if (!Objects.equals(src, dest)) {
+                if (src != null && dest != null && me.continent.war.WarManager.isAtWar(src.getName(), dest.getName())) {
+                    continue; // allow during war
+                }
                 event.setCancelled(true);
                 return;
             }
@@ -128,6 +152,9 @@ public class ProtectionStateListener implements Listener {
             Chunk destChunk = block.getRelative(event.getDirection().getOppositeFace()).getChunk();
             Nation dest = NationManager.getByChunk(destChunk);
             if (!Objects.equals(src, dest)) {
+                if (src != null && dest != null && me.continent.war.WarManager.isAtWar(src.getName(), dest.getName())) {
+                    continue; // allow during war
+                }
                 event.setCancelled(true);
                 return;
             }
