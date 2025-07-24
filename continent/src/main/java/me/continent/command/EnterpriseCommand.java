@@ -49,7 +49,9 @@ public class EnterpriseCommand implements CommandExecutor {
             }
 
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
-            double cost = 100; // simple flat registration cost
+            double cost = 100;
+            var info = me.continent.enterprise.EnterpriseTypeConfig.get(type);
+            if (info != null) cost = info.getCost();
             if (data.getGold() < cost) {
                 player.sendMessage("§c골드가 부족합니다. 비용: " + cost + "G");
                 return true;

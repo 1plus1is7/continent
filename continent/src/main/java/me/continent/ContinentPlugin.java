@@ -25,6 +25,10 @@ import me.continent.nation.service.NationMenuListener;
 import me.continent.nation.service.NationTreasuryListener;
 import me.continent.nation.service.NationMemberListener;
 import me.continent.menu.ServerMenuListener;
+import me.continent.job.JobManager;
+import me.continent.job.JobMenuListener;
+import me.continent.command.JobCommand;
+import me.continent.enterprise.EnterpriseTypeConfig;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.continent.player.PlayerDataManager;
 import me.continent.command.MarketCommand;
@@ -64,6 +68,7 @@ public class ContinentPlugin extends JavaPlugin {
         registerCommand("admin", new AdminCommand());
         registerCommand("menu", new MenuCommand());
         registerCommand("enterprise", new EnterpriseCommand());
+        registerCommand("job", new JobCommand());
 
         // 중앙은행 데이터 로딩
         CentralBankDataManager.load();
@@ -73,6 +78,8 @@ public class ContinentPlugin extends JavaPlugin {
 
         ResearchManager.loadNodes(this);
         SpecialtyManager.load(this);
+        JobManager.load(this);
+        EnterpriseTypeConfig.load(this);
 
         CropGrowthManager.init(this);
 
@@ -100,6 +107,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ServerMenuListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.economy.gui.GoldMenuListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.enterprise.gui.EnterpriseMenuListener(), this);
+        getServer().getPluginManager().registerEvents(new JobMenuListener(), this);
 
 
         getServer().getPluginManager().registerEvents(new MarketListener(), this);
