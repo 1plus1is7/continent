@@ -223,9 +223,11 @@ public class UnionCommand implements TabExecutor {
                 }
                 return true;
             }
+            default -> {
+                player.sendMessage("§c알 수 없는 하위 명령어입니다.");
+                return true;
+            }
         }
-
-        return true;
     }
 
     @Override
