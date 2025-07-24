@@ -31,6 +31,12 @@ public class EnterpriseManager {
         return false;
     }
 
+    /** Check if the player owns at least one enterprise. */
+    public static boolean hasEnterprise(UUID owner) {
+        Set<Enterprise> set = byOwner.get(owner);
+        return set != null && !set.isEmpty();
+    }
+
     public static void clear() {
         enterprises.clear();
         byOwner.clear();

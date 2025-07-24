@@ -20,14 +20,19 @@ public class EnterpriseCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            player.sendMessage("§6[Enterprise 명령어 도움말]");
-            player.sendMessage("§e/enterprise register <이름> <업종> §7- 새 기업 설립");
+            if (EnterpriseManager.hasEnterprise(player.getUniqueId())) {
+                Enterprise ent = EnterpriseManager.getByOwner(player.getUniqueId()).iterator().next();
+                me.continent.enterprise.gui.EnterpriseMenuService.openMain(player, ent);
+            } else {
+                player.sendMessage("§e[기업] 아직 기업이 없습니다. 지금 설립하시겠습니까?");
+                me.continent.enterprise.gui.EnterpriseMenuService.openRegister(player);
+            }
             return true;
         }
 
         if (args[0].equalsIgnoreCase("register")) {
             if (args.length < 3) {
-                player.sendMessage("§c사용법: /enterprise register <이름> <업종>");
+                me.continent.enterprise.gui.EnterpriseMenuService.openRegister(player);
                 return true;
             }
             String name = args[1];
