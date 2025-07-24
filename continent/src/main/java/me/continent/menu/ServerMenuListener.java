@@ -39,7 +39,8 @@ public class ServerMenuListener implements Listener {
                     player.sendMessage("§f국가: §e" + nationName);
                 }
                 case 37 -> MarketGUI.open(player, 1, MarketManager.SortMode.NEWEST, false);
-                case 16, 40, 43 -> player.sendMessage("§e준비 중인 기능입니다.");
+                case 16 -> me.continent.economy.gui.GoldMenuService.openMenu(player);
+                case 40, 43 -> player.sendMessage("§e준비 중인 기능입니다.");
             }
         }
     }
