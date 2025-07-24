@@ -573,13 +573,13 @@ public class NationCommand implements TabExecutor {
                 return true;
             }
             org.bukkit.inventory.ItemStack item = player.getInventory().getItemInMainHand();
-            if (item == null || item.getType() == org.bukkit.Material.AIR) {
-                player.sendMessage("§c손에 아이템을 들고 있어야 합니다.");
+            if (item == null || item.getType() == org.bukkit.Material.AIR || !item.getType().name().endsWith("BANNER")) {
+                player.sendMessage("§c손에 배너를 들고 있어야 합니다.");
                 return true;
             }
             nation.setSymbol(item.clone());
             NationStorage.save(nation);
-            player.sendMessage("§a상징 아이템이 업데이트되었습니다.");
+            player.sendMessage("§a상징 배너가 업데이트되었습니다.");
             return true;
         }
 

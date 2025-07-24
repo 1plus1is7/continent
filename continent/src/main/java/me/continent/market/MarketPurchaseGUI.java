@@ -36,7 +36,16 @@ public class MarketPurchaseGUI {
         price.setItemMeta(pm);
         inv.setItem(31, price);
         inv.setItem(38, createButton(Material.BARRIER, "취소"));
-        inv.setItem(40, createButton(Material.EMERALD_BLOCK, "구매"));
+
+        ItemStack confirm = createButton(Material.EMERALD_BLOCK, "구매");
+        ItemMeta cm = confirm.getItemMeta();
+        java.util.List<String> lore = new java.util.ArrayList<>();
+        lore.add("§7수량: " + qty + "/" + stock);
+        lore.add("§7가격: " + (unitPrice * qty) + "G");
+        cm.setLore(lore);
+        confirm.setItemMeta(cm);
+        inv.setItem(40, confirm);
+
         inv.setItem(42, createButton(Material.ARROW, "돌아가기"));
     }
 

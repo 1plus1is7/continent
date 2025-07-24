@@ -54,7 +54,13 @@ public class GoldPayService {
         amt.setItemMeta(meta);
         inv.setItem(31, amt);
         inv.setItem(38, createButton(Material.BARRIER, "취소"));
-        inv.setItem(40, createButton(Material.EMERALD_BLOCK, "송금"));
+
+        ItemStack confirm = createButton(Material.EMERALD_BLOCK, "송금");
+        ItemMeta cMeta = confirm.getItemMeta();
+        cMeta.setLore(java.util.List.of("§7금액: " + amount + "G"));
+        confirm.setItemMeta(cMeta);
+        inv.setItem(40, confirm);
+
         inv.setItem(42, createButton(Material.ARROW, "메인 메뉴"));
     }
 

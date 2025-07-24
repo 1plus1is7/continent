@@ -37,7 +37,13 @@ public class MarketRegisterGUI {
         inv.setItem(31, priceItem);
 
         inv.setItem(38, createButton(Material.BARRIER, "취소"));
-        inv.setItem(40, createButton(Material.EMERALD_BLOCK, "등록"));
+
+        ItemStack confirm = createButton(Material.EMERALD_BLOCK, "등록");
+        ItemMeta cm = confirm.getItemMeta();
+        cm.setLore(java.util.List.of("§7가격: " + price + "G"));
+        confirm.setItemMeta(cm);
+        inv.setItem(40, confirm);
+
         inv.setItem(42, createButton(Material.ARROW, "돌아가기"));
     }
 

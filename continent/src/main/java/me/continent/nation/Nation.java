@@ -52,7 +52,8 @@ public class Nation {
         this.members.add(king);
         this.vault = 0;
         this.protectionUntil = System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000L; // 7일
-        this.symbol = new org.bukkit.inventory.ItemStack(org.bukkit.Material.WOODEN_SWORD);
+        // 기본 상징은 흰색 배너
+        this.symbol = new org.bukkit.inventory.ItemStack(org.bukkit.Material.WHITE_BANNER);
     }
 
     public static Location getGroundLocation(Location loc) {
@@ -162,7 +163,10 @@ public class Nation {
     }
 
     public void setSymbol(org.bukkit.inventory.ItemStack symbol) {
-        this.symbol = symbol;
+        // 상징은 배너 아이템만 허용한다
+        if (symbol != null && symbol.getType().name().endsWith("BANNER")) {
+            this.symbol = symbol;
+        }
     }
 
     // ---- 연구/특산품 관련 ----
