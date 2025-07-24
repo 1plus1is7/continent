@@ -1,0 +1,27 @@
+RAW_SUPPLY:
+  name: "원재료 공급업"
+  cost: 100
+RAW_DISTRIBUTION:
+  name: "원재료 유통업"
+  cost: 120
+PROCESSING:
+  name: "가공업"
+  cost: 150
+MANUFACTURING:
+  name: "생산업"
+  cost: 200
+PRODUCT_DISTRIBUTION:
+  name: "제품 유통업"
+  cost: 150
+TRANSPORT:
+  name: "운수업"
+  cost: 130
+CONSTRUCTION:
+  name: "건설업"
+  cost: 170
+SERVICES:
+  name: "서비스업"
+  cost: 100
+FINANCE:
+  name: "금융업"
+  cost: 250

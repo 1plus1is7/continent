@@ -1,0 +1,9 @@
+miner:
+  name: "광부"
+  description: "광물을 캐서 골드를 벌 수 있는 직업"
+farmer:
+  name: "농부"
+  description: "작물을 재배해 골드를 얻는 직업"
+merchant:
+  name: "상인"
+  description: "아이템 거래로 수익을 내는 직업"

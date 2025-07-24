@@ -38,3 +38,6 @@ commands:
   enterprise:
     description: Manage player enterprises
     usage: /enterprise <subcommand>
+  job:
+    description: Manage player jobs
+    usage: /job <subcommand>

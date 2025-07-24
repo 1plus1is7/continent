@@ -34,6 +34,8 @@ public class PlayerData {
 
     private int knownMaintenance = 0;
 
+    private String jobId = null;
+
 
     public boolean isNationChatEnabled() {
         return nationChatEnabled;
@@ -94,6 +96,14 @@ public class PlayerData {
 
     public void setKnownMaintenance(int count) {
         this.knownMaintenance = count;
+    }
+
+    public String getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
     }
 
 }

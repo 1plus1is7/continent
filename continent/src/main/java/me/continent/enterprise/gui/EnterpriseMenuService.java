@@ -108,7 +108,11 @@ public class EnterpriseMenuService {
         fill(inv);
         int idx = 0;
         for (EnterpriseType t : EnterpriseType.values()) {
-            inv.setItem(idx++, button(Material.BOOK, t.name(), null));
+            var info = EnterpriseTypeConfig.get(t);
+            String name = info != null ? info.getName() : t.name();
+            List<String> lore = null;
+            if (info != null) lore = List.of("비용: " + info.getCost() + "G");
+            inv.setItem(idx++, button(Material.BOOK, name, lore));
         }
         inv.setItem(26, button(Material.ARROW, "뒤로", null));
         player.openInventory(inv);
@@ -125,7 +129,9 @@ public class EnterpriseMenuService {
             return;
         }
         PlayerData data = PlayerDataManager.get(player.getUniqueId());
-        double cost = 100; // flat cost
+        double cost = 100;
+        var info = EnterpriseTypeConfig.get(holder.getType());
+        if (info != null) cost = info.getCost();
         if (data.getGold() < cost) {
             player.sendMessage("§c골드가 부족합니다. 비용: " + cost + "G");
             return;
