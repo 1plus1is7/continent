@@ -24,6 +24,7 @@ public class EnterpriseStorage {
         config.set("type", enterprise.getType().name());
         config.set("owner", enterprise.getOwner().toString());
         config.set("registeredAt", enterprise.getRegisteredAt());
+        config.set("symbol", me.continent.utils.ItemSerialization.serializeItem(enterprise.getSymbol()));
         try {
             config.save(file);
         } catch (IOException e) {
@@ -38,7 +39,10 @@ public class EnterpriseStorage {
         EnterpriseType type = EnterpriseType.valueOf(config.getString("type"));
         UUID owner = UUID.fromString(config.getString("owner"));
         long registeredAt = config.getLong("registeredAt", System.currentTimeMillis());
-        return new Enterprise(id, name, type, owner, registeredAt);
+        Enterprise ent = new Enterprise(id, name, type, owner, registeredAt);
+        org.bukkit.inventory.ItemStack symbol = me.continent.utils.ItemSerialization.deserializeItem(config.getString("symbol"));
+        if (symbol != null) ent.setSymbol(symbol);
+        return ent;
     }
 
     public static void loadAll() {

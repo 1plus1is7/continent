@@ -17,7 +17,9 @@ public class NationMenuListener implements Listener {
             Player player = (Player) event.getWhoClicked();
             Nation nation = holder.getNation();
             int slot = event.getRawSlot();
-            if (slot == 19) {
+            if (slot == 11) {
+                me.continent.nation.gui.NationListGUI.open(player);
+            } else if (slot == 19) {
                 NationMemberService.openMenu(player, nation);
             } else if (slot == 21) {
                 NationTreasuryService.openMenu(player, nation);
