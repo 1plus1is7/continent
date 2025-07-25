@@ -4,6 +4,7 @@ import me.continent.nation.Nation;
 import me.continent.nation.NationManager;
 import me.continent.nation.service.CoreService;
 import me.continent.storage.NationStorage;
+import me.continent.war.CoreSlimeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
@@ -21,6 +22,7 @@ public class WarManager {
         initCoreHp(war, attacker);
         initCoreHp(war, defender);
         WarBossBarManager.createWar(war);
+        CoreSlimeManager.createWar(war);
         return war;
     }
 
@@ -55,6 +57,7 @@ public class WarManager {
 
         war.getBannedPlayers().clear();
         WarBossBarManager.endWar(war);
+        CoreSlimeManager.endWar(war);
 
         String msg = "§e[전쟁] §f" + war.getAttacker() + " 국가과 "
                 + war.getDefender() + " 국가의 전쟁이 종료되었습니다.";
@@ -77,6 +80,7 @@ public class WarManager {
         if (war == null) return;
         war.addDestroyedNation(nation.getName(), attacker.getName());
         WarBossBarManager.remove(war, nation.getName());
+        CoreSlimeManager.remove(war, nation.getName());
         CoreService.removeCore(nation);
         Bukkit.broadcastMessage("§c[전쟁] §f" + nation.getName() + " 국가의 코어가 파괴되었습니다!");
         surrender(nation);
