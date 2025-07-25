@@ -6,12 +6,11 @@ import me.continent.nation.NationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.entity.Slime;
 import org.bukkit.scheduler.BukkitTask;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.text.Component;
@@ -24,23 +23,6 @@ import java.util.UUID;
 public class CoreAttackListener implements Listener {
     private final Map<String, BukkitTask> alertTasks = new HashMap<>();
     private final Map<String, Long> lastAttack = new HashMap<>();
-
-    private boolean isCoreBlock(Block block) {
-        Nation nation = NationManager.getByChunk(block.getChunk());
-        if (nation == null) return false;
-        if (nation.getCoreLocation() == null) return false;
-        return nation.getCoreLocation().getBlock().equals(block);
-    }
-
-    private Nation getNationByCore(Block block) {
-        Nation nation = NationManager.getByChunk(block.getChunk());
-        if (nation == null) return null;
-        if (nation.getCoreLocation() == null) return null;
-        if (nation.getCoreLocation().getBlock().equals(block)) {
-            return nation;
-        }
-        return null;
-    }
 
     private void startAlert(Nation nation) {
         String key = nation.getName().toLowerCase();
@@ -90,29 +72,27 @@ public class CoreAttackListener implements Listener {
         }
     }
 
-    private void handle(Block block, Player attacker) {
-        Nation nation = getNationByCore(block);
+
+    @EventHandler
+    public void onSlimeDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Slime slime)) return;
+        String tag = slime.getScoreboardTags().stream()
+                .filter(t -> t.startsWith("core_slime:"))
+                .findFirst().orElse(null);
+        if (tag == null) return;
+        event.setCancelled(true);
+        Nation nation = NationManager.getByName(tag.substring("core_slime:".length()));
         if (nation == null) return;
+        if (!(event.getDamager() instanceof Player attacker)) return;
         Nation attackerNation = NationManager.getByPlayer(attacker.getUniqueId());
         if (attackerNation == null) return;
         if (!WarManager.isAtWar(attackerNation.getName(), nation.getName())) return;
-        if (attackerNation.getName().equalsIgnoreCase(nation.getName())) return;
         lastAttack.put(nation.getName().toLowerCase(), System.currentTimeMillis());
         startAlert(nation);
-        WarManager.damageCore(nation, attackerNation);
-    }
-
-    @EventHandler
-    public void onBlockDamage(BlockDamageEvent event) {
-        if (isCoreBlock(event.getBlock())) {
-            handle(event.getBlock(), event.getPlayer());
-        }
-    }
-
-    @EventHandler
-    public void onBlockBreak(BlockBreakEvent event) {
-        if (isCoreBlock(event.getBlock())) {
-            handle(event.getBlock(), event.getPlayer());
+        int dmg = (int) Math.round(event.getFinalDamage());
+        if (dmg < 1) dmg = 1;
+        for (int i = 0; i < dmg; i++) {
+            WarManager.damageCore(nation, attackerNation);
         }
     }
 }

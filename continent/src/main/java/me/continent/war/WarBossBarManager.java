@@ -7,13 +7,18 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.Location;
 
+import me.continent.ContinentPlugin;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class WarBossBarManager {
     private static final Map<String, BossBar> bars = new HashMap<>();
+    private static BukkitTask task;
+    private static final double VIEW_DISTANCE = 10.0; // blocks
 
     private static String key(War war, String nation) {
         return war.hashCode() + ":" + nation.toLowerCase();
@@ -22,6 +27,7 @@ public class WarBossBarManager {
     public static void createWar(War war) {
         createBarForNation(war, war.getAttacker());
         createBarForNation(war, war.getDefender());
+        startTask();
     }
 
     private static void createBarForNation(War war, String nationName) {
@@ -34,6 +40,38 @@ public class WarBossBarManager {
         }
         Nation nation = NationManager.getByName(nationName);
         if (nation != null) addPlayers(bar, nation);
+    }
+
+    private static void startTask() {
+        if (task != null) return;
+        task = Bukkit.getScheduler().runTaskTimer(ContinentPlugin.getInstance(), WarBossBarManager::tick, 0L, 20L);
+    }
+
+    private static void stopTask() {
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+    }
+
+    private static void tick() {
+        for (Map.Entry<String, BossBar> entry : bars.entrySet()) {
+            String nationName = entry.getKey().substring(entry.getKey().indexOf(":") + 1);
+            Nation nation = NationManager.getByName(nationName);
+            if (nation == null) continue;
+            Location core = nation.getCoreLocation();
+            if (core == null) continue;
+            BossBar bar = entry.getValue();
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                boolean near = p.getWorld().equals(core.getWorld()) && p.getLocation().distanceSquared(core) <= VIEW_DISTANCE * VIEW_DISTANCE;
+                boolean member = nation.getMembers().contains(p.getUniqueId());
+                if (near) {
+                    bar.addPlayer(p);
+                } else if (!member) {
+                    bar.removePlayer(p);
+                }
+            }
+        }
     }
 
     private static void addPlayers(BossBar bar, Nation nation) {
@@ -73,5 +111,8 @@ public class WarBossBarManager {
             }
             return false;
         });
+        if (bars.isEmpty()) {
+            stopTask();
+        }
     }
 }
