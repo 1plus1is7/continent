@@ -80,7 +80,6 @@ public class CoreAttackListener implements Listener {
                 .filter(t -> t.startsWith("core_slime:"))
                 .findFirst().orElse(null);
         if (tag == null) return;
-        event.setCancelled(true);
         Nation nation = NationManager.getByName(tag.substring("core_slime:".length()));
         if (nation == null) return;
         if (!(event.getDamager() instanceof Player attacker)) return;
@@ -94,5 +93,7 @@ public class CoreAttackListener implements Listener {
         for (int i = 0; i < dmg; i++) {
             WarManager.damageCore(nation, attackerNation);
         }
+        // Allow enchantments to trigger while preventing actual damage
+        event.setDamage(0);
     }
 }
