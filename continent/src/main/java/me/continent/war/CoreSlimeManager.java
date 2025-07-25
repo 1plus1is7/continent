@@ -36,10 +36,11 @@ public class CoreSlimeManager {
         if (world == null) return;
         Slime slime = (Slime) world.spawnEntity(loc.clone().add(0.5, 1, 0.5), EntityType.SLIME);
         slime.setAI(false);
-        slime.setInvisible(true);
+        slime.setInvisible(false);
+        slime.setGlowing(true);
         slime.setCollidable(false);
         slime.setGravity(false);
-        slime.setSize(1);
+        slime.setSize(4);
         slime.setSilent(true);
         slime.setPersistent(true);
         slime.setRemoveWhenFarAway(false);
