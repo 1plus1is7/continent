@@ -1,6 +1,7 @@
 package me.continent.enterprise;
 
 import me.continent.ContinentPlugin;
+import me.continent.utils.ItemSerialization;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -8,15 +9,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-/** Handles persistence of enterprises to YAML files. */
-public class EnterpriseStorage {
-    private static final File folder = new File(ContinentPlugin.getInstance().getDataFolder(), "enterprises");
+/** YAML-based implementation of EnterpriseRepository. */
+public class YamlEnterpriseRepository implements EnterpriseRepository {
+    private final File folder;
 
-    static {
+    public YamlEnterpriseRepository(ContinentPlugin plugin) {
+        this.folder = new File(plugin.getDataFolder(), "enterprises");
         if (!folder.exists()) folder.mkdirs();
     }
 
-    public static void save(Enterprise enterprise) {
+    @Override
+    public void save(Enterprise enterprise) {
         File file = new File(folder, enterprise.getId() + ".yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
         config.set("id", enterprise.getId());
@@ -24,7 +27,7 @@ public class EnterpriseStorage {
         config.set("type", enterprise.getType().name());
         config.set("owner", enterprise.getOwner().toString());
         config.set("registeredAt", enterprise.getRegisteredAt());
-        config.set("symbol", me.continent.utils.ItemSerialization.serializeItem(enterprise.getSymbol()));
+        config.set("symbol", ItemSerialization.serializeItem(enterprise.getSymbol()));
         try {
             config.save(file);
         } catch (IOException e) {
@@ -32,7 +35,8 @@ public class EnterpriseStorage {
         }
     }
 
-    public static Enterprise load(File file) {
+    @Override
+    public Enterprise load(File file) {
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
         String id = config.getString("id", file.getName().replace(".yml", ""));
         String name = config.getString("name", id);
@@ -40,12 +44,13 @@ public class EnterpriseStorage {
         UUID owner = UUID.fromString(config.getString("owner"));
         long registeredAt = config.getLong("registeredAt", System.currentTimeMillis());
         Enterprise ent = new Enterprise(id, name, type, owner, registeredAt);
-        org.bukkit.inventory.ItemStack symbol = me.continent.utils.ItemSerialization.deserializeItem(config.getString("symbol"));
+        var symbol = ItemSerialization.deserializeItem(config.getString("symbol"));
         if (symbol != null) ent.setSymbol(symbol);
         return ent;
     }
 
-    public static void loadAll() {
+    @Override
+    public void loadAll() {
         EnterpriseManager.clear();
         File[] files = folder.listFiles((dir, n) -> n.endsWith(".yml"));
         if (files == null) return;
@@ -55,7 +60,8 @@ public class EnterpriseStorage {
         }
     }
 
-    public static void saveAll() {
+    @Override
+    public void saveAll() {
         for (Enterprise e : EnterpriseManager.getAll()) {
             save(e);
         }
