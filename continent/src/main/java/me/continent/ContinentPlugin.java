@@ -18,6 +18,7 @@ import me.continent.protection.TerritoryProtectionListener;
 import me.continent.protection.CoreProtectionListener;
 import me.continent.war.CoreAttackListener;
 import me.continent.war.WarDeathListener;
+import me.continent.war.CoreSlimeDamageListener;
 import me.continent.protection.ProtectionStateListener;
 import me.continent.nation.service.ChestListener;
 import me.continent.nation.service.MaintenanceService;
@@ -103,6 +104,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new TerritoryProtectionListener(), this);
         getServer().getPluginManager().registerEvents(new CoreProtectionListener(), this);
         getServer().getPluginManager().registerEvents(new CoreAttackListener(), this);
+        getServer().getPluginManager().registerEvents(new CoreSlimeDamageListener(), this);
         getServer().getPluginManager().registerEvents(new ChestListener(), this);
         getServer().getPluginManager().registerEvents(new ProtectionStateListener(), this);
         getServer().getPluginManager().registerEvents(new WarDeathListener(), this);
