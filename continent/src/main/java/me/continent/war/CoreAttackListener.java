@@ -85,6 +85,10 @@ public class CoreAttackListener implements Listener {
         if (!(event.getDamager() instanceof Player attacker)) return;
         Nation attackerNation = NationManager.getByPlayer(attacker.getUniqueId());
         if (attackerNation == null) return;
+
+        // Prevent friendly fire on a nation's own core
+        if (attackerNation.getName().equalsIgnoreCase(nation.getName())) return;
+
         if (!WarManager.isAtWar(attackerNation.getName(), nation.getName())) return;
         lastAttack.put(nation.getName().toLowerCase(), System.currentTimeMillis());
         startAlert(nation);
