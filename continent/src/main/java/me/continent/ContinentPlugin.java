@@ -72,7 +72,6 @@ public class ContinentPlugin extends JavaPlugin {
         registerCommand("admin", new AdminCommand());
         registerCommand("menu", new MenuCommand());
         registerCommand("enterprise", new EnterpriseCommand());
-        registerCommand("contract", new me.continent.command.ContractCommand());
         registerCommand("job", new JobCommand());
 
         // 중앙은행 데이터 로딩

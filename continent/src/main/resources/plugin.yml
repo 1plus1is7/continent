@@ -38,9 +38,6 @@ commands:
   enterprise:
     description: Manage player enterprises
     usage: /enterprise <subcommand>
-  contract:
-    description: Manage enterprise contracts
-    usage: /contract <subcommand>
   job:
     description: Manage player jobs
     usage: /job <subcommand>

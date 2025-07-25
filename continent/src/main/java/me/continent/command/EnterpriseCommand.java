@@ -3,6 +3,8 @@ package me.continent.command;
 import me.continent.enterprise.*;
 import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
+import me.continent.enterprise.contract.Contract;
+import me.continent.enterprise.contract.ContractManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -84,6 +86,39 @@ public class EnterpriseCommand implements CommandExecutor {
             EnterpriseManager.register(ent);
             EnterpriseService.save(ent);
             player.sendMessage("§a기업이 설립되었습니다: " + name + "(" + type + ")");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("contract")) {
+            if (args.length == 1) {
+                player.sendMessage("§6[계약 목록]");
+                for (Contract c : ContractManager.getAvailable()) {
+                    player.sendMessage("§e" + c.getId() + " §f" + c.getDescription() +
+                            " (" + c.getGrade() + ") 보상:" + c.getReward());
+                }
+                return true;
+            }
+            if (args[1].equalsIgnoreCase("accept") && args.length >= 3) {
+                java.util.UUID cid;
+                try {
+                    cid = java.util.UUID.fromString(args[2]);
+                } catch (IllegalArgumentException e) {
+                    player.sendMessage("§c잘못된 계약 ID입니다.");
+                    return true;
+                }
+                if (!EnterpriseManager.hasEnterprise(player.getUniqueId())) {
+                    player.sendMessage("§c기업이 없습니다.");
+                    return true;
+                }
+                Enterprise ent = EnterpriseManager.getByOwner(player.getUniqueId()).iterator().next();
+                if (ContractManager.accept(cid, ent.getId())) {
+                    player.sendMessage("§a계약을 수락했습니다.");
+                } else {
+                    player.sendMessage("§c해당 계약을 찾을 수 없습니다.");
+                }
+                return true;
+            }
+            player.sendMessage("§c사용법: /enterprise contract [accept <id>]");
             return true;
         }
 
