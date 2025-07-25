@@ -47,7 +47,7 @@ public class EnterpriseCommand implements CommandExecutor {
                 return true;
             }
             ent.setSymbol(item.clone());
-            EnterpriseStorage.save(ent);
+            EnterpriseService.save(ent);
             player.sendMessage("§a기업 상징이 업데이트되었습니다.");
             return true;
         }
@@ -82,7 +82,7 @@ public class EnterpriseCommand implements CommandExecutor {
             String id = UUID.randomUUID().toString();
             Enterprise ent = new Enterprise(id, name, type, player.getUniqueId(), System.currentTimeMillis());
             EnterpriseManager.register(ent);
-            EnterpriseStorage.save(ent);
+            EnterpriseService.save(ent);
             player.sendMessage("§a기업이 설립되었습니다: " + name + "(" + type + ")");
             return true;
         }

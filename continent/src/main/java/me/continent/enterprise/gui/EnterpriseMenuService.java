@@ -140,7 +140,7 @@ public class EnterpriseMenuService {
         String id = UUID.randomUUID().toString();
         Enterprise ent = new Enterprise(id, holder.getName(), holder.getType(), player.getUniqueId(), System.currentTimeMillis());
         EnterpriseManager.register(ent);
-        EnterpriseStorage.save(ent);
+        EnterpriseService.save(ent);
         PlayerDataManager.save(player.getUniqueId());
         player.sendMessage("§a기업이 설립되었습니다: " + ent.getName());
         openMain(player, ent);

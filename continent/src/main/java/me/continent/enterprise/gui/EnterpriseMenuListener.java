@@ -50,7 +50,7 @@ public class EnterpriseMenuListener implements Listener {
                 var item = player.getInventory().getItemInMainHand();
                 if (item != null && item.getType().name().endsWith("BANNER")) {
                     holder.getEnterprise().setSymbol(item.clone());
-                    me.continent.enterprise.EnterpriseStorage.save(holder.getEnterprise());
+                    me.continent.enterprise.EnterpriseService.save(holder.getEnterprise());
                     player.sendMessage("§a기업 상징이 업데이트되었습니다.");
                 } else {
                     player.sendMessage("§c손에 배너를 들고 있어야 합니다.");
