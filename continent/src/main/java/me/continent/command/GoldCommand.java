@@ -27,26 +27,26 @@ public class GoldCommand implements TabExecutor {
         }
 
         if (args[0].equalsIgnoreCase("help")) {
-            player.sendMessage("§6[골드 명령어 도움말]");
-            player.sendMessage("§e/gold convert <수량> §7- 골드를 사용해 금괴를 획득합니다.");
-            player.sendMessage("§e/gold exchange [수량] §7- 금을 골드로 환전합니다.");
-            player.sendMessage("§e/gold rate §7- 현재 환율 확인");
-            player.sendMessage("§e/gold balance §7- 현재 보유 골드를 확인합니다.");
-            player.sendMessage("§e/gold pay <플레이어> <금액> §7- 플레이어에게 골드를 송금합니다.");
-            player.sendMessage("§e/gold gui §7- 골드 메뉴 열기");
+            player.sendMessage("§6[크라운 명령어 도움말]");
+            player.sendMessage("§e/crown convert <수량> §7- 크라운을 사용해 금괴를 획득합니다.");
+            player.sendMessage("§e/crown exchange [수량] §7- 금을 크라운으로 환전합니다.");
+            player.sendMessage("§e/crown rate §7- 현재 환율 확인");
+            player.sendMessage("§e/crown balance §7- 현재 보유 크라운을 확인합니다.");
+            player.sendMessage("§e/crown pay <플레이어> <금액> §7- 플레이어에게 크라운을 송금합니다.");
+            player.sendMessage("§e/crown gui §7- 크라운 메뉴 열기");
             return true;
         }
 
 
-        // ✅ 보유 골드 확인
+        // ✅ 보유 크라운 확인
         if (args[0].equalsIgnoreCase("balance")) {
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
-            player.sendMessage("§6[골드] §f현재 보유 골드: §e" + data.getGold() + "G");
+            player.sendMessage("§6[크라운] §f현재 보유 크라운: §e" + data.getGold() + "C");
             return true;
         }
 
         if (args[0].equalsIgnoreCase("rate")) {
-            player.sendMessage("§6[환율] §f현재 환율: §e" + CentralBank.getExchangeRate() + "G");
+            player.sendMessage("§6[환율] §f현재 환율: §e" + CentralBank.getExchangeRate() + "C");
             return true;
         }
 
@@ -56,8 +56,8 @@ public class GoldCommand implements TabExecutor {
                 return true;
             }
             if (args.length < 2) {
-                player.sendMessage("§e/gold admin addgold <수량>");
-                player.sendMessage("§e/gold admin setrate <값>");
+                player.sendMessage("§e/crown admin addgold <수량>");
+                player.sendMessage("§e/crown admin setrate <값>");
                 return true;
             }
             if (args[1].equalsIgnoreCase("addgold") && args.length >= 3) {
@@ -81,13 +81,13 @@ public class GoldCommand implements TabExecutor {
                 }
                 return true;
             }
-            player.sendMessage("§c사용법: /gold admin <addgold|setrate>");
+            player.sendMessage("§c사용법: /crown admin <addgold|setrate>");
             return true;
         }
 
         if (args[0].equalsIgnoreCase("pay")) {
             if (args.length < 3) {
-                player.sendMessage("§c사용법: /gold pay <플레이어> <금액>");
+                player.sendMessage("§c사용법: /crown pay <플레이어> <금액>");
                 return true;
             }
 
@@ -111,7 +111,7 @@ public class GoldCommand implements TabExecutor {
 
             PlayerData senderData = PlayerDataManager.get(player.getUniqueId());
             if (senderData.getGold() < amount) {
-                player.sendMessage("§c보유 골드가 부족합니다.");
+                player.sendMessage("§c보유 크라운이 부족합니다.");
                 return true;
             }
 
@@ -127,7 +127,7 @@ public class GoldCommand implements TabExecutor {
         }
         if (args[0].equalsIgnoreCase("convert")) {
             if (args.length < 2) {
-                player.sendMessage("§c사용법: /gold convert <수량>");
+                player.sendMessage("§c사용법: /crown convert <수량>");
                 return true;
             }
 
@@ -145,7 +145,7 @@ public class GoldCommand implements TabExecutor {
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
 
             if (data.getGold() < totalCost) {
-                player.sendMessage("§c골드가 부족합니다. (필요: " + totalCost + "G)");
+                player.sendMessage("§c크라운이 부족합니다. (필요: " + totalCost + "C)");
                 return true;
             }
 
@@ -165,9 +165,9 @@ public class GoldCommand implements TabExecutor {
 
             data.removeGold(totalCost);
 
-            player.sendMessage("§6[중앙은행] §e" + totalCost + "G §f를 소모하여 금괴 " + quantity + "개를 획득했습니다.");
-            player.sendMessage("§6[환율] §f1개당 " + rate + "G 기준");
-            player.sendMessage("§6[잔액] §f현재 보유 골드: §e" + data.getGold() + "G");
+            player.sendMessage("§6[중앙은행] §e" + totalCost + "C §f를 소모하여 금괴 " + quantity + "개를 획득했습니다.");
+            player.sendMessage("§6[환율] §f1개당 " + rate + "C 기준");
+            player.sendMessage("§6[잔액] §f현재 보유 크라운: §e" + data.getGold() + "C");
 
             return true;
         }
@@ -201,15 +201,15 @@ public class GoldCommand implements TabExecutor {
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
             data.addGold(totalG);
 
-            player.sendMessage("§6[중앙은행] §f금 " + quantity + "개를 환전하여 §e" + totalG + "G §f를 획득했습니다.");
-            player.sendMessage("§6[환율] §f1개당 " + rate + "G 기준");
-            player.sendMessage("§6[잔액] §f현재 보유 골드: §e" + data.getGold() + "G");
+            player.sendMessage("§6[중앙은행] §f금 " + quantity + "개를 환전하여 §e" + totalG + "C §f를 획득했습니다.");
+            player.sendMessage("§6[환율] §f1개당 " + rate + "C 기준");
+            player.sendMessage("§6[잔액] §f현재 보유 크라운: §e" + data.getGold() + "C");
 
             return true;
         }
 
         // ✅ 알 수 없는 명령어
-        player.sendMessage("§c알 수 없는 하위 명령어입니다. /gold 를 입력해 도움말을 확인하세요.");
+        player.sendMessage("§c알 수 없는 하위 명령어입니다. /crown 를 입력해 도움말을 확인하세요.");
         return true;
     }
 

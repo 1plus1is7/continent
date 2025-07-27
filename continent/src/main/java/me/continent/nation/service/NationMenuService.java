@@ -27,7 +27,7 @@ public class NationMenuService {
         OfflinePlayer king = Bukkit.getOfflinePlayer(nation.getKing());
         lore.add("§f촌장: §e" + (king.getName() != null ? king.getName() : king.getUniqueId()));
         lore.add("§f구성원: §e" + nation.getMembers().size());
-        lore.add("§f금고: §e" + nation.getVault() + "G");
+        lore.add("§f금고: §e" + nation.getVault() + "C");
         meta.setLore(lore);
         symbol.setItemMeta(meta);
         inv.setItem(13, symbol);

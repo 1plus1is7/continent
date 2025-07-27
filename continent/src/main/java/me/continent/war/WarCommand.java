@@ -53,7 +53,7 @@ public class WarCommand implements TabExecutor {
             double cost = ContinentPlugin.getInstance().getConfig()
                     .getDouble("war.declare-cost", 0);
             if (cost > 0 && attacker.getVault() < cost) {
-                player.sendMessage("§c국가 금고가 부족합니다. 전쟁 선포 비용: " + cost + "G");
+                player.sendMessage("§c국가 금고가 부족합니다. 전쟁 선포 비용: " + cost + "C");
                 return true;
             }
             if (cost > 0) {

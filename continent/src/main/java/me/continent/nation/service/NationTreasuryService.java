@@ -25,17 +25,17 @@ public class NationTreasuryService {
 
         ItemStack deposit = createItem(Material.EMERALD_BLOCK, "입금하기");
         ItemMeta dMeta = deposit.getItemMeta();
-        dMeta.setLore(java.util.List.of("§7국가 금고에 골드를 입금합니다."));
+        dMeta.setLore(java.util.List.of("§7국가 금고에 크라운를 입금합니다."));
         deposit.setItemMeta(dMeta);
         inv.setItem(11, deposit);
 
         ItemStack withdraw = createItem(Material.REDSTONE_BLOCK, "출금하기");
         ItemMeta wMeta = withdraw.getItemMeta();
-        wMeta.setLore(java.util.List.of("§7국가 금고에서 골드를 출금합니다."));
+        wMeta.setLore(java.util.List.of("§7국가 금고에서 크라운를 출금합니다."));
         withdraw.setItemMeta(wMeta);
         inv.setItem(15, withdraw);
 
-        ItemStack bal = createItem(Material.GOLD_INGOT, "잔액: " + nation.getVault() + "G");
+        ItemStack bal = createItem(Material.GOLD_INGOT, "잔액: " + nation.getVault() + "C");
         inv.setItem(13, bal);
 
         inv.setItem(22, createItem(Material.ARROW, "메인 메뉴"));
@@ -97,14 +97,14 @@ public class NationTreasuryService {
 
     static void renderAmount(Inventory inv, AmountHolder holder, Player player) {
         int amt = holder.getAmount();
-        inv.setItem(20, amtButton(Material.REDSTONE, "-10G", amt - 10));
-        inv.setItem(21, amtButton(Material.REDSTONE, "-1G", amt - 1));
-        inv.setItem(23, amtButton(Material.LIME_DYE, "+1G", amt + 1));
-        inv.setItem(24, amtButton(Material.LIME_DYE, "+10G", amt + 10));
+        inv.setItem(20, amtButton(Material.REDSTONE, "-10C", amt - 10));
+        inv.setItem(21, amtButton(Material.REDSTONE, "-1C", amt - 1));
+        inv.setItem(23, amtButton(Material.LIME_DYE, "+1C", amt + 1));
+        inv.setItem(24, amtButton(Material.LIME_DYE, "+10C", amt + 10));
         ItemStack info = new ItemStack(Material.GOLD_INGOT);
         ItemMeta meta = info.getItemMeta();
         String prefix = holder.getMode() == Mode.DEPOSIT ? "입금" : "출금";
-        meta.setDisplayName(prefix + ": " + amt + "G");
+        meta.setDisplayName(prefix + ": " + amt + "C");
         info.setItemMeta(meta);
         inv.setItem(31, info);
         inv.setItem(41, maxButton(player, holder));
@@ -118,7 +118,7 @@ public class NationTreasuryService {
         ItemStack item = new ItemStack(mat);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
-        meta.setLore(java.util.List.of("§7금액: " + amount + "G"));
+        meta.setLore(java.util.List.of("§7금액: " + amount + "C"));
         item.setItemMeta(meta);
         return item;
     }
@@ -151,12 +151,12 @@ public class NationTreasuryService {
         PlayerData data = PlayerDataManager.get(player.getUniqueId());
         if (holder.getMode() == Mode.DEPOSIT) {
             if (data.getGold() < amount) {
-                player.sendMessage("§c보유 골드가 부족합니다.");
+                player.sendMessage("§c보유 크라운이 부족합니다.");
                 return;
             }
             data.removeGold(amount);
             nation.addGold(amount);
-            player.sendMessage("§a입금 완료: " + amount + "G");
+            player.sendMessage("§a입금 완료: " + amount + "C");
         } else {
             if (nation.getVault() < amount) {
                 player.sendMessage("§c금고가 부족합니다.");
@@ -164,7 +164,7 @@ public class NationTreasuryService {
             }
             nation.removeGold(amount);
             data.addGold(amount);
-            player.sendMessage("§a출금 완료: " + amount + "G");
+            player.sendMessage("§a출금 완료: " + amount + "C");
         }
         PlayerDataManager.save(player.getUniqueId());
         NationStorage.save(nation);
@@ -191,7 +191,7 @@ public class NationTreasuryService {
                             nation.addGold(amount);
                             PlayerDataManager.save(player.getUniqueId());
                             NationStorage.save(nation);
-                            player.sendMessage("§a입금 완료: " + amount + "G");
+                            player.sendMessage("§a입금 완료: " + amount + "C");
                         }
                         return END_OF_CONVERSATION;
                     }
@@ -221,7 +221,7 @@ public class NationTreasuryService {
                             data.addGold(amount);
                             PlayerDataManager.save(player.getUniqueId());
                             NationStorage.save(nation);
-                            player.sendMessage("§a출금 완료: " + amount + "G");
+                            player.sendMessage("§a출금 완료: " + amount + "C");
                         }
                         return END_OF_CONVERSATION;
                     }

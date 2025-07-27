@@ -28,7 +28,7 @@ public class NationUpkeepService {
         ItemStack cost = item(Material.PAPER, "이번 주 유지비");
         ItemMeta cMeta = cost.getItemMeta();
         double amount = MaintenanceService.getWeeklyCost(nation);
-        cMeta.setLore(List.of("§7금액: " + amount + "G", "§7미납 주: " + nation.getUnpaidWeeks()));
+        cMeta.setLore(List.of("§7금액: " + amount + "C", "§7미납 주: " + nation.getUnpaidWeeks()));
         cost.setItemMeta(cMeta);
         inv.setItem(11, cost);
 

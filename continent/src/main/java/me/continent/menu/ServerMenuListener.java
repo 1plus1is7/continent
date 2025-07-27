@@ -35,7 +35,7 @@ public class ServerMenuListener implements Listener {
                     Nation nation = NationManager.getByPlayer(player.getUniqueId());
                     String nationName = nation != null ? nation.getName() : "없음";
                     player.sendMessage("§6[플레이어 정보]");
-                    player.sendMessage("§f골드: §e" + String.format("%.2f", gold) + "G");
+                    player.sendMessage("§f크라운: §e" + String.format("%.2f", gold) + "C");
                     player.sendMessage("§f국가: §e" + nationName);
                 }
                 case 37 -> MarketGUI.open(player, 1, MarketManager.SortMode.NEWEST, MarketManager.FilterMode.ALL, false);

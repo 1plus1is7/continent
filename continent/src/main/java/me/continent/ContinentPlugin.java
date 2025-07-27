@@ -63,7 +63,7 @@ public class ContinentPlugin extends JavaPlugin {
         MaintenanceService.schedule();
 
         // 명령어 등록 (plugin.yml 누락 시 NPE 방지)
-        registerCommand("gold", new GoldCommand());
+        registerCommand("crown", new GoldCommand());
         registerCommand("nation", new NationCommand());
         registerCommand("union", new UnionCommand());
         registerCommand("war", new WarCommand());

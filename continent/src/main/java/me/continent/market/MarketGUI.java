@@ -43,7 +43,7 @@ public class MarketGUI {
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(item.getItemMeta().getDisplayName());
             List<String> lore = meta.getLore() == null ? new ArrayList<>() : new ArrayList<>(meta.getLore());
-            lore.add("§7가격: " + mi.getPricePerUnit() + "G");
+            lore.add("§7가격: " + mi.getPricePerUnit() + "C");
             lore.add("§7재고: " + mi.getStock());
             OfflinePlayer op = Bukkit.getOfflinePlayer(mi.getSeller());
             String sellerName = op.getName() != null ? op.getName() : mi.getSeller().toString();
@@ -76,7 +76,7 @@ public class MarketGUI {
 
         ItemStack bal = new ItemStack(Material.GOLD_INGOT);
         ItemMeta bm = bal.getItemMeta();
-        bm.setDisplayName(ChatColor.GOLD + "보유 골드: " + data.getGold() + "G");
+        bm.setDisplayName(ChatColor.GOLD + "보유 크라운: " + data.getGold() + "C");
         bal.setItemMeta(bm);
         inv.setItem(51, bal);
         inv.setItem(52, createButton(Material.HOPPER, "필터 설정"));

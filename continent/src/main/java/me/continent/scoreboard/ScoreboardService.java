@@ -48,7 +48,7 @@ public class ScoreboardService {
         lines.add("국가: " + nationName);
 
         double gold = PlayerDataManager.get(uuid).getGold();
-        lines.add("골드: " + String.format("%.2f", gold) + "G");
+        lines.add("크라운: " + String.format("%.2f", gold) + "C");
 
         if (showCoordinates) {
             int x = player.getLocation().getBlockX();

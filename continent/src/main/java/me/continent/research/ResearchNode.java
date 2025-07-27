@@ -25,7 +25,7 @@ public class ResearchNode {
 
     private static double parseGoldCost(String cost) {
         if (cost == null) return 0;
-        java.util.regex.Matcher m = java.util.regex.Pattern.compile("(\\d+(?:\\.\\d+)?)\\s*G").matcher(cost);
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("(\\d+(?:\\.\\d+)?)\\s*C").matcher(cost);
         if (m.find()) {
             try {
                 return Double.parseDouble(m.group(1));

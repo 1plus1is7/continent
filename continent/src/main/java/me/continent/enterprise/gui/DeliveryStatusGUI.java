@@ -36,7 +36,7 @@ public class DeliveryStatusGUI {
             long remain = e.getFinishTime() - System.currentTimeMillis();
             if (remain < 0) remain = 0;
             lore.add("§7남은 시간: " + (remain / 1000) + "s");
-            lore.add("§7보상: " + e.getReward() + "G");
+            lore.add("§7보상: " + e.getReward() + "C");
             meta.setLore(lore);
             item.setItemMeta(meta);
             inv.setItem(idx++, item);

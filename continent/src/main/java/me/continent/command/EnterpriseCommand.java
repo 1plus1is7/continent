@@ -77,7 +77,7 @@ public class EnterpriseCommand implements CommandExecutor {
             var info = me.continent.enterprise.EnterpriseTypeConfig.get(type);
             if (info != null) cost = info.getCost();
             if (data.getGold() < cost) {
-                player.sendMessage("§c골드가 부족합니다. 비용: " + cost + "G");
+                player.sendMessage("§c크라운이 부족합니다. 비용: " + cost + "C");
                 return true;
             }
             data.removeGold(cost);

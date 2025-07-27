@@ -93,7 +93,7 @@ public class AdminCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("rate")) {
             if (args.length >= 2 && args[1].equalsIgnoreCase("get")) {
-                sender.sendMessage("§6[환율] §f현재 환율: §e" + CentralBank.getExchangeRate() + "G");
+                sender.sendMessage("§6[환율] §f현재 환율: §e" + CentralBank.getExchangeRate() + "C");
                 return true;
             }
             if (args.length >= 3 && args[1].equalsIgnoreCase("set")) {
@@ -108,7 +108,7 @@ public class AdminCommand implements TabExecutor {
             }
             if (args.length >= 2 && args[1].equalsIgnoreCase("reset")) {
                 CentralBank.resetExchangeRate();
-                sender.sendMessage("§6[환율] §f환율을 초기화했습니다. 현재 환율: §e" + CentralBank.getExchangeRate() + "G");
+                sender.sendMessage("§6[환율] §f환율을 초기화했습니다. 현재 환율: §e" + CentralBank.getExchangeRate() + "C");
                 return true;
             }
             if (args.length >= 3 && args[1].equalsIgnoreCase("min")) {
@@ -137,8 +137,8 @@ public class AdminCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("maintenance")) {
             if (args.length >= 2 && args[1].equalsIgnoreCase("get")) {
-                sender.sendMessage("§6[유지비] §f기본: §e" + MaintenanceService.getCost() + "G");
-                sender.sendMessage("§6[유지비] §f청크당: §e" + MaintenanceService.getPerChunkCost() + "G");
+                sender.sendMessage("§6[유지비] §f기본: §e" + MaintenanceService.getCost() + "C");
+                sender.sendMessage("§6[유지비] §f청크당: §e" + MaintenanceService.getPerChunkCost() + "C");
                 sender.sendMessage("§6[유지비] §f미납 허용 주수: §e" + MaintenanceService.getUnpaidLimit());
                 return true;
             }

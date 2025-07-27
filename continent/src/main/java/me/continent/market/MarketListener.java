@@ -108,7 +108,7 @@ public class MarketListener implements Listener {
                     PlayerData buyerData = PlayerDataManager.get(player.getUniqueId());
                     int total = qty * mi.getPricePerUnit();
                     if (buyerData.getGold() < total) {
-                        player.sendMessage("§c골드가 부족합니다");
+                        player.sendMessage("§c크라운이 부족합니다");
                         return;
                     }
                     if (player.getInventory().firstEmpty() == -1) {
