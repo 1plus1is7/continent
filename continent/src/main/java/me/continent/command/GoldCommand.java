@@ -28,8 +28,8 @@ public class GoldCommand implements TabExecutor {
 
         if (args[0].equalsIgnoreCase("help")) {
             player.sendMessage("§6[크라운 명령어 도움말]");
-            player.sendMessage("§e/crown convert <수량> §7- 크라운을 사용해 금괴를 획득합니다.");
-            player.sendMessage("§e/crown exchange [수량] §7- 금을 크라운으로 환전합니다.");
+            player.sendMessage("§e/crown convert <금|다이아> <수량> §7- 크라운을 사용해 광물을 구매합니다.");
+            player.sendMessage("§e/crown exchange <금|다이아> [수량] §7- 광물을 크라운으로 환전합니다.");
             player.sendMessage("§e/crown rate §7- 현재 환율 확인");
             player.sendMessage("§e/crown balance §7- 현재 보유 크라운을 확인합니다.");
             player.sendMessage("§e/crown pay <플레이어> <금액> §7- 플레이어에게 크라운을 송금합니다.");
@@ -57,7 +57,9 @@ public class GoldCommand implements TabExecutor {
             }
             if (args.length < 2) {
                 player.sendMessage("§e/crown admin addgold <수량>");
+                player.sendMessage("§e/crown admin adddiamond <수량>");
                 player.sendMessage("§e/crown admin setrate <값>");
+                player.sendMessage("§e/crown admin setdrate <값>");
                 return true;
             }
             if (args[1].equalsIgnoreCase("addgold") && args.length >= 3) {
@@ -65,6 +67,16 @@ public class GoldCommand implements TabExecutor {
                     int amt = Integer.parseInt(args[2]);
                     CentralBank.addGold(amt);
                     player.sendMessage("§6[중앙은행] §f금고에 금 " + amt + "개를 추가했습니다. 현재 보유: " + CentralBank.getGold());
+                } catch (NumberFormatException e) {
+                    player.sendMessage("§c수량은 숫자여야 합니다.");
+                }
+                return true;
+            }
+            if (args[1].equalsIgnoreCase("adddiamond") && args.length >= 3) {
+                try {
+                    int amt = Integer.parseInt(args[2]);
+                    CentralBank.addDiamond(amt);
+                    player.sendMessage("§6[중앙은행] §f금고에 다이아 " + amt + "개를 추가했습니다. 현재 보유: " + CentralBank.getDiamond());
                 } catch (NumberFormatException e) {
                     player.sendMessage("§c수량은 숫자여야 합니다.");
                 }
@@ -81,7 +93,18 @@ public class GoldCommand implements TabExecutor {
                 }
                 return true;
             }
-            player.sendMessage("§c사용법: /crown admin <addgold|setrate>");
+            if (args[1].equalsIgnoreCase("setdrate") && args.length >= 3) {
+                try {
+                    double val = Double.parseDouble(args[2]);
+                    CentralBank.setDiamondExchangeRate(val);
+                    CentralBank.setAutoRate(false);
+                    player.sendMessage("§6[중앙은행] §f다이아 환율을 " + CentralBank.getDiamondExchangeRate() + "G 로 설정했습니다.");
+                } catch (NumberFormatException e) {
+                    player.sendMessage("§c숫자를 입력해야 합니다.");
+                }
+                return true;
+            }
+            player.sendMessage("§c사용법: /crown admin <addgold|adddiamond|setrate|setdrate>");
             return true;
         }
 
@@ -127,19 +150,33 @@ public class GoldCommand implements TabExecutor {
         }
         if (args[0].equalsIgnoreCase("convert")) {
             if (args.length < 2) {
-                player.sendMessage("§c사용법: /crown convert <수량>");
+                player.sendMessage("§c사용법: /crown convert <금|다이아> <수량>");
+                return true;
+            }
+
+            boolean useDiamond = false;
+            int idx = 1;
+            try {
+                Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                useDiamond = args[1].equalsIgnoreCase("다이아") || args[1].equalsIgnoreCase("diamond") || args[1].equalsIgnoreCase("dia") || args[1].equalsIgnoreCase("d");
+                idx = 2;
+            }
+
+            if (args.length < idx + 1) {
+                player.sendMessage("§c사용법: /crown convert <금|다이아> <수량>");
                 return true;
             }
 
             int quantity;
             try {
-                quantity = Math.max(1, Integer.parseInt(args[1]));
+                quantity = Math.max(1, Integer.parseInt(args[idx]));
             } catch (NumberFormatException e) {
                 player.sendMessage("§c수량은 숫자여야 합니다.");
                 return true;
             }
 
-            double rate = CentralBank.getExchangeRate();
+            double rate = useDiamond ? CentralBank.getDiamondExchangeRate() : CentralBank.getExchangeRate();
             int totalCost = (int) Math.round(rate * quantity);
 
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
@@ -149,23 +186,39 @@ public class GoldCommand implements TabExecutor {
                 return true;
             }
 
-            if (!CentralBank.withdrawGold(quantity)) {
-                player.sendMessage("§c중앙은행 금고에 금이 부족합니다.");
-                return true;
-            }
-
-            ItemStack goldIngot = new ItemStack(Material.GOLD_INGOT, quantity);
-            HashMap<Integer, ItemStack> leftovers = player.getInventory().addItem(goldIngot);
-            if (!leftovers.isEmpty()) {
-                // 금고에서 이미 차감했으므로 복구
-                CentralBank.addGold(quantity);
-                player.sendMessage("§c인벤토리에 금괴를 넣을 공간이 부족합니다.");
-                return true;
+            if (useDiamond) {
+                if (!CentralBank.withdrawDiamond(quantity)) {
+                    player.sendMessage("§c중앙은행 금고에 다이아가 부족합니다.");
+                    return true;
+                }
+                ItemStack diamondItem = new ItemStack(Material.DIAMOND, quantity);
+                HashMap<Integer, ItemStack> leftovers = player.getInventory().addItem(diamondItem);
+                if (!leftovers.isEmpty()) {
+                    CentralBank.addDiamond(quantity);
+                    player.sendMessage("§c인벤토리에 다이아를 넣을 공간이 부족합니다.");
+                    return true;
+                }
+            } else {
+                if (!CentralBank.withdrawGold(quantity)) {
+                    player.sendMessage("§c중앙은행 금고에 금이 부족합니다.");
+                    return true;
+                }
+                ItemStack goldIngot = new ItemStack(Material.GOLD_INGOT, quantity);
+                HashMap<Integer, ItemStack> leftovers = player.getInventory().addItem(goldIngot);
+                if (!leftovers.isEmpty()) {
+                    CentralBank.addGold(quantity);
+                    player.sendMessage("§c인벤토리에 금괴를 넣을 공간이 부족합니다.");
+                    return true;
+                }
             }
 
             data.removeGold(totalCost);
 
-            player.sendMessage("§6[중앙은행] §e" + totalCost + "C §f를 소모하여 금괴 " + quantity + "개를 획득했습니다.");
+            if (useDiamond) {
+                player.sendMessage("§6[중앙은행] §e" + totalCost + "C §f를 소모하여 다이아 " + quantity + "개를 획득했습니다.");
+            } else {
+                player.sendMessage("§6[중앙은행] §e" + totalCost + "C §f를 소모하여 금괴 " + quantity + "개를 획득했습니다.");
+            }
             player.sendMessage("§6[환율] §f1개당 " + rate + "C 기준");
             player.sendMessage("§6[잔액] §f현재 보유 크라운: §e" + data.getGold() + "C");
 
@@ -175,33 +228,51 @@ public class GoldCommand implements TabExecutor {
 
         // ✅ 환전 명령어
         if (args[0].equalsIgnoreCase("exchange")) {
+            boolean useDiamond = false;
             int quantity = 1;
+            int idx = 1;
             if (args.length >= 2) {
                 try {
                     quantity = Math.max(1, Integer.parseInt(args[1]));
+                } catch (NumberFormatException e) {
+                    useDiamond = args[1].equalsIgnoreCase("다이아") || args[1].equalsIgnoreCase("diamond") || args[1].equalsIgnoreCase("dia") || args[1].equalsIgnoreCase("d");
+                    idx = 2;
+                }
+            }
+            if (args.length >= idx + 1) {
+                try {
+                    quantity = Math.max(1, Integer.parseInt(args[idx]));
                 } catch (NumberFormatException e) {
                     player.sendMessage("§c수량은 1 이상의 숫자여야 합니다.");
                     return true;
                 }
             }
 
-            ItemStack goldIngot = new ItemStack(Material.GOLD_INGOT);
-            if (!player.getInventory().containsAtLeast(goldIngot, quantity)) {
-                player.sendMessage("§c금괴가 부족합니다. (보유 수량 < " + quantity + ")");
+            ItemStack materialItem = new ItemStack(useDiamond ? Material.DIAMOND : Material.GOLD_INGOT);
+            if (!player.getInventory().containsAtLeast(materialItem, quantity)) {
+                player.sendMessage(useDiamond ? "§c다이아가 부족합니다. (보유 수량 < " + quantity + ")" : "§c금괴가 부족합니다. (보유 수량 < " + quantity + ")");
                 return true;
             }
 
-            // 금 차감
-            player.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, quantity));
-            CentralBank.addGold(quantity);
+            // 광물 차감
+            player.getInventory().removeItem(new ItemStack(useDiamond ? Material.DIAMOND : Material.GOLD_INGOT, quantity));
+            if (useDiamond) {
+                CentralBank.addDiamond(quantity);
+            } else {
+                CentralBank.addGold(quantity);
+            }
 
-            double rate = CentralBank.getExchangeRate();
+            double rate = useDiamond ? CentralBank.getDiamondExchangeRate() : CentralBank.getExchangeRate();
             int totalG = (int) Math.round(rate * quantity);
 
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
             data.addGold(totalG);
 
-            player.sendMessage("§6[중앙은행] §f금 " + quantity + "개를 환전하여 §e" + totalG + "C §f를 획득했습니다.");
+            if (useDiamond) {
+                player.sendMessage("§6[중앙은행] §f다이아 " + quantity + "개를 환전하여 §e" + totalG + "C §f를 획득했습니다.");
+            } else {
+                player.sendMessage("§6[중앙은행] §f금 " + quantity + "개를 환전하여 §e" + totalG + "C §f를 획득했습니다.");
+            }
             player.sendMessage("§6[환율] §f1개당 " + rate + "C 기준");
             player.sendMessage("§6[잔액] §f현재 보유 크라운: §e" + data.getGold() + "C");
 
@@ -223,6 +294,10 @@ public class GoldCommand implements TabExecutor {
                     .toList();
         }
 
+        if (args.length == 2 && (args[0].equalsIgnoreCase("convert") || args[0].equalsIgnoreCase("exchange"))) {
+            return Arrays.asList("gold", "diamond");
+        }
+
         if (args.length == 2 && args[0].equalsIgnoreCase("pay")) {
             return Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)
@@ -231,7 +306,7 @@ public class GoldCommand implements TabExecutor {
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("admin")) {
-            return Arrays.asList("addgold", "setrate").stream()
+            return Arrays.asList("addgold", "adddiamond", "setrate", "setdrate").stream()
                     .filter(s -> s.startsWith(args[1].toLowerCase()))
                     .toList();
         }
