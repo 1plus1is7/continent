@@ -14,11 +14,7 @@ public class CentralBankDataManager {
     public static void load() {
         file = new File(ContinentPlugin.getInstance().getDataFolder(), "centralbank.yml");
         if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            ContinentPlugin.getInstance().saveResource("centralbank.yml", false);
         }
 
         config = YamlConfiguration.loadConfiguration(file);
@@ -32,6 +28,9 @@ public class CentralBankDataManager {
         CentralBank.setDiamondMaxRate(config.getDouble("diamondMaxRate", 500.0));
         CentralBank.setExchangeRate(config.getDouble("lastRate", 20.0));
         CentralBank.setDiamondExchangeRate(config.getDouble("diamondLastRate", 200.0));
+        CentralBank.setPriceIndex(config.getDouble("priceIndex", 1.0));
+        CentralBank.setGrowthIndex(config.getDouble("growthIndex", 1.0));
+        CentralBank.setSmoothing(config.getDouble("smoothing", 0.2));
         CentralBank.setAutoRate(config.getBoolean("autoRate", true));
     }
 
@@ -46,6 +45,9 @@ public class CentralBankDataManager {
         config.set("diamondMaxRate", CentralBank.getDiamondMaxRate());
         config.set("lastRate", CentralBank.getExchangeRate());
         config.set("diamondLastRate", CentralBank.getDiamondExchangeRate());
+        config.set("priceIndex", CentralBank.getPriceIndex());
+        config.set("growthIndex", CentralBank.getGrowthIndex());
+        config.set("smoothing", CentralBank.getSmoothing());
         config.set("autoRate", CentralBank.isAutoRate());
         try {
             config.save(file);

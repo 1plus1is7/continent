@@ -1,0 +1,17 @@
+# Central bank persistent data
+# Initial mineral reserves and exchange rate parameters
+
+gold: 0
+diamond: 300
+baseRate: 20.0
+diamondBaseRate: 200.0
+minRate: 10.0
+diamondMinRate: 100.0
+maxRate: 50.0
+diamondMaxRate: 500.0
+lastRate: 20.0
+diamondLastRate: 200.0
+priceIndex: 1.0
+growthIndex: 1.0
+smoothing: 0.2
+autoRate: true
