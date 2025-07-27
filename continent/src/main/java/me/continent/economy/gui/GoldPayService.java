@@ -43,21 +43,21 @@ public class GoldPayService {
     }
 
     static void render(Inventory inv, int amount) {
-        inv.setItem(20, amountButton(Material.REDSTONE, "-10G", amount - 10));
-        inv.setItem(21, amountButton(Material.REDSTONE, "-1G", amount - 1));
-        inv.setItem(23, amountButton(Material.LIME_DYE, "+1G", amount + 1));
-        inv.setItem(24, amountButton(Material.LIME_DYE, "+10G", amount + 10));
+        inv.setItem(20, amountButton(Material.REDSTONE, "-10C", amount - 10));
+        inv.setItem(21, amountButton(Material.REDSTONE, "-1C", amount - 1));
+        inv.setItem(23, amountButton(Material.LIME_DYE, "+1C", amount + 1));
+        inv.setItem(24, amountButton(Material.LIME_DYE, "+10C", amount + 10));
         if (amount < 1) amount = 1;
         ItemStack amt = new ItemStack(Material.GOLD_INGOT);
         ItemMeta meta = amt.getItemMeta();
-        meta.setDisplayName("송금: " + amount + "G");
+        meta.setDisplayName("송금: " + amount + "C");
         amt.setItemMeta(meta);
         inv.setItem(31, amt);
         inv.setItem(38, createButton(Material.BARRIER, "취소"));
 
         ItemStack confirm = createButton(Material.EMERALD_BLOCK, "송금");
         ItemMeta cMeta = confirm.getItemMeta();
-        cMeta.setLore(java.util.List.of("§7금액: " + amount + "G"));
+        cMeta.setLore(java.util.List.of("§7금액: " + amount + "C"));
         confirm.setItemMeta(cMeta);
         inv.setItem(40, confirm);
 
@@ -87,7 +87,7 @@ public class GoldPayService {
         ItemStack item = new ItemStack(mat);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
-        meta.setLore(java.util.List.of("§7금액: " + amount + "G"));
+        meta.setLore(java.util.List.of("§7금액: " + amount + "C"));
         item.setItemMeta(meta);
         return item;
     }
@@ -119,7 +119,7 @@ public class GoldPayService {
         int amount = holder.getAmount();
         PlayerData sender = PlayerDataManager.get(player.getUniqueId());
         if (sender.getGold() < amount) {
-            player.sendMessage("§c보유 골드가 부족합니다.");
+            player.sendMessage("§c보유 크라운이 부족합니다.");
             return;
         }
         PlayerData receiver = PlayerDataManager.get(target.getUniqueId());
@@ -127,7 +127,7 @@ public class GoldPayService {
         receiver.addGold(amount);
         PlayerDataManager.save(player.getUniqueId());
         PlayerDataManager.save(target.getUniqueId());
-        player.sendMessage("§e" + target.getName() + "에게 " + amount + "G를 송금했습니다.");
-        target.sendMessage("§e" + player.getName() + "로부터 " + amount + "G를 받았습니다.");
+        player.sendMessage("§e" + target.getName() + "에게 " + amount + "C를 송금했습니다.");
+        target.sendMessage("§e" + player.getName() + "로부터 " + amount + "C를 받았습니다.");
     }
 }

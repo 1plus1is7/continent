@@ -192,7 +192,7 @@ public class ResearchManager {
         };
         meta.setDisplayName(color + node.getId());
         List<String> lore = new ArrayList<>();
-        lore.add("§7필요 골드: " + node.getCost());
+        lore.add("§7필요 크라운: " + node.getCost());
         lore.add("§7필요 시간: " + node.getTime());
         String stateText = switch (state) {
             case LOCKED -> "🔒 잠김";

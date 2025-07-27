@@ -36,7 +36,7 @@ public class GoldExchangeGUI {
         bMeta.setDisplayName("§e거래 설정");
         List<String> bLore = new ArrayList<>();
         bLore.add("§7수량: " + qty);
-        bLore.add((mode == Mode.CONVERT ? "§7비용: " : "§7수익: ") + total + "G");
+        bLore.add((mode == Mode.CONVERT ? "§7비용: " : "§7수익: ") + total + "C");
         bMeta.setLore(bLore);
         bundle.setItemMeta(bMeta);
         inv.setItem(4, bundle);
@@ -46,7 +46,7 @@ public class GoldExchangeGUI {
         inv.setItem(23, qtyButton(Material.LIME_DYE, "+1", qty + 1));
         inv.setItem(24, qtyButton(Material.LIME_DYE, "+10", qty + 10));
         inv.setItem(41, maxButton(player, mode));
-        String name = mode == Mode.CONVERT ? "비용: " + total + "G" : "수익: " + total + "G";
+        String name = mode == Mode.CONVERT ? "비용: " + total + "C" : "수익: " + total + "C";
         ItemStack price = new ItemStack(Material.GOLD_INGOT);
         ItemMeta pm = price.getItemMeta();
         pm.setDisplayName(name);
@@ -119,7 +119,7 @@ public class GoldExchangeGUI {
         PlayerData data = PlayerDataManager.get(player.getUniqueId());
         if (holder.getMode() == Mode.CONVERT) {
             if (data.getGold() < total) {
-                player.sendMessage("§c골드가 부족합니다. (필요: " + total + "G)");
+                player.sendMessage("§c크라운이 부족합니다. (필요: " + total + "C)");
                 return;
             }
             if (player.getInventory().firstEmpty() == -1) {

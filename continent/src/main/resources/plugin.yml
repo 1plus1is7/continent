@@ -10,9 +10,9 @@ commands:
     description: Nation system command
     aliases: [n]
     usage: /nation <subcommand>
-  gold:
-    description: Gold system command
-    usage: /gold <subcommand>
+  crown:
+    description: Crown system command
+    usage: /crown <subcommand>
   war:
     description: War system command
     aliases: [ww]

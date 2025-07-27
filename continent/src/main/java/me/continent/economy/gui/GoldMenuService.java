@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class GoldMenuService {
     public static void openMenu(Player player) {
         MenuHolder holder = new MenuHolder();
-        Inventory inv = Bukkit.createInventory(holder, 27, "Gold Menu");
+        Inventory inv = Bukkit.createInventory(holder, 27, "Crown Menu");
         holder.setInventory(inv);
 
         inv.setItem(10, createItem(Material.GOLD_INGOT, "잔액 확인"));

@@ -29,14 +29,14 @@ public class MarketRegisterGUI {
     }
 
     static void renderButtons(Inventory inv, int price) {
-        inv.setItem(20, priceButton(Material.REDSTONE, "-10G", price - 10));
-        inv.setItem(21, priceButton(Material.REDSTONE, "-1G", price - 1));
-        inv.setItem(23, priceButton(Material.LIME_DYE, "+1G", price + 1));
-        inv.setItem(24, priceButton(Material.LIME_DYE, "+10G", price + 10));
+        inv.setItem(20, priceButton(Material.REDSTONE, "-10C", price - 10));
+        inv.setItem(21, priceButton(Material.REDSTONE, "-1C", price - 1));
+        inv.setItem(23, priceButton(Material.LIME_DYE, "+1C", price + 1));
+        inv.setItem(24, priceButton(Material.LIME_DYE, "+10C", price + 10));
 
         ItemStack priceItem = new ItemStack(Material.GOLD_INGOT);
         ItemMeta pm = priceItem.getItemMeta();
-        pm.setDisplayName(ChatColor.GOLD + "가격: " + price + "G");
+        pm.setDisplayName(ChatColor.GOLD + "가격: " + price + "C");
         priceItem.setItemMeta(pm);
         inv.setItem(31, priceItem);
 
@@ -44,7 +44,7 @@ public class MarketRegisterGUI {
 
         ItemStack confirm = createButton(Material.EMERALD_BLOCK, "등록");
         ItemMeta cm = confirm.getItemMeta();
-        cm.setLore(java.util.List.of("§7가격: " + price + "G"));
+        cm.setLore(java.util.List.of("§7가격: " + price + "C"));
         confirm.setItemMeta(cm);
         inv.setItem(40, confirm);
 
@@ -75,7 +75,7 @@ public class MarketRegisterGUI {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.YELLOW + name);
         List<String> lore = new ArrayList<>();
-        lore.add("§7가격: " + result + "G");
+        lore.add("§7가격: " + result + "C");
         meta.setLore(lore);
         item.setItemMeta(meta);
         return item;

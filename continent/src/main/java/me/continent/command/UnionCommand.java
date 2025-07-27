@@ -59,7 +59,7 @@ public class UnionCommand implements TabExecutor {
                 }
                 double cost = 1000.0;
                 if (nation.getVault() < cost) {
-                    player.sendMessage("§c국가 금고가 부족합니다. 연합 생성 비용: " + cost + "G");
+                    player.sendMessage("§c국가 금고가 부족합니다. 연합 생성 비용: " + cost + "C");
                     return true;
                 }
                 String name = args[1];

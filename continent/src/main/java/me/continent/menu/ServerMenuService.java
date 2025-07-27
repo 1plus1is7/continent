@@ -38,7 +38,7 @@ public class ServerMenuService {
 
         ItemStack rawGold = new ItemStack(Material.RAW_GOLD);
         ItemMeta gMeta = rawGold.getItemMeta();
-        gMeta.setDisplayName("§a골드 메뉴 열기");
+        gMeta.setDisplayName("§a크라운 메뉴 열기");
         CustomModelDataComponent goldCmd = gMeta.getCustomModelDataComponent();
         goldCmd.setStrings(java.util.List.of("0"));
         gMeta.setCustomModelDataComponent(goldCmd);

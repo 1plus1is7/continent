@@ -20,7 +20,7 @@ public class GoldMenuListener implements Listener {
             switch (slot) {
                 case 10 -> {
                     PlayerData data = PlayerDataManager.get(player.getUniqueId());
-                    player.sendMessage("§6[골드] §f현재 보유 골드: §e" + data.getGold() + "G");
+                    player.sendMessage("§6[크라운] §f현재 보유 크라운: §e" + data.getGold() + "C");
                 }
                 case 12 -> GoldExchangeGUI.open(player, GoldExchangeGUI.Mode.CONVERT, 1);
                 case 14 -> GoldExchangeGUI.open(player, GoldExchangeGUI.Mode.EXCHANGE, 1);

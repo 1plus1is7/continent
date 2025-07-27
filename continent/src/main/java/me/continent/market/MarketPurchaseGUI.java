@@ -32,7 +32,7 @@ public class MarketPurchaseGUI {
         if (qty < 1) qty = 1; if (qty > stock) qty = stock;
         ItemStack price = new ItemStack(Material.GOLD_INGOT);
         ItemMeta pm = price.getItemMeta();
-        pm.setDisplayName(ChatColor.GOLD + "가격: " + (unitPrice * qty) + "G");
+        pm.setDisplayName(ChatColor.GOLD + "가격: " + (unitPrice * qty) + "C");
         price.setItemMeta(pm);
         inv.setItem(31, price);
         inv.setItem(38, createButton(Material.BARRIER, "취소"));
@@ -41,7 +41,7 @@ public class MarketPurchaseGUI {
         ItemMeta cm = confirm.getItemMeta();
         java.util.List<String> lore = new java.util.ArrayList<>();
         lore.add("§7수량: " + qty + "/" + stock);
-        lore.add("§7가격: " + (unitPrice * qty) + "G");
+        lore.add("§7가격: " + (unitPrice * qty) + "C");
         cm.setLore(lore);
         confirm.setItemMeta(cm);
         inv.setItem(40, confirm);

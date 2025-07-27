@@ -195,7 +195,7 @@ public class NationCommand implements TabExecutor {
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
 
             if (args[1].equalsIgnoreCase("balance")) {
-                player.sendMessage("§6[금고] §f잔액: §e" + nation.getVault() + "G");
+                player.sendMessage("§6[금고] §f잔액: §e" + nation.getVault() + "C");
                 return true;
             }
 
@@ -216,14 +216,14 @@ public class NationCommand implements TabExecutor {
                     return true;
                 }
                 if (data.getGold() < amount) {
-                    player.sendMessage("§c보유 골드가 부족합니다.");
+                    player.sendMessage("§c보유 크라운이 부족합니다.");
                     return true;
                 }
                 data.removeGold(amount);
                 nation.addGold(amount);
                 PlayerDataManager.save(player.getUniqueId());
                 NationStorage.save(nation);
-                player.sendMessage("§a금고에 " + amount + "G 를 입금했습니다.");
+                player.sendMessage("§a금고에 " + amount + "C 를 입금했습니다.");
                 return true;
             }
 
@@ -251,7 +251,7 @@ public class NationCommand implements TabExecutor {
                 data.addGold(amount);
                 PlayerDataManager.save(player.getUniqueId());
                 NationStorage.save(nation);
-                player.sendMessage("§a금고에서 " + amount + "G 를 출금했습니다.");
+                player.sendMessage("§a금고에서 " + amount + "C 를 출금했습니다.");
                 return true;
             }
 
@@ -502,7 +502,7 @@ public class NationCommand implements TabExecutor {
 
             PlayerData data = PlayerDataManager.get(player.getUniqueId());
             if (data.getGold() < 5) {
-                player.sendMessage("§c골드가 부족합니다. (5G 필요)");
+                player.sendMessage("§c크라운이 부족합니다. (5C 필요)");
                 return true;
             }
 
@@ -586,7 +586,7 @@ public class NationCommand implements TabExecutor {
                 return true;
             }
             double amount = MaintenanceService.getWeeklyCost(nation);
-            player.sendMessage("§e이번 주 유지비: " + amount + "G");
+            player.sendMessage("§e이번 주 유지비: " + amount + "C");
             return true;
         }
 
