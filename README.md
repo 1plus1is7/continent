@@ -15,7 +15,7 @@ Continent 플러그인은 마인크래프트 서버에서 국가 체계와 경�
 - **국가 채팅 및 로그**
   국가별 전용 채팅을 제공하며, 모든 메시지는 `plugins/Continent/nation-logs` 폴더에 기록됩니다.
 - **스코어보드**
-  플레이어의 크라운, 소속 국가, 미니맵(국가 점령지는 기본 연두색(§a) 표시), 서버 주소 등을 실시간으로 보여 주는 스코어보드가 일정 간격으로 갱신됩니다.
+  플레이어의 크라운, 소속 국가, 미니맵(국가 점령지는 기본 연두색(&a) 표시), 서버 주소 등을 실시간으로 보여 주는 스코어보드가 일정 간격으로 갱신됩니다.
 - **전쟁 시스템**
  국가의 촌장은 `/war declare <국가명>` 명령으로 다른 국가에 전쟁을 선포할 수 있습니다. 선포 시 `config.yml`의 `war.declare-cost` 만큼 국가 금고에서 크라운이 차감되며 두 국가 사이에서만 영토 파괴와 코어 공격이 허용됩니다. `/war status`로 현재 전쟁의 공격측과 방어측을 확인할 수 있고 `/war surrender`로 항복할 수 있습니다.
  코어의 체력이 0이 되면 해당 국가은 전쟁에서 패배합니다.
@@ -58,14 +58,14 @@ Continent 플러그인은 마인크래프트 서버에서 국가 체계와 경�
     unpaid-limit: 2     # 미납 허용 주 수
     per-chunk-cost: 5   # 추가 청크당 비용
   scoreboard:
-    title: "§aContinent Server"     # 스코어보드 제목
+    title: "&aContinent Server"     # 스코어보드 제목
     minimap-size: 7                 # 미니맵 한 변의 크기
     show-coordinates: false         # 좌표 표시 여부
     refresh-interval: 0.5           # 갱신 주기(초)
   server-address: "example.com"     # 하단 서버 주소 표시
   colors:
-    claimed: "§a"        # 점령지 색상
-    unclaimed: "§f"      # 미점령지 색상
+    claimed: "&a"        # 점령지 색상
+    unclaimed: "&f"      # 미점령지 색상
   symbols:
     center: "▣"         # 플레이어 위치 표시
     chunk: "▩"          # 일반 청크 표시

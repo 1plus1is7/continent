@@ -59,6 +59,7 @@ public class ContinentPlugin extends JavaPlugin {
         instance = this;
 
         saveDefaultConfig();
+        translateColorCodes(getConfig());
         MaintenanceService.init(getConfig());
         MaintenanceService.schedule();
 
@@ -156,6 +157,17 @@ public class ContinentPlugin extends JavaPlugin {
             cmd.setExecutor(exe);
         } else {
             getLogger().severe("Command '" + name + "' not defined in plugin.yml");
+        }
+    }
+
+    private static void translateColorCodes(org.bukkit.configuration.ConfigurationSection section) {
+        for (String key : section.getKeys(false)) {
+            Object value = section.get(key);
+            if (value instanceof String str) {
+                section.set(key, org.bukkit.ChatColor.translateAlternateColorCodes('&', str));
+            } else if (value instanceof org.bukkit.configuration.ConfigurationSection cs) {
+                translateColorCodes(cs);
+            }
         }
     }
 }

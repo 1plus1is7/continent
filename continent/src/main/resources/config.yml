@@ -9,8 +9,8 @@ scoreboard:
   refresh-interval: 0.5
 server-address: "example.com"
 colors:
-  claimed: "§a"
-  unclaimed: "§f"
+  claimed: "&a"
+  unclaimed: "&f"
 symbols:
   center: "▣"
   chunk: "▩"
