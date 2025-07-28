@@ -1,6 +1,7 @@
 package me.continent.player;
 
 import me.continent.nation.Nation;
+import me.continent.stat.PlayerStats;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +13,7 @@ public class PlayerData {
 
     private double gold;
     private final Set<String> pendingInvites = new HashSet<>();  // ✅ 중복 제거됨
+    private final PlayerStats stats = new PlayerStats();
 
     private Nation nation;
 
@@ -35,6 +37,10 @@ public class PlayerData {
     private int knownMaintenance = 0;
 
     private String jobId = null;
+
+    public PlayerStats getStats() {
+        return stats;
+    }
 
 
     public boolean isNationChatEnabled() {

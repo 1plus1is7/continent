@@ -76,6 +76,7 @@ public class ContinentPlugin extends JavaPlugin {
         registerCommand("menu", new MenuCommand());
         registerCommand("enterprise", new EnterpriseCommand());
         registerCommand("job", new JobCommand());
+        registerCommand("stat", new me.continent.command.StatCommand());
 
         // 중앙은행 데이터 로딩
         CentralBankDataManager.load();
@@ -127,6 +128,8 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new me.continent.enterprise.gui.EnterpriseListListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.enterprise.gui.ProductionMenuListener(), this);
         getServer().getPluginManager().registerEvents(new JobMenuListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.listener.StatsEffectListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.listener.StatLevelListener(), this);
 
 
         getServer().getPluginManager().registerEvents(new MarketListener(), this);
