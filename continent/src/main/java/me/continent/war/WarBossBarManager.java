@@ -18,7 +18,6 @@ import java.util.UUID;
 public class WarBossBarManager {
     private static final Map<String, BossBar> bars = new HashMap<>();
     private static BukkitTask task;
-    private static final double VIEW_DISTANCE = 10.0; // blocks
 
     private static String key(War war, String nation) {
         return war.hashCode() + ":" + nation.toLowerCase();
@@ -63,13 +62,7 @@ public class WarBossBarManager {
             if (core == null) continue;
             BossBar bar = entry.getValue();
             for (Player p : Bukkit.getOnlinePlayers()) {
-                boolean near = p.getWorld().equals(core.getWorld()) && p.getLocation().distanceSquared(core) <= VIEW_DISTANCE * VIEW_DISTANCE;
-                boolean member = nation.getMembers().contains(p.getUniqueId());
-                if (near) {
-                    bar.addPlayer(p);
-                } else if (!member) {
-                    bar.removePlayer(p);
-                }
+                bar.addPlayer(p);
             }
         }
     }
