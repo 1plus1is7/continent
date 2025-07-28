@@ -256,9 +256,34 @@ public class ResearchManager {
             nation.getSelectedT4Nodes().add(node.getId());
         }
 
+        me.continent.stat.PlayerStats stats = me.continent.player.PlayerDataManager.get(player.getUniqueId()).getStats();
+        int intel = stats.get(me.continent.stat.StatType.INTELLIGENCE);
+
+        long active = tasks.keySet().stream().filter(k -> k.startsWith(nation.getName() + ":")).count();
+        int extraSlots = 0;
+        if (intel >= 11) extraSlots++;
+        if (intel >= 12) extraSlots++;
+        if (intel >= 13) extraSlots++;
+        if (active >= nation.getResearchSlots() + extraSlots) {
+            player.sendMessage("§c연구 슬롯이 부족합니다.");
+            return;
+        }
+
         double cost = node.getGoldCost();
+        if (intel >= 14) cost *= 0.8;
         if (nation.getVault() < cost) {
             player.sendMessage("§c국가 금고가 부족합니다.");
+            return;
+        }
+
+        long duration = parseDuration(node.getTime());
+        if (intel >= 5) duration = (long) (duration * 0.85);
+
+        if (intel >= 15) {
+            nation.getResearchedNodes().add(node.getId());
+            NationStorage.save(nation);
+            player.sendMessage("§a연구를 즉시 완료했습니다!");
+            openNodeMenu(player, node.getTree());
             return;
         }
 
@@ -268,7 +293,6 @@ public class ResearchManager {
         player.sendMessage("§a연구를 시작합니다: " + node.getId());
         player.sendMessage("§e연구 비용 " + cost + "G 차감");
 
-        long duration = parseDuration(node.getTime());
         ResearchTask task = new ResearchTask(nation, node, duration);
         tasks.put(nation.getName() + ":" + node.getId(), task);
         task.start();

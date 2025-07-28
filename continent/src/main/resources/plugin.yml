@@ -41,3 +41,6 @@ commands:
   job:
     description: Manage player jobs
     usage: /job <subcommand>
+  stat:
+    description: Player stat management
+    usage: /stat <add>

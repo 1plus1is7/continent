@@ -2,6 +2,8 @@ package me.continent.storage;
 
 import me.continent.ContinentPlugin;
 import me.continent.player.PlayerData;
+import me.continent.stat.PlayerStats;
+import me.continent.stat.StatType;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -27,6 +29,15 @@ public class PlayerStorage {
         config.set("maintenance", data.getKnownMaintenance());
         config.set("kingdomChat", data.isKingdomChatEnabled());
         config.set("job", data.getJobId());
+        PlayerStats stats = data.getStats();
+        for (StatType type : StatType.values()) {
+            config.set("stats." + type.name().toLowerCase(), stats.get(type));
+        }
+        if (stats.getMastery() != null) {
+            config.set("stats.mastery", stats.getMastery().name());
+        }
+        config.set("stats.points", stats.getUnusedPoints());
+        config.set("stats.lastLevel", stats.getLastLevelGiven());
 
         try {
             config.save(file);
@@ -46,6 +57,20 @@ public class PlayerStorage {
         data.setKnownMaintenance(config.getInt("maintenance", 0));
         data.setKingdomChatEnabled(config.getBoolean("kingdomChat", false));
         data.setJobId(config.getString("job", null));
+
+        PlayerStats stats = data.getStats();
+        for (StatType type : StatType.values()) {
+            int val = config.getInt("stats." + type.name().toLowerCase(), 0);
+            stats.set(type, val);
+        }
+        String mastery = config.getString("stats.mastery", null);
+        if (mastery != null) {
+            try {
+                stats.setMastery(StatType.valueOf(mastery));
+            } catch (IllegalArgumentException ignored) {}
+        }
+        stats.addPoints(config.getInt("stats.points", 0));
+        stats.setLastLevelGiven(config.getInt("stats.lastLevel", 0));
         return data;
     }
 }
