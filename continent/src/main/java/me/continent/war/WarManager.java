@@ -11,7 +11,7 @@ import org.bukkit.Material;
 import java.util.*;
 
 public class WarManager {
-    public static final int VILLAGE_CORE_HP = 100;
+    public static final int VILLAGE_CORE_HP = 250;
     private static final Map<String, War> wars = new HashMap<>();
 
     public static War declareWar(Nation attacker, Nation defender) {

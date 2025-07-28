@@ -39,13 +39,13 @@ public class CoreSlimeManager {
         World world = loc.getWorld();
         if (world == null) return;
         // Spawn the slime directly above the core center
-        Slime slime = (Slime) world.spawnEntity(loc.clone().add(0, 1, 0), EntityType.SLIME);
+        Slime slime = (Slime) world.spawnEntity(loc.clone().add(0, 0, 0), EntityType.SLIME);
         slime.setAI(false);
-        slime.setInvisible(false);
+        slime.setInvisible(true);
         slime.setGlowing(true);
         slime.setCollidable(false);
         slime.setGravity(false);
-        slime.setSize(4);
+        slime.setSize(2);
         slime.setSilent(true);
         slime.setPersistent(true);
         slime.setRemoveWhenFarAway(false);
@@ -90,7 +90,7 @@ public class CoreSlimeManager {
             if (nation == null) return;
             Location loc = nation.getCoreLocation();
             if (loc == null) return;
-            slime.teleport(loc.clone().add(0, 1, 0));
+            slime.teleport(loc.clone().add(0, 0, 0));
         });
     }
 }

@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
  */
 public class CentralBank {
 
-    private static int gold = 0;
+    private static int gold = 1000;
 
     private static int diamond = 300;
 
