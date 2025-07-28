@@ -14,6 +14,7 @@ import me.continent.command.EnterpriseCommand;
 import me.continent.economy.CentralBankDataManager;
 import me.continent.listener.TerritoryListener;
 import me.continent.listener.MaintenanceJoinListener;
+import me.continent.listener.KeepLevelListener;
 import me.continent.protection.TerritoryProtectionListener;
 import me.continent.protection.CoreProtectionListener;
 import me.continent.war.CoreAttackListener;
@@ -109,6 +110,7 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChestListener(), this);
         getServer().getPluginManager().registerEvents(new ProtectionStateListener(), this);
         getServer().getPluginManager().registerEvents(new WarDeathListener(), this);
+        getServer().getPluginManager().registerEvents(new KeepLevelListener(), this);
         getServer().getPluginManager().registerEvents(new CropListener(), this);
         getServer().getPluginManager().registerEvents(new ResearchListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.specialty.SpecialtyListener(), this);
