@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.Color;
+import java.util.Random;
 
 public class StatsManager {
 
@@ -37,24 +38,39 @@ public class StatsManager {
         }
     }
 
+    private static final Color[] MULTI_COLORS = new Color[] {
+            Color.fromRGB(0xFFD700),
+            Color.fromRGB(0xFFFF00),
+            Color.fromRGB(0x800080)
+    };
+    private static final Random RANDOM = new Random();
+
     private static void launchFireworks(Player player, boolean multiple) {
         if (multiple) {
+            int total = 3 + RANDOM.nextInt(3); // 3~5
             new BukkitRunnable() {
                 int count = 0;
                 @Override
                 public void run() {
-                    spawnFirework(player, Color.fromRGB(0xFFDB4D));
+                    Color color = MULTI_COLORS[RANDOM.nextInt(MULTI_COLORS.length)];
+                    spawnFirework(player, color, true);
                     count++;
-                    if (count >= 5) cancel();
+                    if (count >= total) cancel();
                 }
             }.runTaskTimer(ContinentPlugin.getInstance(), 0L, 4L);
         } else {
-            spawnFirework(player, Color.fromRGB(0xFFDB4D));
+            spawnFirework(player, Color.fromRGB(0xFFDB4D), false);
         }
     }
 
-    private static void spawnFirework(Player player, Color color) {
-        Firework fw = (Firework) player.getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK_ROCKET);
+    private static void spawnFirework(Player player, Color color, boolean around) {
+        var loc = player.getLocation().clone();
+        if (around) {
+            double dx = (RANDOM.nextDouble() - 0.5) * 4.0;
+            double dz = (RANDOM.nextDouble() - 0.5) * 4.0;
+            loc.add(dx, 0, dz);
+        }
+        Firework fw = (Firework) player.getWorld().spawnEntity(loc, EntityType.FIREWORK_ROCKET);
         FireworkMeta meta = fw.getFireworkMeta();
         meta.addEffect(FireworkEffect.builder().withColor(color).with(FireworkEffect.Type.STAR).build());
         meta.setPower(0);
