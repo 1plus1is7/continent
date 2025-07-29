@@ -129,6 +129,8 @@ public class ContinentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new me.continent.enterprise.gui.ProductionMenuListener(), this);
         getServer().getPluginManager().registerEvents(new JobMenuListener(), this);
         getServer().getPluginManager().registerEvents(new me.continent.listener.StatLevelListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.listener.StatJoinListener(), this);
+        getServer().getPluginManager().registerEvents(new me.continent.listener.DoubleJumpListener(), this);
 
 
         getServer().getPluginManager().registerEvents(new MarketListener(), this);

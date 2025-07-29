@@ -4,6 +4,7 @@ import me.continent.player.PlayerData;
 import me.continent.player.PlayerDataManager;
 import me.continent.stat.PlayerStats;
 import me.continent.stat.StatType;
+import me.continent.stat.StatsEffectManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -54,6 +55,7 @@ public class StatCommand implements TabExecutor {
                 stats.set(type, current + 1);
                 stats.usePoint();
                 PlayerDataManager.save(player.getUniqueId());
+                StatsEffectManager.apply(player);
                 player.sendMessage("§a" + type.name() + " +1 (" + stats.get(type) + ")");
             } catch (IllegalArgumentException e) {
                 player.sendMessage("§c잘못된 스탯입니다.");
